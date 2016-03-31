@@ -1,9 +1,14 @@
+sudo: true
+
 os:
   - osx
   - linux
 compiler:
   - gcc
   - clang
+
+install:
+  - (test "$TRAVIS_OS_NAME" = "linux" && sudo bin/travis/install_prlimit.sh $PWD/bin/travis && sudo bin/travis/prlimit --pid "$$" --memlock=2000:unlimited && ulimit -l 2000) || true
 
 before_script:
   - cd libcrypto-build
