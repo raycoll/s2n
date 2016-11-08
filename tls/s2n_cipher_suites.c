@@ -19,6 +19,7 @@
 
 #include "crypto/s2n_cipher.h"
 
+#include "tls/s2n_record.h"
 #include "tls/s2n_cipher_suites.h"
 #include "tls/s2n_connection.h"
 #include "utils/s2n_safety.h"
@@ -38,76 +39,106 @@ const struct s2n_key_exchange_algorithm s2n_ecdhe = {
 const struct s2n_record_algorithm s2n_record_alg_null = {
     .cipher = &s2n_null_cipher,
     .hmac_alg = S2N_HMAC_NONE,
+    .record_write = s2n_stream_record_write,
+    .record_parse = s2n_stream_record_parse,
 };
 
 const struct s2n_record_algorithm s2n_record_alg_rc4_md5 = {
     .cipher = &s2n_rc4,
     .hmac_alg = S2N_HMAC_MD5,
+    .record_write = s2n_stream_record_write,
+    .record_parse = s2n_stream_record_parse,
 };
 
 const struct s2n_record_algorithm s2n_record_alg_rc4_sha = {
     .cipher = &s2n_rc4,
     .hmac_alg = S2N_HMAC_SHA1,
+    .record_write = s2n_stream_record_write,
+    .record_parse = s2n_stream_record_parse,
 };
 
 const struct s2n_record_algorithm s2n_record_alg_3des_sha = {
     .cipher = &s2n_3des,
     .hmac_alg = S2N_HMAC_SHA1,
+    .record_write = s2n_cbc_record_write,
+    .record_parse = s2n_cbc_record_parse,
 };
 
 const struct s2n_record_algorithm s2n_record_alg_aes128_sha = {
     .cipher = &s2n_aes128,
     .hmac_alg = S2N_HMAC_SHA1,
+    .record_write = s2n_cbc_record_write,
+    .record_parse = s2n_cbc_record_parse,
 };
 
 const struct s2n_record_algorithm s2n_record_alg_aes128_sha_composite = {
     .cipher = &s2n_aes128_sha,
     .hmac_alg = S2N_HMAC_NONE,
+    .record_write = s2n_composite_record_write,
+    .record_parse = s2n_composite_record_parse,
 };
 
 const struct s2n_record_algorithm s2n_record_alg_aes128_sha256 = {
     .cipher = &s2n_aes128,
     .hmac_alg = S2N_HMAC_SHA256,
+    .record_write = s2n_cbc_record_write,
+    .record_parse = s2n_cbc_record_parse,
 };
 
 const struct s2n_record_algorithm s2n_record_alg_aes128_sha256_composite = {
     .cipher = &s2n_aes128_sha256,
     .hmac_alg = S2N_HMAC_NONE,
+    .record_write = s2n_composite_record_write,
+    .record_parse = s2n_composite_record_parse,
 };
 
 const struct s2n_record_algorithm s2n_record_alg_aes256_sha = {
     .cipher = &s2n_aes256,
     .hmac_alg = S2N_HMAC_SHA1,
+    .record_write = s2n_cbc_record_write,
+    .record_parse = s2n_cbc_record_parse,
 };
 
 const struct s2n_record_algorithm s2n_record_alg_aes256_sha_composite = {
     .cipher = &s2n_aes256_sha,
     .hmac_alg = S2N_HMAC_NONE,
+    .record_write = s2n_composite_record_write,
+    .record_parse = s2n_composite_record_parse,
 };
 
 const struct s2n_record_algorithm s2n_record_alg_aes256_sha256 = {
     .cipher = &s2n_aes256,
     .hmac_alg = S2N_HMAC_SHA256,
+    .record_write = s2n_cbc_record_write,
+    .record_parse = s2n_cbc_record_parse,
 };
 
 const struct s2n_record_algorithm s2n_record_alg_aes256_sha256_composite = {
     .cipher = &s2n_aes256_sha256,
     .hmac_alg = S2N_HMAC_NONE,
+    .record_write = s2n_composite_record_write,
+    .record_parse = s2n_composite_record_parse,
 };
 
 const struct s2n_record_algorithm s2n_record_alg_aes256_sha384 = {
     .cipher = &s2n_aes256,
     .hmac_alg = S2N_HMAC_SHA384,
+    .record_write = s2n_cbc_record_write,
+    .record_parse = s2n_cbc_record_parse,
 };
 
 const struct s2n_record_algorithm s2n_record_alg_aes128_gcm = {
     .cipher = &s2n_aes128_gcm,
     .hmac_alg = S2N_HMAC_NONE,
+    .record_write = s2n_aead_record_write,
+    .record_parse = s2n_aead_record_parse,
 };
 
 const struct s2n_record_algorithm s2n_record_alg_aes256_gcm = {
     .cipher = &s2n_aes256_gcm,
     .hmac_alg = S2N_HMAC_NONE,
+    .record_write = s2n_aead_record_write,
+    .record_parse = s2n_aead_record_parse,
 };
 
 /* This is the initial cipher suite, but is never negotiated */
@@ -117,6 +148,9 @@ struct s2n_cipher_suite s2n_null_cipher_suite = {
     .iana_value = { TLS_NULL_WITH_NULL_NULL },
     .key_exchange_alg = &s2n_rsa,
     .active_record_alg = &s2n_record_alg_null,
+    .all_record_algs = { &s2n_record_alg_null },
+    .num_record_algs = 1,
+    .minimum_required_tls_version = S2N_SSLv2,
 };
 
 struct s2n_cipher_suite s2n_rsa_with_rc4_128_md5 = /* 0x00,0x04 */ {

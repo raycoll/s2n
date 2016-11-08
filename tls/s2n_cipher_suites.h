@@ -49,6 +49,8 @@ extern const struct s2n_key_exchange_algorithm s2n_ecdhe;
 struct s2n_record_algorithm {
     const struct s2n_cipher *cipher;
     s2n_hmac_algorithm hmac_alg;
+    int (*record_write) (struct s2n_connection *conn, uint8_t content_type, struct s2n_blob *in);
+    int (*record_parse) (struct s2n_connection *conn);
 };
 
 extern const struct s2n_record_algorithm s2n_record_alg_null;
