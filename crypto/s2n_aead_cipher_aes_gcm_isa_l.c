@@ -37,17 +37,23 @@ static int s2n_aead_cipher_aes128_gcm_encrypt(struct s2n_session_key *key, struc
     /* requires a 16 byte IV with 0x1 at the end*/
     uint8_t gcm_iv[16];
     memcpy(gcm_iv, iv->data, S2N_TLS_GCM_IV_LEN);
-    memcpy(gcm_iv, &gcm_iv_trailer, 4);
+    memcpy(gcm_iv + S2N_TLS_GCM_IV_LEN, &gcm_iv_trailer, 4);
 
-    aesni_gcm128_enc(&key->gcm_data,
-           out->data,   //!< Ciphertext output. Encrypt in-place is allowed.
-           in->data,   //!< Plaintext input
-           in_len,  //!< Length of data in Bytes for encryption.
-           gcm_iv,    //!< Pre-counter block j0: 4 byte salt (from Security Association) concatenated with 8 byte Initialization Vector (from IPSec ESP Payload) concatenated with 0x00000001. 16-byte pointer.
-           aad->data,  //!< Additional Authentication Data (AAD).
-           aad->size,    //!< Length of AAD.
-           tag_data,  //!< Authenticated Tag output.
-           S2N_TLS_GCM_TAG_LEN   //!< Authenticated Tag Length in bytes (must be a multiple of 4 bytes). Valid values are 16 (most likely), 12 or 8.
+    aesni_gcm128_init(&key->gcm_data,
+        gcm_iv,  //!< Pre-counter block j0: 4 byte salt (from Security Association) concatenated with 8 byte Initialization Vector (from IPSec ESP Payload) concatenated with 0x00000001. 16-byte pointer.
+        aad->data,  //!< Additional Authentication Data (AAD).
+        aad->size //!< Length of AAD.
+    );
+
+    aesni_gcm128_enc_update(&key->gcm_data,
+        out->data,    //!< Ciphertext output. Encrypt in-place is allowed.
+        in->data,   //!< Plaintext input
+        in_len,      //!< Length of data in Bytes for encryption.
+    );
+
+    aesni_gcm128_enc_finalize(&key->gcm_data,
+        tag_data, //!< Authenticated Tag output.
+        S2N_TLS_GCM_TAG_LEN //!< Authenticated Tag Length in bytes. Valid values are 16 (most likely), 12 or 8.
     );
 
     return 0;
@@ -66,17 +72,23 @@ static int s2n_aead_cipher_aes256_gcm_encrypt(struct s2n_session_key *key, struc
     /* requires a 16 byte IV with 0x1 at the end*/
     uint8_t gcm_iv[16];
     memcpy(gcm_iv, iv->data, S2N_TLS_GCM_IV_LEN);
-    memcpy(gcm_iv, &gcm_iv_trailer, 4);
+    memcpy(gcm_iv + S2N_TLS_GCM_IV_LEN, &gcm_iv_trailer, 4);
 
-    aesni_gcm256_enc(&key->gcm_data,
-           out->data,   //!< Ciphertext output. Encrypt in-place is allowed.
-           in->data,   //!< Plaintext input
-           in_len,  //!< Length of data in Bytes for encryption.
-           gcm_iv,    //!< Pre-counter block j0: 4 byte salt (from Security Association) concatenated with 8 byte Initialization Vector (from IPSec ESP Payload) concatenated with 0x00000001. 16-byte pointer.
-           aad->data,  //!< Additional Authentication Data (AAD).
-           aad->size,    //!< Length of AAD.
-           tag_data,  //!< Authenticated Tag output.
-           S2N_TLS_GCM_TAG_LEN   //!< Authenticated Tag Length in bytes (must be a multiple of 4 bytes). Valid values are 16 (most likely), 12 or 8.
+    aesni_gcm256_init(&key->gcm_data,
+        gcm_iv,  //!< Pre-counter block j0: 4 byte salt (from Security Association) concatenated with 8 byte Initialization Vector (from IPSec ESP Payload) concatenated with 0x00000001. 16-byte pointer.
+        aad->data,  //!< Additional Authentication Data (AAD).
+        aad->size //!< Length of AAD.
+    );
+
+    aesni_gcm256_enc_update(&key->gcm_data,
+        out->data,    //!< Ciphertext output. Encrypt in-place is allowed.
+        in->data,   //!< Plaintext input
+        in_len,      //!< Length of data in Bytes for encryption.
+    );
+
+    aesni_gcm256_enc_finalize(&key->gcm_data,
+        tag_data, //!< Authenticated Tag output.
+        S2N_TLS_GCM_TAG_LEN //!< Authenticated Tag Length in bytes. Valid values are 16 (most likely), 12 or 8.
     );
 
     return 0;
@@ -95,21 +107,29 @@ static int s2n_aead_cipher_aes128_gcm_decrypt(struct s2n_session_key *key, struc
     /* requires a 16 byte IV with 0x1 at the end*/
     uint8_t gcm_iv[16];
     memcpy(gcm_iv, iv->data, S2N_TLS_GCM_IV_LEN);
-    memcpy(gcm_iv, &gcm_iv_trailer, 4);
+    memcpy(gcm_iv + S2N_TLS_GCM_IV_LEN, &gcm_iv_trailer, 4);
 
-    // no return value, fingers crossed
-    aesni_gcm128_dec(&key->gcm_data,
-           out->data,   //!< Plaintext output. Decrypt in-place is allowed.
-           in->data,   //!< Ciphertext input
-           in_len,  //!< Length of data in Bytes for encryption.
-           gcm_iv,    //!< Pre-counter block j0: 4 byte salt (from Security Association) concatenated with 8 byte Initialisation Vector (from IPSec ESP Payload) concatenated with 0x00000001. 16-byte pointer.
-           aad->data,  //!< Additional Authentication Data (AAD).
-           aad->size,    //!< Length of AAD.
-           tag_data,  //!< Authenticated Tag output.
-           S2N_TLS_GCM_TAG_LEN   //!< Authenticated Tag Length in bytes (must be a multiple of 4 bytes). Valid values are 16 (most likely), 12 or 8.
+    aesni_gcm128_init(&key->gcm_data,
+        gcm_iv,  //!< Pre-counter block j0: 4 byte salt (from Security Association) concatenated with 8 byte Initialization Vector (from IPSec ESP Payload) concatenated with 0x00000001. 16-byte pointer.
+        aad->data,  //!< Additional Authentication Data (AAD).
+        aad->size //!< Length of AAD.
     );
 
-    /* How do we verify ? */
+    aesni_gcm128_dec_update(&key->gcm_data,
+        out->data,    //!< Ciphertext output. Encrypt in-place is allowed.
+        in->data,   //!< Plaintext input
+        in_len,      //!< Length of data in Bytes for encryption.
+    );
+
+    uint8_t computed_tag[S2N_TLS_GCM_TAG_LEN];
+    aesni_gcm128_dec_finalize(&key->gcm_data,
+        computed_tag, //!< Authenticated Tag output.
+        S2N_TLS_GCM_TAG_LEN //!< Authenticated Tag Length in bytes. Valid values are 16 (most likely), 12 or 8.
+    );
+
+    if (memcmp(computed_tag, tag_data, S2N_TLS_GCM_TAG_LEN)) {
+        S2N_ERROR(S2N_ERR_DECRYPT);
+    }
 
     return 0;
 }
@@ -127,21 +147,29 @@ static int s2n_aead_cipher_aes256_gcm_decrypt(struct s2n_session_key *key, struc
     /* requires a 16 byte IV with 0x1 at the end*/
     uint8_t gcm_iv[16];
     memcpy(gcm_iv, iv->data, S2N_TLS_GCM_IV_LEN);
-    memcpy(gcm_iv, &gcm_iv_trailer, 4);
+    memcpy(gcm_iv + S2N_TLS_GCM_IV_LEN, &gcm_iv_trailer, 4);
 
-    // no return value, fingers crossed
-    aesni_gcm256_dec(&key->gcm_data,
-           out->data,   //!< Plaintext output. Decrypt in-place is allowed.
-           in->data,   //!< Ciphertext input
-           in_len,  //!< Length of data in Bytes for encryption.
-           gcm_iv,    //!< Pre-counter block j0: 4 byte salt (from Security Association) concatenated with 8 byte Initialisation Vector (from IPSec ESP Payload) concatenated with 0x00000001. 16-byte pointer.
-           aad->data,  //!< Additional Authentication Data (AAD).
-           aad->size,    //!< Length of AAD.
-           tag_data,  //!< Authenticated Tag output.
-           S2N_TLS_GCM_TAG_LEN   //!< Authenticated Tag Length in bytes (must be a multiple of 4 bytes). Valid values are 16 (most likely), 12 or 8.
+    aesni_gcm256_init(&key->gcm_data,
+        gcm_iv,  //!< Pre-counter block j0: 4 byte salt (from Security Association) concatenated with 8 byte Initialization Vector (from IPSec ESP Payload) concatenated with 0x00000001. 16-byte pointer.
+        aad->data,  //!< Additional Authentication Data (AAD).
+        aad->size //!< Length of AAD.
     );
 
-    /* How do we verify ? */
+    aesni_gcm256_dec_update(&key->gcm_data,
+        out->data,    //!< Ciphertext output. Encrypt in-place is allowed.
+        in->data,   //!< Plaintext input
+        in_len,      //!< Length of data in Bytes for encryption.
+    );
+
+    uint8_t computed_tag[S2N_TLS_GCM_TAG_LEN];
+    aesni_gcm256_dec_finalize(&key->gcm_data,
+        computed_tag, //!< Authenticated Tag output.
+        S2N_TLS_GCM_TAG_LEN //!< Authenticated Tag Length in bytes. Valid values are 16 (most likely), 12 or 8.
+    );
+
+    if (memcmp(computed_tag, tag_data, S2N_TLS_GCM_TAG_LEN)) {
+        S2N_ERROR(S2N_ERR_DECRYPT);
+    }
 
     return 0;
 }
