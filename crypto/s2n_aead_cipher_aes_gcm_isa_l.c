@@ -30,11 +30,6 @@ static int s2n_aead_cipher_aes128_gcm_encrypt(struct s2n_session_key *key, struc
     gte_check(out->size, in->size);
     eq_check(iv->size, S2N_TLS_GCM_IV_LEN);
 
-    /* Initialize the IV */
-    if (EVP_EncryptInit_ex(key->evp_cipher_ctx, NULL, NULL, NULL, iv->data) != 1) {
-        S2N_ERROR(S2N_ERR_KEY_INIT);
-    }
-
     /* Adjust our buffer pointers to account for the explicit IV and TAG lengths */
     int in_len = in->size - S2N_TLS_GCM_TAG_LEN;
     uint8_t *tag_data = out->data + out->size - S2N_TLS_GCM_TAG_LEN;
@@ -63,11 +58,6 @@ static int s2n_aead_cipher_aes256_gcm_encrypt(struct s2n_session_key *key, struc
     gte_check(in->size, S2N_TLS_GCM_TAG_LEN);
     gte_check(out->size, in->size);
     eq_check(iv->size, S2N_TLS_GCM_IV_LEN);
-
-    /* Initialize the IV */
-    if (EVP_EncryptInit_ex(key->evp_cipher_ctx, NULL, NULL, NULL, iv->data) != 1) {
-        S2N_ERROR(S2N_ERR_KEY_INIT);
-    }
 
     /* Adjust our buffer pointers to account for the explicit IV and TAG lengths */
     int in_len = in->size - S2N_TLS_GCM_TAG_LEN;
