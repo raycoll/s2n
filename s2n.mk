@@ -39,6 +39,10 @@ DEFAULT_CFLAGS = -pedantic -Wall -Werror -Wimplicit -Wunused -Wcomment -Wchar-su
                  -I../api/ -I../ -Wno-deprecated-declarations -Wno-unknown-pragmas -Wformat-security \
                  -D_FORTIFY_SOURCE=2 -fgnu89-inline
 
+ifdef ISA_L_ROOT
+	DEFAULT_CFLAGS += -I$(ISA_L_ROOT)/include
+endif
+
 # Add a flag to disable stack protector for alternative libcs without
 # libssp.
 ifneq ($(NO_STACK_PROTECTOR), 1)

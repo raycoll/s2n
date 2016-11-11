@@ -193,7 +193,7 @@ static int s2n_aead_cipher_aes_gcm_destroy_key(struct s2n_session_key *key)
     return 0;
 }
 
-struct s2n_cipher s2n_aes128_gcm = {
+struct s2n_cipher s2n_aes128_gcm_ossl = {
     .key_material_size = 16,
     .type = S2N_AEAD,
     .io.aead = {
@@ -209,7 +209,7 @@ struct s2n_cipher s2n_aes128_gcm = {
     .destroy_key = s2n_aead_cipher_aes_gcm_destroy_key,
 };
 
-struct s2n_cipher s2n_aes256_gcm = {
+struct s2n_cipher s2n_aes256_gcm_ossl = {
     .key_material_size = 32,
     .type = S2N_AEAD,
     .io.aead = {

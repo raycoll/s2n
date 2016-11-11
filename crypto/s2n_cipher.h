@@ -22,12 +22,15 @@
 #include <openssl/rsa.h>
 #include <openssl/dh.h>
 
+#include <isa-l_crypto.h> // isa_l
+
 #include "crypto/s2n_crypto.h"
 
 #include "utils/s2n_blob.h"
 
 struct s2n_session_key {
     EVP_CIPHER_CTX *evp_cipher_ctx;
+    struct gcm_data gcm_data;
 };
 
 struct s2n_stream_cipher {
@@ -87,6 +90,8 @@ extern struct s2n_cipher s2n_aes256;
 extern struct s2n_cipher s2n_3des;
 extern struct s2n_cipher s2n_aes128_gcm;
 extern struct s2n_cipher s2n_aes256_gcm;
+extern struct s2n_cipher s2n_aes128_gcm_ossl;
+extern struct s2n_cipher s2n_aes256_gcm_ossl;
 extern struct s2n_cipher s2n_aes128_sha;
 extern struct s2n_cipher s2n_aes256_sha;
 extern struct s2n_cipher s2n_aes128_sha256;

@@ -13,7 +13,7 @@
 # permissions and limitations under the License.
 #
 
-OBJS = $(wildcard ../utils/*.o ../stuffer/*.o ../tls/*.o ../iana/*.o ../crypto/*.o ../error/*.o)
+OBJS = $(wildcard ../utils/*.o ../stuffer/*.o ../tls/*.o ../iana/*.o ../crypto/*.o ../error/*.o $(ISA_L_ROOT)/lib/libisal_crypto.a)
 
 .PHONY : all
 all: libs2n.a libs2n.so libs2n.dylib
@@ -29,3 +29,4 @@ libs2n.so: ${OBJS}
 
 libs2n.dylib: ${OBJS}
 	test ! -f /usr/lib/libSystem.dylib || libtool -dynamic  ${LIBS} -L${LIBCRYPTO_ROOT}/lib ${CRYPTO_LIBS} -o libs2n.dylib ${OBJS}
+
