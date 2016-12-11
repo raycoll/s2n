@@ -27,8 +27,9 @@
 
 #define TLS_EC_CURVE_TYPE_NAMED 3
 
-const struct s2n_ecc_named_curve s2n_ecc_supported_curves[2] = {
+const struct s2n_ecc_named_curve s2n_ecc_supported_curves[3] = {
     {.iana_id = TLS_EC_CURVE_SECP_256_R1,.libcrypto_nid = NID_X9_62_prime256v1},
+    {.iana_id = TLS_EC_CURVE_X25519 , .libcrypto_nid = NID_X25519},
     {.iana_id = TLS_EC_CURVE_SECP_384_R1,.libcrypto_nid = NID_secp384r1},
 };
 
@@ -194,10 +195,12 @@ static EC_KEY *s2n_ecc_generate_own_key(const struct s2n_ecc_named_curve *named_
 {
     EC_KEY *key = EC_KEY_new_by_curve_name(named_curve->libcrypto_nid);
     if (key == NULL) {
+        printf("EC_KEY_new_by_curve_name failed!\n");
         S2N_ERROR_PTR(S2N_ERR_ECDHE_GEN_KEY);
     }
     if (EC_KEY_generate_key(key) != 1) {
         EC_KEY_free(key);
+        printf("EC_KEY_generate_key failed\n");
         S2N_ERROR_PTR(S2N_ERR_ECDHE_GEN_KEY);
     }
     return key;
