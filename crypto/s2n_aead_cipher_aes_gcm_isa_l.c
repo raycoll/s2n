@@ -22,7 +22,13 @@
 #include "utils/s2n_safety.h"
 #include "utils/s2n_blob.h"
 
-static uint32_t gcm_iv_trailer = 0x00000001U;
+//static uint32_t gcm_iv_trailer = 0x00000001U;
+
+static uint8_t s2n_aead_cipher_aes_gcm_available()
+{
+    // TODO: add actual logic here. Dependent on header availability?
+    return 1;
+}
 
 static int s2n_aead_cipher_aes128_gcm_encrypt(struct s2n_session_key *key, struct s2n_blob *iv, struct s2n_blob *aad, struct s2n_blob *in, struct s2n_blob *out)
 {
@@ -37,7 +43,10 @@ static int s2n_aead_cipher_aes128_gcm_encrypt(struct s2n_session_key *key, struc
     /* requires a 16 byte IV with 0x1 at the end*/
     uint8_t gcm_iv[16];
     memcpy(gcm_iv, iv->data, S2N_TLS_GCM_IV_LEN);
-    memcpy(gcm_iv + S2N_TLS_GCM_IV_LEN, &gcm_iv_trailer, 4);
+    gcm_iv[12] = 0;
+    gcm_iv[13] = 0;
+    gcm_iv[14] = 0;
+    gcm_iv[15] = 1;
 
     aesni_gcm128_init(&key->gcm_data,
         gcm_iv,  //!< Pre-counter block j0: 4 byte salt (from Security Association) concatenated with 8 byte Initialization Vector (from IPSec ESP Payload) concatenated with 0x00000001. 16-byte pointer.
@@ -48,7 +57,7 @@ static int s2n_aead_cipher_aes128_gcm_encrypt(struct s2n_session_key *key, struc
     aesni_gcm128_enc_update(&key->gcm_data,
         out->data,    //!< Ciphertext output. Encrypt in-place is allowed.
         in->data,   //!< Plaintext input
-        in_len,      //!< Length of data in Bytes for encryption.
+        in_len      //!< Length of data in Bytes for encryption.
     );
 
     aesni_gcm128_enc_finalize(&key->gcm_data,
@@ -72,7 +81,10 @@ static int s2n_aead_cipher_aes256_gcm_encrypt(struct s2n_session_key *key, struc
     /* requires a 16 byte IV with 0x1 at the end*/
     uint8_t gcm_iv[16];
     memcpy(gcm_iv, iv->data, S2N_TLS_GCM_IV_LEN);
-    memcpy(gcm_iv + S2N_TLS_GCM_IV_LEN, &gcm_iv_trailer, 4);
+    gcm_iv[12] = 0;
+    gcm_iv[13] = 0;
+    gcm_iv[14] = 0;
+    gcm_iv[15] = 1;
 
     aesni_gcm256_init(&key->gcm_data,
         gcm_iv,  //!< Pre-counter block j0: 4 byte salt (from Security Association) concatenated with 8 byte Initialization Vector (from IPSec ESP Payload) concatenated with 0x00000001. 16-byte pointer.
@@ -83,7 +95,7 @@ static int s2n_aead_cipher_aes256_gcm_encrypt(struct s2n_session_key *key, struc
     aesni_gcm256_enc_update(&key->gcm_data,
         out->data,    //!< Ciphertext output. Encrypt in-place is allowed.
         in->data,   //!< Plaintext input
-        in_len,      //!< Length of data in Bytes for encryption.
+        in_len      //!< Length of data in Bytes for encryption.
     );
 
     aesni_gcm256_enc_finalize(&key->gcm_data,
@@ -107,8 +119,10 @@ static int s2n_aead_cipher_aes128_gcm_decrypt(struct s2n_session_key *key, struc
     /* requires a 16 byte IV with 0x1 at the end*/
     uint8_t gcm_iv[16];
     memcpy(gcm_iv, iv->data, S2N_TLS_GCM_IV_LEN);
-    memcpy(gcm_iv + S2N_TLS_GCM_IV_LEN, &gcm_iv_trailer, 4);
-
+    gcm_iv[12] = 0;
+    gcm_iv[13] = 0;
+    gcm_iv[14] = 0;
+    gcm_iv[15] = 1;
     aesni_gcm128_init(&key->gcm_data,
         gcm_iv,  //!< Pre-counter block j0: 4 byte salt (from Security Association) concatenated with 8 byte Initialization Vector (from IPSec ESP Payload) concatenated with 0x00000001. 16-byte pointer.
         aad->data,  //!< Additional Authentication Data (AAD).
@@ -118,7 +132,7 @@ static int s2n_aead_cipher_aes128_gcm_decrypt(struct s2n_session_key *key, struc
     aesni_gcm128_dec_update(&key->gcm_data,
         out->data,    //!< Ciphertext output. Encrypt in-place is allowed.
         in->data,   //!< Plaintext input
-        in_len,      //!< Length of data in Bytes for encryption.
+        in_len      //!< Length of data in Bytes for encryption.
     );
 
     uint8_t computed_tag[S2N_TLS_GCM_TAG_LEN];
@@ -147,8 +161,10 @@ static int s2n_aead_cipher_aes256_gcm_decrypt(struct s2n_session_key *key, struc
     /* requires a 16 byte IV with 0x1 at the end*/
     uint8_t gcm_iv[16];
     memcpy(gcm_iv, iv->data, S2N_TLS_GCM_IV_LEN);
-    memcpy(gcm_iv + S2N_TLS_GCM_IV_LEN, &gcm_iv_trailer, 4);
-
+    gcm_iv[12] = 0;
+    gcm_iv[13] = 0;
+    gcm_iv[14] = 0;
+    gcm_iv[15] = 1;
     aesni_gcm256_init(&key->gcm_data,
         gcm_iv,  //!< Pre-counter block j0: 4 byte salt (from Security Association) concatenated with 8 byte Initialization Vector (from IPSec ESP Payload) concatenated with 0x00000001. 16-byte pointer.
         aad->data,  //!< Additional Authentication Data (AAD).
@@ -158,7 +174,7 @@ static int s2n_aead_cipher_aes256_gcm_decrypt(struct s2n_session_key *key, struc
     aesni_gcm256_dec_update(&key->gcm_data,
         out->data,    //!< Ciphertext output. Encrypt in-place is allowed.
         in->data,   //!< Plaintext input
-        in_len,      //!< Length of data in Bytes for encryption.
+        in_len      //!< Length of data in Bytes for encryption.
     );
 
     uint8_t computed_tag[S2N_TLS_GCM_TAG_LEN];
@@ -222,7 +238,7 @@ static int s2n_aead_cipher_aes_gcm_destroy_key(struct s2n_session_key *key)
     return 0;
 }
 
-struct s2n_cipher s2n_aes128_gcm = {
+struct s2n_cipher s2n_aes128_gcm_isa_l = {
     .key_material_size = 16,
     .type = S2N_AEAD,
     .io.aead = {
@@ -235,9 +251,10 @@ struct s2n_cipher s2n_aes128_gcm = {
     .set_encryption_key = s2n_aead_cipher_aes128_gcm_set_encryption_key,
     .set_decryption_key = s2n_aead_cipher_aes128_gcm_set_decryption_key,
     .destroy_key = s2n_aead_cipher_aes_gcm_destroy_key,
+    .is_available = s2n_aead_cipher_aes_gcm_available,
 };
 
-struct s2n_cipher s2n_aes256_gcm = {
+struct s2n_cipher s2n_aes256_gcm_isa_l = {
     .key_material_size = 32,
     .type = S2N_AEAD,
     .io.aead = {
@@ -250,4 +267,5 @@ struct s2n_cipher s2n_aes256_gcm = {
     .set_encryption_key = s2n_aead_cipher_aes256_gcm_set_encryption_key,
     .set_decryption_key = s2n_aead_cipher_aes256_gcm_set_decryption_key,
     .destroy_key = s2n_aead_cipher_aes_gcm_destroy_key,
+    .is_available = s2n_aead_cipher_aes_gcm_available,
 };

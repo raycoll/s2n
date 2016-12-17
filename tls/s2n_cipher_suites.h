@@ -64,8 +64,10 @@ extern const struct s2n_record_algorithm s2n_record_alg_aes256_sha_composite;
 extern const struct s2n_record_algorithm s2n_record_alg_aes256_sha256;
 extern const struct s2n_record_algorithm s2n_record_alg_aes256_sha256_composite;
 extern const struct s2n_record_algorithm s2n_record_alg_aes256_sha384;
-extern const struct s2n_record_algorithm s2n_record_alg_aes128_gcm;
-extern const struct s2n_record_algorithm s2n_record_alg_aes256_gcm;
+extern const struct s2n_record_algorithm s2n_record_alg_aes128_gcm_isa_l;
+extern const struct s2n_record_algorithm s2n_record_alg_aes128_gcm_ossl;
+extern const struct s2n_record_algorithm s2n_record_alg_aes256_gcm_isa_l;
+extern const struct s2n_record_algorithm s2n_record_alg_aes256_gcm_ossl;
 
 struct s2n_cipher_suite {
     /* Is there an implementation available? Set in s2n_cipher_suites_init() */
