@@ -88,7 +88,7 @@ int s2n_record_header_parse(struct s2n_connection *conn, uint8_t * content_type,
 }
 
 /* How much overhead does the IV, MAC, TAG and padding bytes introduce ? */
-uint16_t overhead(struct s2n_connection *conn)
+uint16_t s2n_record_overhead(struct s2n_connection *conn)
 {
     struct s2n_crypto_parameters *active = conn->server;
 
@@ -136,5 +136,5 @@ int s2n_record_max_write_payload_size(struct s2n_connection *conn)
         max_fragment_size -= 1;
     }
 
-    return max_fragment_size - overhead(conn);
+    return max_fragment_size - s2n_record_overhead(conn);
 }

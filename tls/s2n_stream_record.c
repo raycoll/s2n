@@ -144,7 +144,7 @@ int s2n_stream_record_write(struct s2n_connection *conn, uint8_t content_type, s
      */
     uint16_t data_bytes_to_take = MIN(in->size, s2n_record_max_write_payload_size(conn));
 
-    uint16_t extra = overhead(conn);
+    uint16_t extra = s2n_record_overhead(conn);
 
     /* Start the MAC with the sequence number */
     GUARD(s2n_hmac_update(mac, sequence_number, S2N_TLS_SEQUENCE_NUM_LEN));

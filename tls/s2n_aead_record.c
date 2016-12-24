@@ -148,7 +148,7 @@ int s2n_aead_record_write(struct s2n_connection *conn, uint8_t content_type, str
      * fragment is going to be.
      */
     uint16_t data_bytes_to_take = MIN(in->size, s2n_record_max_write_payload_size(conn));
-    uint16_t extra = overhead(conn);
+    uint16_t extra = s2n_record_overhead(conn);
 
     /* Now that we know the length, start writing the record */
     protocol_version[0] = conn->actual_protocol_version / 10;
