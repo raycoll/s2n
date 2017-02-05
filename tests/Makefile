@@ -34,6 +34,10 @@ integration:
 fuzz:
 	${MAKE} -C fuzz
 
+.PHONY : bssl
+bssl:
+	${MAKE} -C bssl
+
 include ../s2n.mk
 
 .PHONY : clean

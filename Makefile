@@ -64,6 +64,9 @@ bin: libs
 integration: bin
 	$(MAKE) -C tests integration
 
+.PHONY : bssl
+bssl: bin
+	$(MAKE) -C tests bssl
 
 .PHONY : fuzz
 ifeq ($(shell uname),Linux)
