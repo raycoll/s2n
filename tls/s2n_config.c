@@ -191,6 +191,54 @@ struct s2n_cipher_preferences cipher_preferences_20160824 = {
     .minimum_protocol_version = S2N_TLS10
 };
 
+/* 20160411 preferences with a ChaCha20 suite */
+uint8_t wire_format_20170208[] = {
+    TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
+    TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+    TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,
+    TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256,
+    TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,
+    TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
+    TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,
+    TLS_RSA_WITH_AES_128_CBC_SHA,
+    TLS_RSA_WITH_AES_128_GCM_SHA256,
+    TLS_RSA_WITH_AES_256_GCM_SHA384,
+    TLS_RSA_WITH_AES_128_CBC_SHA256,
+    TLS_RSA_WITH_AES_256_CBC_SHA,
+    TLS_RSA_WITH_AES_256_CBC_SHA256,
+    TLS_RSA_WITH_3DES_EDE_CBC_SHA,
+};
+
+struct s2n_cipher_preferences cipher_preferences_20170208 = {
+    .count = sizeof(wire_format_20170208) / S2N_TLS_CIPHER_SUITE_LEN,
+    .wire_format = wire_format_20170208,
+    .minimum_protocol_version = S2N_TLS10
+};
+
+/* 20160804 preferences with a ChaCha20 suite */
+uint8_t wire_format_20170209[] = {
+    TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+    TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,
+    TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256,
+    TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
+    TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,
+    TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
+    TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,
+    TLS_RSA_WITH_AES_128_GCM_SHA256,
+    TLS_RSA_WITH_AES_256_GCM_SHA384,
+    TLS_RSA_WITH_AES_128_CBC_SHA,
+    TLS_RSA_WITH_AES_128_CBC_SHA256,
+    TLS_RSA_WITH_AES_256_CBC_SHA,
+    TLS_RSA_WITH_AES_256_CBC_SHA256,
+    TLS_RSA_WITH_3DES_EDE_CBC_SHA
+};
+
+struct s2n_cipher_preferences cipher_preferences_20170209 = {
+    .count = sizeof(wire_format_20170209) / S2N_TLS_CIPHER_SUITE_LEN,
+    .wire_format = wire_format_20170209,
+    .minimum_protocol_version = S2N_TLS10
+};
+
 /* Add ChaCha20 suite */
 uint8_t wire_format_20170210[] = {
     TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
@@ -242,6 +290,8 @@ struct {
     "20160411", &cipher_preferences_20160411}, {
     "20160804", &cipher_preferences_20160804}, {
     "20160824", &cipher_preferences_20160824}, {
+    "20170208", &cipher_preferences_20170208}, {
+    "20170209", &cipher_preferences_20170209}, {
     "20170210", &cipher_preferences_20170210}, {
     "test_all", &cipher_preferences_test_all}, {
     NULL, NULL}

@@ -370,6 +370,8 @@ int s2n_config_set_cipher_preferences(struct s2n_config *config,
 |------------|-------|--------|--------|--------|---------|-------------------|---------|------|-----|-----|-------|
 | "default"  |       |   X    |    X   |    X   |    X    |         X         |    X    |      |     |     |   X   |
 | "20170210" |       |   X    |    X   |    X   |    X    |         X         |    X    |      |     |     |   X   |
+| "20170209" |       |   X    |    X   |    X   |    X    |         X         |    X    |  X   |     |     |   X   |
+| "20170208" |       |   X    |    X   |    X   |    X    |         X         |    X    |  X   |     |     |   X   |
 | "20160824" |       |   X    |    X   |    X   |    X    |                   |    X    |      |     |     |   X   |
 | "20160804" |       |   X    |    X   |    X   |    X    |                   |    X    |  X   |     |     |   X   |
 | "20160411" |       |   X    |    X   |    X   |    X    |                   |    X    |  X   |     |     |   X   |
@@ -381,7 +383,7 @@ int s2n_config_set_cipher_preferences(struct s2n_config *config,
 
 The "default" version is special in that it will be updated with future s2n changes and ciphersuites and protocol versions may be added and removed, or their internal order of preference might change. Numbered versions are fixed and will never change. 
 
-"20160411" follows the same general preference order as "default". The main difference is it has a CBC cipher suite at the top. This is to accomodate certain Java clients that have poor GCM implementations. Users of s2n who have found GCM to be hurting performance for their clients should consider this version.
+"20160411"/"20170208" follow the same general preference order as "default". The main difference is it has a CBC cipher suite at the top. This is to accomodate certain Java clients that have poor GCM implementations. Users of s2n who have found GCM to be hurting performance for their clients should consider this version.
 
 s2n does not expose an API to control the order of preference for each ciphersuite or protocol version. s2n follows the following order:
 
