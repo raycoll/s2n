@@ -19,7 +19,6 @@ Simple handshake tests using gnutls-cli
 
 import os
 import sys
-import ssl
 import socket
 import subprocess
 import itertools
