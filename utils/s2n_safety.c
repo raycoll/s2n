@@ -20,8 +20,22 @@
 #include <sys/syscall.h>
 #include <sys/types.h>
 #include <stdint.h>
+#include <string.h>
 
-#include "s2n_annotations.h"
+#include "utils/s2n_annotations.h"
+
+#include "error/s2n_errno.h"
+
+void* trace_memcpy_check(void *restrict to, const void *restrict from, size_t size, const char *debug_str)
+{
+    if (to == NULL || from == NULL) {
+        s2n_errno = S2N_ERR_NULL;
+        s2n_debug_str = debug_str;
+        return NULL;
+    }
+
+    return memcpy(to, from, size);
+}
 
 /**
  * Get the process id
