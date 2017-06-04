@@ -148,9 +148,7 @@ int main(int argc, char **argv)
             EXPECT_SUCCESS(copy_output_to_input(conn));
             conn->in.blob.data[2] = 0xFF;
             EXPECT_SUCCESS(s2n_record_header_parse(conn, &content_type, &fragment_length));
-            s2n_record_parse(conn);
-            EXPECT_EQUAL(s2n_errno, S2N_ERR_DECRYPT);
-            s2n_errno = 0;
+            EXPECT_FAILURE(s2n_record_parse(conn));
             EXPECT_EQUAL(content_type, TLS_APPLICATION_DATA);
 
             /* Tamper with the explicit IV and ensure decryption fails */
@@ -249,9 +247,7 @@ int main(int argc, char **argv)
              * the composite AAD. */
             conn->in.blob.data[2] = 0xFF;
             EXPECT_SUCCESS(s2n_record_header_parse(conn, &content_type, &fragment_length));
-            s2n_record_parse(conn);
-            EXPECT_EQUAL(s2n_errno, S2N_ERR_DECRYPT);
-            s2n_errno = 0;
+            EXPECT_FAILURE(s2n_record_parse(conn));
             EXPECT_EQUAL(content_type, TLS_APPLICATION_DATA);
 
             /* Tamper with the explicit IV and ensure decryption fails */
