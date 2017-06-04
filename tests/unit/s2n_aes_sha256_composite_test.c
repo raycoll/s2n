@@ -87,8 +87,8 @@ int main(int argc, char **argv)
     int max_aligned_fragment = S2N_DEFAULT_FRAGMENT_LENGTH - (S2N_DEFAULT_FRAGMENT_LENGTH % 16);
     uint8_t proto_versions[] = { S2N_TLS10, S2N_TLS11, S2N_TLS12 };
 
-    /* test the composite AES128_SHA1 cipher  */
-    conn->initial.cipher_suite->record_alg = &s2n_record_alg_aes128_sha_composite;
+    /* test the composite AES128_SHA256 cipher  */
+    conn->initial.cipher_suite->record_alg = &s2n_record_alg_aes128_sha256_composite;
 
     /* It's important to verify all TLS versions for the composite implementation.
      * There are a few gotchas with respect to explicit IV length and payload length
@@ -99,7 +99,7 @@ int main(int argc, char **argv)
             int bytes_written;
 
             EXPECT_SUCCESS(s2n_connection_wipe(conn));
-            test_connection_reset(conn, proto_versions[j], &s2n_record_alg_aes128_sha_composite, &aes128, &mac_key, &in);
+            test_connection_reset(conn, proto_versions[j], &s2n_record_alg_aes128_sha256_composite, &aes128, &mac_key, &in);
             EXPECT_SUCCESS(bytes_written = s2n_record_write(conn, TLS_APPLICATION_DATA, &in));
 
             const uint16_t block_size = 16;
@@ -143,7 +143,7 @@ int main(int argc, char **argv)
 
             /* Tamper the protocol version in the header and ensure decryption fails. We supply this data as part of
              * the composite AAD. */
-            EXPECT_SUCCESS(test_connection_reset(conn, proto_versions[j], &s2n_record_alg_aes128_sha_composite, &aes128, &mac_key, &in));
+            EXPECT_SUCCESS(test_connection_reset(conn, proto_versions[j], &s2n_record_alg_aes128_sha256_composite, &aes128, &mac_key, &in));
             GUARD(s2n_record_write(conn, TLS_APPLICATION_DATA, &in));
             EXPECT_SUCCESS(copy_output_to_input(conn));
             conn->in.blob.data[2] = 0xFF;
@@ -155,7 +155,7 @@ int main(int argc, char **argv)
 
             /* Tamper with the explicit IV and ensure decryption fails */
             if (proto_versions[i] > S2N_TLS10) {
-                EXPECT_SUCCESS(test_connection_reset(conn, proto_versions[j], &s2n_record_alg_aes128_sha_composite, &aes128, &mac_key, &in));
+                EXPECT_SUCCESS(test_connection_reset(conn, proto_versions[j], &s2n_record_alg_aes128_sha256_composite, &aes128, &mac_key, &in));
                 GUARD(s2n_record_write(conn, TLS_APPLICATION_DATA, &in));
                 EXPECT_SUCCESS(copy_output_to_input(conn));
                 conn->in.blob.data[5 + (explicit_iv_length - j - 1)]++;
@@ -163,7 +163,7 @@ int main(int argc, char **argv)
             }
 
             /* Tamper with ciphertext and make sure decryption fails */
-            EXPECT_SUCCESS(test_connection_reset(conn, proto_versions[j], &s2n_record_alg_aes128_sha_composite, &aes128, &mac_key, &in));
+            EXPECT_SUCCESS(test_connection_reset(conn, proto_versions[j], &s2n_record_alg_aes128_sha256_composite, &aes128, &mac_key, &in));
             EXPECT_SUCCESS(s2n_record_write(conn, TLS_APPLICATION_DATA, &in));
             EXPECT_SUCCESS(copy_output_to_input(conn));
             conn->in.blob.data[5 + explicit_iv_length + j]++;
@@ -172,7 +172,7 @@ int main(int argc, char **argv)
             EXPECT_FAILURE(s2n_record_parse(conn));
 
             /* Tamper with the MAC and ensure decryption fails */
-            EXPECT_SUCCESS(test_connection_reset(conn, proto_versions[j], &s2n_record_alg_aes128_sha_composite, &aes128, &mac_key, &in));
+            EXPECT_SUCCESS(test_connection_reset(conn, proto_versions[j], &s2n_record_alg_aes128_sha256_composite, &aes128, &mac_key, &in));
             EXPECT_SUCCESS(s2n_record_write(conn, TLS_APPLICATION_DATA, &in));
             EXPECT_SUCCESS(copy_output_to_input(conn));
             conn->in.blob.data[prepadded_length - j - 1]++;
@@ -181,7 +181,7 @@ int main(int argc, char **argv)
             EXPECT_EQUAL(content_type, TLS_APPLICATION_DATA);
 
             /* Tamper with the padding and ensure decryption fails */
-            EXPECT_SUCCESS(test_connection_reset(conn, proto_versions[j], &s2n_record_alg_aes128_sha_composite, &aes128, &mac_key, &in));
+            EXPECT_SUCCESS(test_connection_reset(conn, proto_versions[j], &s2n_record_alg_aes128_sha256_composite, &aes128, &mac_key, &in));
             EXPECT_SUCCESS(s2n_record_write(conn, TLS_APPLICATION_DATA, &in));
             EXPECT_SUCCESS(copy_output_to_input(conn));
             conn->in.blob.data[predicted_length - j - 1]++;
@@ -191,15 +191,15 @@ int main(int argc, char **argv)
         }
     }
 
-    /* test the composite AES256_SHA1 cipher  */
-    conn->initial.cipher_suite->record_alg = &s2n_record_alg_aes256_sha_composite;
+    /* test the composite AES256_SHA256 cipher  */
+    conn->initial.cipher_suite->record_alg = &s2n_record_alg_aes256_sha256_composite;
     for (int j = 0; j < 3; j++ ) {
         for (int i = 0; i < max_aligned_fragment; i++) {
             struct s2n_blob in = {.data = random_data,.size = i };
             int bytes_written;
 
             EXPECT_SUCCESS(s2n_connection_wipe(conn));
-            test_connection_reset(conn, proto_versions[j], &s2n_record_alg_aes256_sha_composite, &aes256, &mac_key, &in);
+            test_connection_reset(conn, proto_versions[j], &s2n_record_alg_aes256_sha256_composite, &aes256, &mac_key, &in);
             EXPECT_SUCCESS(bytes_written = s2n_record_write(conn, TLS_APPLICATION_DATA, &in));
 
             const uint16_t block_size = 16;
@@ -242,7 +242,7 @@ int main(int argc, char **argv)
             EXPECT_SUCCESS(s2n_stuffer_wipe(&conn->in));
 
             /* Start over */
-            EXPECT_SUCCESS(test_connection_reset(conn, proto_versions[j], &s2n_record_alg_aes256_sha_composite, &aes256, &mac_key, &in));
+            EXPECT_SUCCESS(test_connection_reset(conn, proto_versions[j], &s2n_record_alg_aes256_sha256_composite, &aes256, &mac_key, &in));
             GUARD(s2n_record_write(conn, TLS_APPLICATION_DATA, &in));
             EXPECT_SUCCESS(copy_output_to_input(conn));
             /* Tamper the protocol version in the header and ensure decryption fails. We supply this data as part of
@@ -256,7 +256,7 @@ int main(int argc, char **argv)
 
             /* Tamper with the explicit IV and ensure decryption fails */
             if (proto_versions[i] > S2N_TLS10) {
-                EXPECT_SUCCESS(test_connection_reset(conn, proto_versions[j], &s2n_record_alg_aes256_sha_composite, &aes256, &mac_key, &in));
+                EXPECT_SUCCESS(test_connection_reset(conn, proto_versions[j], &s2n_record_alg_aes256_sha256_composite, &aes256, &mac_key, &in));
                 GUARD(s2n_record_write(conn, TLS_APPLICATION_DATA, &in));
                 EXPECT_SUCCESS(copy_output_to_input(conn));
                 conn->in.blob.data[5 + (explicit_iv_length - j - 1)]++;
@@ -264,7 +264,7 @@ int main(int argc, char **argv)
             }
 
             /* Tamper with ciphertext and make sure decryption fails */
-            EXPECT_SUCCESS(test_connection_reset(conn, proto_versions[j], &s2n_record_alg_aes256_sha_composite, &aes256, &mac_key, &in));
+            EXPECT_SUCCESS(test_connection_reset(conn, proto_versions[j], &s2n_record_alg_aes256_sha256_composite, &aes256, &mac_key, &in));
             EXPECT_SUCCESS(s2n_record_write(conn, TLS_APPLICATION_DATA, &in));
             EXPECT_SUCCESS(copy_output_to_input(conn));
             conn->in.blob.data[5 + explicit_iv_length + j]++;
@@ -273,7 +273,7 @@ int main(int argc, char **argv)
             EXPECT_FAILURE(s2n_record_parse(conn));
 
             /* Tamper with the MAC and ensure decryption fails */
-            EXPECT_SUCCESS(test_connection_reset(conn, proto_versions[j], &s2n_record_alg_aes256_sha_composite, &aes256, &mac_key, &in));
+            EXPECT_SUCCESS(test_connection_reset(conn, proto_versions[j], &s2n_record_alg_aes256_sha256_composite, &aes256, &mac_key, &in));
             EXPECT_SUCCESS(s2n_record_write(conn, TLS_APPLICATION_DATA, &in));
             EXPECT_SUCCESS(copy_output_to_input(conn));
             conn->in.blob.data[prepadded_length - j - 1]++;
@@ -282,7 +282,7 @@ int main(int argc, char **argv)
             EXPECT_EQUAL(content_type, TLS_APPLICATION_DATA);
 
             /* Tamper with the padding and ensure decryption fails */
-            EXPECT_SUCCESS(test_connection_reset(conn, proto_versions[j], &s2n_record_alg_aes256_sha_composite, &aes256, &mac_key, &in));
+            EXPECT_SUCCESS(test_connection_reset(conn, proto_versions[j], &s2n_record_alg_aes256_sha256_composite, &aes256, &mac_key, &in));
             EXPECT_SUCCESS(s2n_record_write(conn, TLS_APPLICATION_DATA, &in));
             EXPECT_SUCCESS(copy_output_to_input(conn));
             conn->in.blob.data[predicted_length - j - 1]++;
