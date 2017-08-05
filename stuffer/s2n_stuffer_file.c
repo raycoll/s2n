@@ -19,6 +19,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <stdio.h>
 
 #include "error/s2n_errno.h"
 
@@ -111,4 +112,34 @@ int s2n_stuffer_alloc_ro_from_file(struct s2n_stuffer *stuffer, const char *file
     GUARD(close(fd));
 
     return r;
+}
+
+int s2n_stuffer_alloc_cstr_from_file(struct s2n_stuffer *stuffer, const char *path)
+{
+    FILE *file;
+
+  OPEN:
+    file = fopen(path, O_RDONLY);
+    if (file == NULL) {
+        if (errno == EINTR) {
+            goto OPEN;
+        }
+        S2N_ERROR(S2N_ERR_OPEN);
+    }
+
+    fseek(file, 0, SEEK_END);
+    const long int pem_file_size = ftell(file);
+    rewind(file);
+
+    // one extra for the null byte
+    GUARD(s2n_stuffer_alloc(stuffer, pem_file_size + 1));
+
+    const int amt_read = fread(stuffer->blob.data, 1, pem_file_size, file);
+    if (amt_read != pem_file_size) {
+        S2N_ERROR(S2N_ERR_OPEN);
+    }
+
+    stuffer->blob.data[pem_file_size] = 0;
+    fclose(file);
+    return 0;
 }
