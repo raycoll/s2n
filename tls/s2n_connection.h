@@ -197,6 +197,8 @@ struct s2n_connection {
      */
     unsigned int secure_renegotiation:1;
 
+    unsigned int extended_master_secret:1;
+
     /* OCSP stapling response data */
     s2n_status_request_type status_type;
     struct s2n_blob status_response;

@@ -54,15 +54,16 @@
 #define TLS_EMPTY_RENEGOTIATION_INFO_SCSV   0x00, 0xff
 
 /* TLS extensions from https://www.iana.org/assignments/tls-extensiontype-values/tls-extensiontype-values.xhtml */
-#define TLS_EXTENSION_SERVER_NAME           0
-#define TLS_EXTENSION_MAX_FRAG_LEN          1
-#define TLS_EXTENSION_STATUS_REQUEST        5
-#define TLS_EXTENSION_ELLIPTIC_CURVES      10
-#define TLS_EXTENSION_EC_POINT_FORMATS     11
-#define TLS_EXTENSION_SIGNATURE_ALGORITHMS 13
-#define TLS_EXTENSION_ALPN                 16
-#define TLS_EXTENSION_SCT_LIST             18
-#define TLS_EXTENSION_RENEGOTIATION_INFO   65281
+#define TLS_EXTENSION_SERVER_NAME            0
+#define TLS_EXTENSION_MAX_FRAG_LEN           1
+#define TLS_EXTENSION_STATUS_REQUEST         5
+#define TLS_EXTENSION_ELLIPTIC_CURVES        10
+#define TLS_EXTENSION_EC_POINT_FORMATS       11
+#define TLS_EXTENSION_SIGNATURE_ALGORITHMS   13
+#define TLS_EXTENSION_ALPN                   16
+#define TLS_EXTENSION_SCT_LIST               18
+#define TLS_EXTENSION_EXTENDED_MASTER_SECRET 23
+#define TLS_EXTENSION_RENEGOTIATION_INFO     65281
 
 /* TLS Signature Algorithms - RFC 5246 7.4.1.4.1*/
 #define TLS_SIGNATURE_ALGORITHM_ANONYMOUS   0

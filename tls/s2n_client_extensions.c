@@ -37,6 +37,7 @@ static int s2n_recv_client_ec_point_formats(struct s2n_connection *conn, struct 
 static int s2n_recv_client_renegotiation_info(struct s2n_connection *conn, struct s2n_stuffer *extension);
 static int s2n_recv_client_sct_list(struct s2n_connection *conn, struct s2n_stuffer *extension);
 static int s2n_recv_client_max_frag_len(struct s2n_connection *conn, struct s2n_stuffer *extension);
+static int s2n_recv_client_extended_master_secret(struct s2n_connection *conn, struct s2n_stuffer *extension);
 
 static int s2n_send_client_signature_algorithms_extension(struct s2n_connection *conn, struct s2n_stuffer *out)
 {
@@ -219,6 +220,8 @@ int s2n_client_extensions_recv(struct s2n_connection *conn, struct s2n_blob *ext
             break;
         case TLS_EXTENSION_MAX_FRAG_LEN:
             GUARD(s2n_recv_client_max_frag_len(conn, &extension));
+        case TLS_EXTENSION_EXTENDED_MASTER_SECRET:
+            GUARD(s2n_recv_client_extended_master_secret(conn, &extension));
             break;
         }
     }
@@ -419,7 +422,7 @@ static int s2n_recv_client_elliptic_curves(struct s2n_connection *conn, struct s
 
 static int s2n_recv_client_ec_point_formats(struct s2n_connection *conn, struct s2n_stuffer *extension)
 {
-    /**
+    /*
      * Only uncompressed points are supported by the server and the client must include it in
      * the extension. Just skip the extension.
      */
@@ -461,5 +464,15 @@ static int s2n_recv_client_max_frag_len(struct s2n_connection *conn, struct s2n_
 
     conn->mfl_code = mfl_code;
     conn->max_outgoing_fragment_length = mfl_code_to_length[mfl_code];
+    return 0;
+}
+
+static int s2n_recv_client_extended_master_secret(struct s2n_connection *conn, struct s2n_stuffer *extension)
+{
+    /* Per RFC 7627, the entire data field of this extension should be (0x00 0x17 0x00 0x00) for extention type and
+     * length. At this point the extension has type matched. Enforcing zero data length will only punish buggy or
+     * non-conformtant client implementations. Be permissive and ignore extra extension data.
+     */
+    conn->extended_master_secret = 1;
     return 0;
 }

@@ -369,6 +369,7 @@ int s2n_prf_master_secret(struct s2n_connection *conn, struct s2n_blob *premaste
     struct s2n_blob client_random, server_random, master_secret;
     struct s2n_blob label;
     uint8_t master_secret_label[] = "master secret";
+    uint8_t extended_master_secret_label[] = "extended master secret";
 
     client_random.data = conn->secure.client_random;
     client_random.size = sizeof(conn->secure.client_random);
@@ -376,8 +377,36 @@ int s2n_prf_master_secret(struct s2n_connection *conn, struct s2n_blob *premaste
     server_random.size = sizeof(conn->secure.server_random);
     master_secret.data = conn->secure.master_secret;
     master_secret.size = sizeof(conn->secure.master_secret);
-    label.data = master_secret_label;
-    label.size = sizeof(master_secret_label) - 1;
+
+    if (conn->extended_master_secret) {
+        label.data = extended_master_secret_label;
+        label.size = sizeof(extended_master_secret_label) - 1;
+    } else {
+        label.data = master_secret_label;
+        label.size = sizeof(master_secret_label) - 1;
+    }
+
+    if (conn->actual_protocol_version == S2N_TLS12 && conn->extended_master_secret) {
+        struct s2n_blob sha;
+        uint8_t sha_digest[SHA384_DIGEST_LENGTH];
+        switch (conn->secure.cipher_suite->tls12_prf_alg) {
+        case S2N_HMAC_SHA256:
+            GUARD(s2n_hash_copy(&conn->handshake.tls_hash_copy, &conn->handshake.sha256));
+            GUARD(s2n_hash_digest(&conn->handshake.tls_hash_copy, sha_digest, SHA256_DIGEST_LENGTH));
+            sha.size = SHA256_DIGEST_LENGTH;
+            break;
+        case S2N_HMAC_SHA384:
+            GUARD(s2n_hash_copy(&conn->handshake.tls_hash_copy, &conn->handshake.sha384));
+            GUARD(s2n_hash_digest(&conn->handshake.tls_hash_copy, sha_digest, SHA384_DIGEST_LENGTH));
+            sha.size = SHA384_DIGEST_LENGTH;
+            break;
+        default:
+            S2N_ERROR(S2N_ERR_PRF_INVALID_ALGORITHM);
+        }
+
+        sha.data = sha_digest;
+        return s2n_prf(conn, premaster_secret, &label, &sha, NULL, &master_secret);
+    }
 
     return s2n_prf(conn, premaster_secret, &label, &client_random, &server_random, &master_secret);
 }
