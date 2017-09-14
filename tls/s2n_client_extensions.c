@@ -167,6 +167,9 @@ int s2n_client_extensions_send(struct s2n_connection *conn, struct s2n_stuffer *
         GUARD(s2n_stuffer_write_uint8(out, 0));
     }
 
+    GUARD(s2n_stuffer_write_uint16(out, TLS_EXTENSION_EXTENDED_MASTER_SECRET));
+    GUARD(s2n_stuffer_write_uint16(out, 0));
+
     return 0;
 }
 
@@ -220,6 +223,7 @@ int s2n_client_extensions_recv(struct s2n_connection *conn, struct s2n_blob *ext
             break;
         case TLS_EXTENSION_MAX_FRAG_LEN:
             GUARD(s2n_recv_client_max_frag_len(conn, &extension));
+            break;
         case TLS_EXTENSION_EXTENDED_MASTER_SECRET:
             GUARD(s2n_recv_client_extended_master_secret(conn, &extension));
             break;

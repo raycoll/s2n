@@ -387,18 +387,17 @@ int s2n_prf_master_secret(struct s2n_connection *conn, struct s2n_blob *premaste
     }
 
     if (conn->actual_protocol_version == S2N_TLS12 && conn->extended_master_secret) {
-        printf("running ems prf: %d\n", s2n_conn_get_current_message_type(conn));
         struct s2n_blob sha;
         uint8_t sha_digest[SHA384_DIGEST_LENGTH];
         switch (conn->secure.cipher_suite->tls12_prf_alg) {
         case S2N_HMAC_SHA256:
-            GUARD(s2n_hash_copy(&conn->handshake.tls_hash_copy, &conn->handshake.sha256));
-            GUARD(s2n_hash_digest(&conn->handshake.tls_hash_copy, sha_digest, SHA256_DIGEST_LENGTH));
+            GUARD(s2n_hash_copy(&conn->handshake.prf_tls12_hash_copy, &conn->handshake.sha256));
+            GUARD(s2n_hash_digest(&conn->handshake.prf_tls12_hash_copy, sha_digest, SHA256_DIGEST_LENGTH));
             sha.size = SHA256_DIGEST_LENGTH;
             break;
         case S2N_HMAC_SHA384:
-            GUARD(s2n_hash_copy(&conn->handshake.tls_hash_copy, &conn->handshake.sha384));
-            GUARD(s2n_hash_digest(&conn->handshake.tls_hash_copy, sha_digest, SHA384_DIGEST_LENGTH));
+            GUARD(s2n_hash_copy(&conn->handshake.prf_tls12_hash_copy, &conn->handshake.sha384));
+            GUARD(s2n_hash_digest(&conn->handshake.prf_tls12_hash_copy, sha_digest, SHA384_DIGEST_LENGTH));
             sha.size = SHA384_DIGEST_LENGTH;
             break;
         default:

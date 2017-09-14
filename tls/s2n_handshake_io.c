@@ -575,7 +575,6 @@ static int handshake_read_io(struct s2n_connection *conn)
         }
 
         if (s2n_conn_get_current_message_type(conn) == CLIENT_KEY) {
-            printf("doing client key hashes\n");
             GUARD(s2n_handshake_conn_update_hashes(conn));
         }
         /* Call the relevant handler */
