@@ -574,12 +574,19 @@ static int handshake_read_io(struct s2n_connection *conn)
             S2N_ERROR(S2N_ERR_BAD_MESSAGE);
         }
 
+        if (s2n_conn_get_current_message_type(conn) == CLIENT_KEY) {
+            printf("doing client key hashes\n");
+            GUARD(s2n_handshake_conn_update_hashes(conn));
+        }
         /* Call the relevant handler */
         r = ACTIVE_STATE(conn).handler[conn->mode] (conn);
 
         /* Don't update handshake hashes until after the handler has executed since some handlers need to read the
          * hash values before they are updated. */
         GUARD(s2n_handshake_conn_update_hashes(conn));
+        if (s2n_conn_get_current_message_type(conn) != CLIENT_KEY) {
+            GUARD(s2n_handshake_conn_update_hashes(conn));
+        }
 
         GUARD(s2n_stuffer_wipe(&conn->handshake.io));
 

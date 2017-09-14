@@ -154,7 +154,7 @@ static int s2n_evp_hmac_p_hash_update(struct s2n_prf_working_space *ws, const vo
 
 static int s2n_evp_hmac_p_hash_digest(struct s2n_prf_working_space *ws, void *digest, uint32_t size)
 {
-    /* EVP_DigestSign API's require size_t data structures */
+    /* EVP_DigestSign API's require size_t */
     size_t digest_size = size;
 
     if (EVP_DigestSignFinal(ws->tls.p_hash.evp_hmac.evp_digest.ctx, (unsigned char *)digest, &digest_size) == 0) {
@@ -387,6 +387,7 @@ int s2n_prf_master_secret(struct s2n_connection *conn, struct s2n_blob *premaste
     }
 
     if (conn->actual_protocol_version == S2N_TLS12 && conn->extended_master_secret) {
+        printf("running ems prf: %d\n", s2n_conn_get_current_message_type(conn));
         struct s2n_blob sha;
         uint8_t sha_digest[SHA384_DIGEST_LENGTH];
         switch (conn->secure.cipher_suite->tls12_prf_alg) {

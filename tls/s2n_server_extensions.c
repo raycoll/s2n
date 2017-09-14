@@ -59,6 +59,9 @@ int s2n_server_extensions_send(struct s2n_connection *conn, struct s2n_stuffer *
     if (conn->mfl_code) {
         total_size += 5;
     }
+    if (conn->extended_master_secret) {
+        total_size += 4;
+    }
 
     if (total_size == 0) {
         return 0;
@@ -119,6 +122,11 @@ int s2n_server_extensions_send(struct s2n_connection *conn, struct s2n_stuffer *
         GUARD(s2n_stuffer_write_uint16(out, TLS_EXTENSION_MAX_FRAG_LEN));
         GUARD(s2n_stuffer_write_uint16(out, sizeof(uint8_t)));
         GUARD(s2n_stuffer_write_uint8(out, conn->mfl_code));
+    }
+
+    if (conn->extended_master_secret) {
+        GUARD(s2n_stuffer_write_uint16(out, TLS_EXTENSION_EXTENDED_MASTER_SECRET));
+        GUARD(s2n_stuffer_write_uint16(out, 0));
     }
 
     return 0;
