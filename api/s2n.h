@@ -46,6 +46,7 @@ typedef enum {
 } s2n_error_type;
 
 extern int s2n_error_get_type(int error);
+extern int s2n_error_clear(void);
 
 struct s2n_config;
 

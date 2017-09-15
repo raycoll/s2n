@@ -303,6 +303,7 @@ struct s2n_cert_public_key;
 ```
 const char *s2n_strerror(int error, const char *lang);
 const char *s2n_strerror_debug(int error, const char *lang);
+int s2n_error_clear(void);
 ````
 
 s2n functions that return 'int' return 0 to indicate success and -1 to indicate
@@ -322,7 +323,7 @@ if (s2n_config_set_cipher_preferences(config, prefs) < 0) {
 }
 ```
 
-**NOTE**: To avoid possible confusion, s2n_errno should be cleared after processing an error: `s2n_errno = S2N_ERR_T_OK`
+**NOTE**: To avoid possible confusion, s2n_errno should be cleared after processing an error with `s2n_error_clear()`
 
 ### Error categories
 
@@ -344,7 +345,7 @@ S2N_ERR_T_USAGE /* User input error. Ex: Providing an invalid cipher preference 
 Here's an example that handles errors based on type:
 
 ```
-s2n_errno = S2N_ERR_T_OK;
+s2n_error_clear();
 if (s2n_recv(conn, &blocked) < 0) {
     switch(s2n_error_get_type(s2n_errno)) {
         case S2N_ERR_T_BLOCKED:

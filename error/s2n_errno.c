@@ -167,9 +167,9 @@ const char *s2n_strerror_debug(int error, const char *lang)
         return no_such_language;
     }
 
-    /* No error, just return the no error string */
-    if (error == S2N_ERR_OK) {
-        return s2n_strerror(error, lang);
+    /* No error, just use the no error string */
+    if (error == S2N_ERR_OK || s2n_debug_str == NULL) {
+        return s2n_strerror(S2N_ERR_OK, lang);
     }
 
     return s2n_debug_str;
@@ -178,4 +178,12 @@ const char *s2n_strerror_debug(int error, const char *lang)
 int s2n_error_get_type(int error)
 {
     return (error >> S2N_ERR_NUM_VALUE_BITS);
+}
+
+int s2n_error_clear(void)
+{
+    s2n_errno = S2N_ERR_OK;
+    s2n_debug_str = NULL;
+
+    return 0;
 }

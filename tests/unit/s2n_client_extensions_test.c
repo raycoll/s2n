@@ -71,14 +71,14 @@ static int s2n_negotiate_test_server_and_client(struct s2n_connection *server_co
 
     do {
         if (!server_done) {
-            s2n_errno = S2N_ERR_T_OK;
+            s2n_error_clear();
             server_rc = s2n_negotiate(server_conn, &server_blocked);
             if (s2n_error_get_type(s2n_errno) != S2N_ERR_T_BLOCKED) {
                 server_done = 1;
             }
         }
         if (!client_done) {
-            s2n_errno = S2N_ERR_T_OK;
+            s2n_error_clear();
             client_rc = s2n_negotiate(client_conn, &client_blocked);
             if (s2n_error_get_type(s2n_errno) != S2N_ERR_T_BLOCKED) {
                 client_done = 1;
@@ -101,14 +101,14 @@ static int s2n_shutdown_test_server_and_client(struct s2n_connection *server_con
 
     do {
         if (!server_done) {
-            s2n_errno = S2N_ERR_T_OK;
+            s2n_error_clear();
             server_rc = s2n_shutdown(server_conn, &server_blocked);
             if (s2n_error_get_type(s2n_errno) != S2N_ERR_T_BLOCKED) {
                 server_done = 1;
             }
         }
         if (!client_done) {
-            s2n_errno = S2N_ERR_T_OK;
+            s2n_error_clear();
             client_rc = s2n_shutdown(client_conn, &client_blocked);
             if (s2n_error_get_type(s2n_errno) != S2N_ERR_T_BLOCKED) {
                 client_done = 1;

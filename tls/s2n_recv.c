@@ -153,7 +153,7 @@ ssize_t s2n_recv(struct s2n_connection * conn, void *buf, ssize_t size, s2n_bloc
 
             /* Don't propagate the error if we already read some bytes */
             if (s2n_errno == S2N_ERR_BLOCKED && bytes_read) {
-                s2n_errno = S2N_ERR_OK;
+                s2n_error_clear();
                 return bytes_read;
             }
 
