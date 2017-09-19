@@ -582,7 +582,6 @@ static int handshake_read_io(struct s2n_connection *conn)
 
         /* Don't update handshake hashes until after the handler has executed since some handlers need to read the
          * hash values before they are updated. */
-        GUARD(s2n_handshake_conn_update_hashes(conn));
         if (s2n_conn_get_current_message_type(conn) != CLIENT_KEY) {
             GUARD(s2n_handshake_conn_update_hashes(conn));
         }

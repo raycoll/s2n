@@ -386,26 +386,38 @@ int s2n_prf_master_secret(struct s2n_connection *conn, struct s2n_blob *premaste
         label.size = sizeof(master_secret_label) - 1;
     }
 
-    if (conn->actual_protocol_version == S2N_TLS12 && conn->extended_master_secret) {
-        struct s2n_blob sha;
+    if (conn->extended_master_secret) {
+        struct s2n_blob md5, sha;
+        uint8_t md5_digest[MD5_DIGEST_LENGTH];
         uint8_t sha_digest[SHA384_DIGEST_LENGTH];
-        switch (conn->secure.cipher_suite->tls12_prf_alg) {
-        case S2N_HMAC_SHA256:
-            GUARD(s2n_hash_copy(&conn->handshake.prf_tls12_hash_copy, &conn->handshake.sha256));
-            GUARD(s2n_hash_digest(&conn->handshake.prf_tls12_hash_copy, sha_digest, SHA256_DIGEST_LENGTH));
-            sha.size = SHA256_DIGEST_LENGTH;
-            break;
-        case S2N_HMAC_SHA384:
-            GUARD(s2n_hash_copy(&conn->handshake.prf_tls12_hash_copy, &conn->handshake.sha384));
-            GUARD(s2n_hash_digest(&conn->handshake.prf_tls12_hash_copy, sha_digest, SHA384_DIGEST_LENGTH));
-            sha.size = SHA384_DIGEST_LENGTH;
-            break;
-        default:
-            S2N_ERROR(S2N_ERR_PRF_INVALID_ALGORITHM);
+        if (conn->actual_protocol_version == S2N_TLS12) {
+            switch (conn->secure.cipher_suite->tls12_prf_alg) {
+            case S2N_HMAC_SHA256:
+                GUARD(s2n_hash_copy(&conn->handshake.prf_tls12_hash_copy, &conn->handshake.sha256));
+                GUARD(s2n_hash_digest(&conn->handshake.prf_tls12_hash_copy, sha_digest, SHA256_DIGEST_LENGTH));
+                sha.size = SHA256_DIGEST_LENGTH;
+                break;
+            case S2N_HMAC_SHA384:
+                GUARD(s2n_hash_copy(&conn->handshake.prf_tls12_hash_copy, &conn->handshake.sha384));
+                GUARD(s2n_hash_digest(&conn->handshake.prf_tls12_hash_copy, sha_digest, SHA384_DIGEST_LENGTH));
+                sha.size = SHA384_DIGEST_LENGTH;
+                break;
+            default:
+                S2N_ERROR(S2N_ERR_PRF_INVALID_ALGORITHM);
+            }
+            sha.data = sha_digest;
+            return s2n_prf(conn, premaster_secret, &label, &sha, NULL, &master_secret);
+        } else {
+            GUARD(s2n_hash_copy(&conn->handshake.prf_md5_hash_copy, &conn->handshake.md5));
+            GUARD(s2n_hash_copy(&conn->handshake.prf_sha1_hash_copy, &conn->handshake.sha1));
+            GUARD(s2n_hash_digest(&conn->handshake.prf_md5_hash_copy, md5_digest, MD5_DIGEST_LENGTH));
+            GUARD(s2n_hash_digest(&conn->handshake.prf_sha1_hash_copy, sha_digest, SHA_DIGEST_LENGTH));
+            md5.data = md5_digest;
+            md5.size = MD5_DIGEST_LENGTH;
+            sha.data = sha_digest;
+            sha.size = SHA_DIGEST_LENGTH;
+            return s2n_prf(conn, premaster_secret, &label, &md5, &sha, &master_secret);
         }
-
-        sha.data = sha_digest;
-        return s2n_prf(conn, premaster_secret, &label, &sha, NULL, &master_secret);
     }
 
     return s2n_prf(conn, premaster_secret, &label, &client_random, &server_random, &master_secret);
