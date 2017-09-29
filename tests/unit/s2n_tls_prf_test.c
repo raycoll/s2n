@@ -45,7 +45,7 @@ int main(int argc, char **argv)
     struct s2n_stuffer premaster_secret_in;
     struct s2n_stuffer master_secret_hex_out;
     struct s2n_blob master_secret = {.data = master_secret_hex_pad,.size = sizeof(master_secret_hex_pad) };
-    struct s2n_blob pms;
+    struct s2n_blob *pms;
 
     struct s2n_connection *conn;
 
@@ -62,11 +62,15 @@ int main(int argc, char **argv)
 
     EXPECT_SUCCESS(s2n_stuffer_init(&master_secret_hex_out, &master_secret));
 
+    pms = &conn->secure.premaster_secret;
+    EXPECT_SUCCESS(s2n_alloc(pms, S2N_TLS_SECRET_LEN));
+    EXPECT_EQUAL(pms->size, 48);
+
     /* Parse the hex */
     for (int i = 0; i < 48; i++) {
         uint8_t c;
         EXPECT_SUCCESS(s2n_stuffer_read_uint8_hex(&premaster_secret_in, &c));
-        conn->secure.rsa_premaster_secret[i] = c;
+        pms->data[i] = c;
     }
     for (int i = 0; i < 32; i++) {
         uint8_t c;
@@ -79,9 +83,7 @@ int main(int argc, char **argv)
         conn->secure.server_random[i] = c;
     }
 
-    pms.data = conn->secure.rsa_premaster_secret;
-    pms.size = sizeof(conn->secure.rsa_premaster_secret);
-    EXPECT_SUCCESS(s2n_prf_master_secret(conn, &pms));
+    EXPECT_SUCCESS(s2n_prf_master_secret(conn, pms));
 
     /* Convert the master secret to hex */
     for (int i = 0; i < 48; i++) {
@@ -94,6 +96,7 @@ int main(int argc, char **argv)
     EXPECT_SUCCESS(s2n_stuffer_free(&client_random_in));
     EXPECT_SUCCESS(s2n_stuffer_free(&server_random_in));
     EXPECT_SUCCESS(s2n_stuffer_free(&premaster_secret_in));
+    EXPECT_SUCCESS(s2n_free(pms));
 
     END_TEST();
 }

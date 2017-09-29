@@ -19,9 +19,14 @@
 #include <stdio.h>
 
 #include "crypto/s2n_fips.h"
+
 #include "testlib/s2n_testlib.h"
+
 #include "stuffer/s2n_stuffer.h"
+
 #include "tls/s2n_prf.h"
+
+#include "utils/s2n_safety.h"
 
 /*
 
@@ -45,7 +50,7 @@ int main(int argc, char **argv)
     struct s2n_stuffer premaster_secret_in;
     struct s2n_stuffer master_secret_hex_out;
     struct s2n_blob master_secret = {.data = master_secret_hex_pad,.size = sizeof(master_secret_hex_pad) };
-    struct s2n_blob pms;
+    struct s2n_blob *pms;
 
     struct s2n_connection *conn;
 
@@ -63,12 +68,15 @@ int main(int argc, char **argv)
     EXPECT_SUCCESS(s2n_stuffer_alloc_ro_from_string(&premaster_secret_in, premaster_secret_hex_in));
 
     EXPECT_SUCCESS(s2n_stuffer_init(&master_secret_hex_out, &master_secret));
+    pms = &conn->secure.premaster_secret;
+    EXPECT_SUCCESS(s2n_alloc(pms, S2N_TLS_SECRET_LEN));
 
     /* Parse the hex */
+    EXPECT_EQUAL(pms->size, 48);
     for (int i = 0; i < 48; i++) {
         uint8_t c;
         EXPECT_SUCCESS(s2n_stuffer_read_uint8_hex(&premaster_secret_in, &c));
-        conn->secure.rsa_premaster_secret[i] = c;
+        pms->data[i] = c;
     }
     for (int i = 0; i < 32; i++) {
         uint8_t c;
@@ -83,9 +91,7 @@ int main(int argc, char **argv)
 
     /* Set the protocol version to sslv3 */
     conn->actual_protocol_version = S2N_SSLv3;
-    pms.data = conn->secure.rsa_premaster_secret;
-    pms.size = sizeof(conn->secure.rsa_premaster_secret);
-    EXPECT_SUCCESS(s2n_prf_master_secret(conn, &pms));
+    EXPECT_SUCCESS(s2n_prf_master_secret(conn, pms));
 
     /* Convert the master secret to hex */
     for (int i = 0; i < 48; i++) {
@@ -98,6 +104,7 @@ int main(int argc, char **argv)
     EXPECT_SUCCESS(s2n_stuffer_free(&client_random_in));
     EXPECT_SUCCESS(s2n_stuffer_free(&server_random_in));
     EXPECT_SUCCESS(s2n_stuffer_free(&premaster_secret_in));
+    EXPECT_SUCCESS(s2n_free(pms));
 
     END_TEST();
 }

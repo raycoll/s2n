@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -71,7 +71,7 @@ struct s2n_crypto_parameters {
     struct s2n_session_key client_key;
     struct s2n_session_key server_key;
 
-    uint8_t rsa_premaster_secret[S2N_TLS_SECRET_LEN];
+    struct s2n_blob premaster_secret;
     uint8_t master_secret[S2N_TLS_SECRET_LEN];
     uint8_t client_random[S2N_TLS_RANDOM_DATA_LEN];
     uint8_t server_random[S2N_TLS_RANDOM_DATA_LEN];

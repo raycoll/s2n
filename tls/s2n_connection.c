@@ -281,6 +281,8 @@ static int s2n_connection_wipe_keys(struct s2n_connection *conn)
     GUARD(s2n_ecc_params_free(&conn->secure.server_ecc_params));
     GUARD(s2n_free(&conn->secure.client_cert_chain));
     GUARD(s2n_free(&conn->ct_response));
+    GUARD(s2n_blob_zero(&conn->secure.premaster_secret));
+    GUARD(s2n_free(&conn->secure.premaster_secret));
 
     return 0;
 }

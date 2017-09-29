@@ -33,7 +33,6 @@
 static int s2n_rsa_client_key_recv(struct s2n_connection *conn)
 {
     struct s2n_stuffer *in = &conn->handshake.io;
-    uint8_t client_protocol_version[S2N_TLS_PROTOCOL_VERSION_LEN];
     uint16_t length;
 
     if (conn->actual_protocol_version == S2N_SSLv3) {
@@ -46,14 +45,10 @@ static int s2n_rsa_client_key_recv(struct s2n_connection *conn)
         S2N_ERROR(S2N_ERR_BAD_MESSAGE);
     }
 
-    /* Keep a copy of the client protocol version in wire format */
-    client_protocol_version[0] = conn->client_protocol_version / 10;
-    client_protocol_version[1] = conn->client_protocol_version % 10;
-
     /* Decrypt the pre-master secret */
-    struct s2n_blob pms, encrypted;
-    pms.data = conn->secure.rsa_premaster_secret;
-    pms.size = S2N_TLS_SECRET_LEN;
+    struct s2n_blob encrypted;
+    struct s2n_blob *pms = &conn->secure.premaster_secret;
+    GUARD(s2n_alloc(pms, S2N_TLS_SECRET_LEN));
 
     encrypted.size = s2n_stuffer_data_available(in);
     encrypted.data = s2n_stuffer_raw_read(in, length);
@@ -61,21 +56,22 @@ static int s2n_rsa_client_key_recv(struct s2n_connection *conn)
     gt_check(encrypted.size, 0);
 
     /* First: use a random pre-master secret */
-    GUARD(s2n_get_private_random_data(&pms));
-    conn->secure.rsa_premaster_secret[0] = client_protocol_version[0];
-    conn->secure.rsa_premaster_secret[1] = client_protocol_version[1];
+    GUARD(s2n_get_private_random_data(pms));
+    uint8_t client_protocol_version[S2N_TLS_PROTOCOL_VERSION_LEN];
+    client_protocol_version[0] = conn->client_protocol_version / 10;
+    client_protocol_version[1] = conn->client_protocol_version % 10;
+
+    /* Over-write the first two bytes with the client protocol version, per RFC2246 7.4.7.1 */
+    memcpy_check(pms->data, client_protocol_version, S2N_TLS_PROTOCOL_VERSION_LEN);
 
     /* Set rsa_failed to 1 if s2n_pkey_decrypt returns anything other than zero */
-    conn->handshake.rsa_failed = !!s2n_pkey_decrypt(&conn->config->cert_and_key_pairs->private_key, &encrypted, &pms);
+    conn->handshake.rsa_failed = !!s2n_pkey_decrypt(&conn->config->cert_and_key_pairs->private_key, &encrypted, pms);
 
     /* Set rsa_failed to 1, if it isn't already, if the protocol version isn't what we expect */
-    conn->handshake.rsa_failed |= !s2n_constant_time_equals(client_protocol_version, pms.data, S2N_TLS_PROTOCOL_VERSION_LEN);
+    conn->handshake.rsa_failed |= !s2n_constant_time_equals(client_protocol_version, pms->data, S2N_TLS_PROTOCOL_VERSION_LEN);
 
     /* Turn the pre-master secret into a master secret */
-    GUARD(s2n_prf_master_secret(conn, &pms));
-
-    /* Erase the pre-master secret */
-    GUARD(s2n_blob_zero(&pms));
+    GUARD(s2n_prf_master_secret(conn, pms));
 
     /* Expand the keys */
     GUARD(s2n_prf_key_expansion(conn));
@@ -91,21 +87,17 @@ static int s2n_rsa_client_key_recv(struct s2n_connection *conn)
 static int s2n_dhe_client_key_recv(struct s2n_connection *conn)
 {
     struct s2n_stuffer *in = &conn->handshake.io;
-    struct s2n_blob shared_key;
+    struct s2n_blob *shared_key = &conn->secure.premaster_secret;
 
     /* Get the shared key */
     if (conn->secure.cipher_suite->key_exchange_alg->flags & S2N_KEY_EXCHANGE_ECC) {
-        GUARD(s2n_ecc_compute_shared_secret_as_server(&conn->secure.server_ecc_params, in, &shared_key));
+        GUARD(s2n_ecc_compute_shared_secret_as_server(&conn->secure.server_ecc_params, in, shared_key));
     } else {
-        GUARD(s2n_dh_compute_shared_secret_as_server(&conn->secure.server_dh_params, in, &shared_key));
+        GUARD(s2n_dh_compute_shared_secret_as_server(&conn->secure.server_dh_params, in, shared_key));
     }
 
     /* Turn the pre-master secret into a master secret */
-    GUARD(s2n_prf_master_secret(conn, &shared_key));
-
-    /* Erase the pre-master secret */
-    GUARD(s2n_blob_zero(&shared_key));
-    GUARD(s2n_free(&shared_key));
+    GUARD(s2n_prf_master_secret(conn, shared_key));
 
     /* Expand the keys */
     GUARD(s2n_prf_key_expansion(conn));
@@ -137,20 +129,16 @@ int s2n_client_key_recv(struct s2n_connection *conn)
 static int s2n_dhe_client_key_send(struct s2n_connection *conn)
 {
     struct s2n_stuffer *out = &conn->handshake.io;
-    struct s2n_blob shared_key;
+    struct s2n_blob *shared_key = &conn->secure.premaster_secret;
 
     if (conn->secure.cipher_suite->key_exchange_alg->flags & S2N_KEY_EXCHANGE_ECC) {
-        GUARD(s2n_ecc_compute_shared_secret_as_client(&conn->secure.server_ecc_params, out, &shared_key));
+        GUARD(s2n_ecc_compute_shared_secret_as_client(&conn->secure.server_ecc_params, out, shared_key));
     } else {
-        GUARD(s2n_dh_compute_shared_secret_as_client(&conn->secure.server_dh_params, out, &shared_key));
+        GUARD(s2n_dh_compute_shared_secret_as_client(&conn->secure.server_dh_params, out, shared_key));
     }
 
     /* Turn the pre-master secret into a master secret */
-    GUARD(s2n_prf_master_secret(conn, &shared_key));
-
-    /* Erase the pre-master secret */
-    GUARD(s2n_blob_zero(&shared_key));
-    GUARD(s2n_free(&shared_key));
+    GUARD(s2n_prf_master_secret(conn, shared_key));
 
     /* Expand the keys */
     GUARD(s2n_prf_key_expansion(conn));
@@ -176,14 +164,13 @@ static int s2n_rsa_client_key_send(struct s2n_connection *conn)
     client_protocol_version[0] = conn->client_protocol_version / 10;
     client_protocol_version[1] = conn->client_protocol_version % 10;
 
-    struct s2n_blob pms;
-    pms.data = conn->secure.rsa_premaster_secret;
-    pms.size = S2N_TLS_SECRET_LEN;
+    struct s2n_blob *pms = &conn->secure.premaster_secret;
+    GUARD(s2n_alloc(pms, S2N_TLS_SECRET_LEN));
 
-    GUARD(s2n_get_private_random_data(&pms));
+    GUARD(s2n_get_private_random_data(pms));
 
     /* Over-write the first two bytes with the client protocol version, per RFC2246 7.4.7.1 */
-    memcpy_check(conn->secure.rsa_premaster_secret, client_protocol_version, S2N_TLS_PROTOCOL_VERSION_LEN);
+    memcpy_check(pms->data, client_protocol_version, S2N_TLS_PROTOCOL_VERSION_LEN);
 
     int encrypted_size = s2n_rsa_public_encrypted_size(&conn->secure.server_public_key.key.rsa_key);
     if (encrypted_size < 0 || encrypted_size > 0xffff) {
@@ -200,16 +187,13 @@ static int s2n_rsa_client_key_send(struct s2n_connection *conn)
     notnull_check(encrypted.data);
 
     /* Encrypt the secret and send it on */
-    GUARD(s2n_pkey_encrypt(&conn->secure.server_public_key, &pms, &encrypted));
+    GUARD(s2n_pkey_encrypt(&conn->secure.server_public_key, pms, &encrypted));
 
     /* We don't need the key any more, so free it */
     GUARD(s2n_pkey_free(&conn->secure.server_public_key));
 
     /* Turn the pre-master secret into a master secret */
-    GUARD(s2n_prf_master_secret(conn, &pms));
-
-    /* Erase the pre-master secret */
-    GUARD(s2n_blob_zero(&pms));
+    GUARD(s2n_prf_master_secret(conn, pms));
 
     /* Expand the keys */
     GUARD(s2n_prf_key_expansion(conn));
