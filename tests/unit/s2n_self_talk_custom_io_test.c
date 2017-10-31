@@ -20,7 +20,6 @@
 #include <sys/poll.h>
 #include <sys/wait.h>
 #include <unistd.h>
-#include <signal.h>
 #include <stdint.h>
 #include <fcntl.h>
 
@@ -86,14 +85,13 @@ int buffer_write(void *io_context, const uint8_t *buf, uint32_t len)
 int mock_client(int writefd, int readfd)
 {
     struct s2n_connection *conn;
-    struct s2n_config *client_config;
+    struct s2n_config *config;
     s2n_blocked_status blocked;
     int result = 0;
 
     conn = s2n_connection_new(S2N_CLIENT);
-    client_config = s2n_config_new();
-    s2n_config_set_verify_cert_chain_cb(client_config, accept_all_rsa_certs, NULL);
-    s2n_connection_set_config(conn, client_config);
+    config = s2n_config_new();
+    s2n_connection_set_config(conn, config);
 
     // Unlike the server, the client just passes ownership of I/O to s2n
     s2n_connection_set_read_fd(conn, readfd);
@@ -106,7 +104,7 @@ int mock_client(int writefd, int readfd)
 
     s2n_shutdown(conn, &blocked);
     s2n_connection_free(conn);
-    s2n_config_free(client_config);
+    s2n_config_free(config);
     s2n_cleanup();
 
     _exit(0);
@@ -145,11 +143,6 @@ int main(int argc, char **argv)
     EXPECT_SUCCESS(s2n_read_test_pem(S2N_DEFAULT_TEST_DHPARAMS, dhparams_pem, S2N_MAX_TEST_PEM_SIZE));
     EXPECT_SUCCESS(s2n_config_add_cert_chain_and_key(config, cert_chain_pem, private_key_pem));
     EXPECT_SUCCESS(s2n_config_add_dhparams(config, dhparams_pem));
-
-    /* For convenience, this test will intentionally try to write to closed pipes during shutdown. Ignore the signal to
-     * avoid exiting the process on SIGPIPE.
-     */
-    signal(SIGPIPE, SIG_IGN);
 
     /* Create a pipe */
     EXPECT_SUCCESS(pipe(server_to_client));
@@ -191,7 +184,7 @@ int main(int argc, char **argv)
     /* Negotiate the handshake. */
     do {
         int ret;
-
+        
         ret = s2n_negotiate(conn, &blocked);
         EXPECT_TRUE(ret == 0 || (blocked && (errno == EAGAIN || errno == EWOULDBLOCK)));
         

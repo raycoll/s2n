@@ -24,7 +24,7 @@
 /* NULL check a pointer */
 #define notnull_check( ptr )           do { if ( (ptr) == NULL ) { S2N_ERROR(S2N_ERR_NULL); } } while(0)
 
-static inline void* trace_memcpy_check(void *restrict to, const void *restrict from, size_t size, const char *debug_str)
+extern inline void* trace_memcpy_check(void *restrict to, const void *restrict from, size_t size, const char *debug_str)
 {
     if (to == NULL || from == NULL) {
         s2n_errno = S2N_ERR_NULL;
@@ -37,24 +37,8 @@ static inline void* trace_memcpy_check(void *restrict to, const void *restrict f
 
 /* Check memcpy and memset's arguments, if these are not right, log an error
  */
-#define memcpy_check( d, s, n )                                             \
-  do {                                                                      \
-    __typeof( n ) __tmp_n = ( n );                                          \
-    if ( __tmp_n ) {                                                        \
-      void *r = trace_memcpy_check( (d), (s) , (__tmp_n), _S2N_DEBUG_LINE); \
-      if (r == NULL) { return -1; }                                         \
-    }                                                                       \
-  } while(0)
-
-#define memset_check( d, c, n )                                             \
-  do {                                                                      \
-    __typeof( n ) __tmp_n = ( n );                                          \
-    if ( __tmp_n ) {                                                        \
-      __typeof( d ) __tmp_d = ( d );                                        \
-      notnull_check( __tmp_d );                                             \
-      memset( __tmp_d, (c), __tmp_n);                                       \
-    }                                                                       \
-  } while(0)
+#define memcpy_check( d, s, n )     do { if ( (n) ) { void *r = trace_memcpy_check( (d), (s) , (n), _S2N_DEBUG_LINE); if (r == NULL) { return -1; } } } while(0)
+#define memset_check( d, c, n )     do { if ( (n) ) { notnull_check( (d) ); memset( (d), (c), (n)); } } while(0)
 
 /* Range check a number */
 #define gte_check(n, min)  do { if ( (n) < min ) { S2N_ERROR(S2N_ERR_SAFETY); } } while(0)
@@ -63,18 +47,8 @@ static inline void* trace_memcpy_check(void *restrict to, const void *restrict f
 #define lt_check(n, max)  do { if ( (n) >= max ) { S2N_ERROR(S2N_ERR_SAFETY); } } while(0)
 #define eq_check(a, b)  do { if ( (a) != (b) ) { S2N_ERROR(S2N_ERR_SAFETY); } } while(0)
 #define ne_check(a, b)  do { if ( (a) == (b) ) { S2N_ERROR(S2N_ERR_SAFETY); } } while(0)
-#define inclusive_range_check( low, n, high )   \
-  do  {                                         \
-    __typeof( n ) __tmp_n = ( n );              \
-    gte_check(__tmp_n, low);                    \
-    lte_check(__tmp_n, high);                   \
-  } while (0)
-#define exclusive_range_check( low, n, high )   \
-  do {                                          \
-    __typeof( n ) __tmp_n = ( n );              \
-    gt_check(__tmp_n, low);                     \
-    lt_check(__tmp_n, high);                    \
-  } while (0)
+#define inclusive_range_check( low, n, high )  gte_check(n, low); lte_check(n, high)
+#define exclusive_range_check( low, n, high )  gt_check(n, low); lt_check(n, high)
 
 #define GUARD( x )      if ( (x) < 0 ) return -1
 #define GUARD_PTR( x )  if ( (x) < 0 ) return NULL

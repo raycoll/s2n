@@ -52,12 +52,11 @@ $(TESTS)::
 	@${CC} ${CFLAGS} $@.c -o $@  ${LDFLAGS} > /dev/null
 
 run_tests:: $(TESTS) ld-preload
-	@( fail_count=0; for test_name in ${FUZZ_TESTS} ; do \
+	@( for test_name in ${FUZZ_TESTS} ; do \
 	export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}; \
 	export DYLD_LIBRARY_PATH=${DYLD_LIBRARY_PATH}; \
 	export LIBCRYPTO_ROOT=${LIBCRYPTO_ROOT}; \
-	./runFuzzTest.sh $${test_name} ${FUZZ_TIMEOUT_SEC} || fail_count=`expr $$fail_count + 1`; done; \
-	exit $${fail_count}; \
+	./runFuzzTest.sh $${test_name} ${FUZZ_TIMEOUT_SEC}; done\
 	)
 
 .PHONY : clean

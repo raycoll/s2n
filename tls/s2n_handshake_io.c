@@ -20,8 +20,6 @@
 
 #include "error/s2n_errno.h"
 
-#include "crypto/s2n_fips.h"
-
 #include "tls/s2n_cipher_suites.h"
 #include "tls/s2n_connection.h"
 #include "tls/s2n_record.h"
@@ -58,6 +56,8 @@ struct s2n_handshake_action {
     char writer;                /* 'S' or 'C' for server or client, 'B' for both */
     int (*handler[2]) (struct s2n_connection * conn);
 };
+
+static int handshake_read_io(struct s2n_connection *conn);
 
 /* Client and Server handlers for each message type we support.  
  * See http://www.iana.org/assignments/tls-parameters/tls-parameters.xhtml#tls-parameters-7 for the list of handshake message types
@@ -136,7 +136,7 @@ static message_type_t handshakes[64][16] = {
             APPLICATION_DATA
     },
 
-    [NEGOTIATED | FULL_HANDSHAKE | OCSP_STATUS ] ={
+    [NEGOTIATED | OCSP_STATUS ] ={
             CLIENT_HELLO,
             SERVER_HELLO, SERVER_CERT, SERVER_CERT_STATUS, SERVER_HELLO_DONE,
             CLIENT_KEY, CLIENT_CHANGE_CIPHER_SPEC, CLIENT_FINISHED,
@@ -144,7 +144,7 @@ static message_type_t handshakes[64][16] = {
             APPLICATION_DATA
     },
 
-    [NEGOTIATED | FULL_HANDSHAKE | OCSP_STATUS | WITH_SESSION_TICKET ] = {
+    [NEGOTIATED | OCSP_STATUS | WITH_SESSION_TICKET ] = {
             CLIENT_HELLO,
             SERVER_HELLO, SERVER_CERT, SERVER_CERT_STATUS, SERVER_HELLO_DONE,
             CLIENT_KEY, CLIENT_CHANGE_CIPHER_SPEC, CLIENT_FINISHED,
@@ -185,15 +185,7 @@ static message_type_t handshakes[64][16] = {
             CLIENT_CERT, CLIENT_KEY, CLIENT_CERT_VERIFY, CLIENT_CHANGE_CIPHER_SPEC, CLIENT_FINISHED,
             SERVER_CHANGE_CIPHER_SPEC, SERVER_FINISHED,
             APPLICATION_DATA
-     },
-
-     [NEGOTIATED | FULL_HANDSHAKE | OCSP_STATUS | CLIENT_AUTH] = {
-            CLIENT_HELLO,
-            SERVER_HELLO, SERVER_CERT, SERVER_CERT_STATUS, SERVER_CERT_REQ, SERVER_HELLO_DONE,
-            CLIENT_CERT, CLIENT_KEY, CLIENT_CERT_VERIFY, CLIENT_CHANGE_CIPHER_SPEC, CLIENT_FINISHED,
-            SERVER_CHANGE_CIPHER_SPEC, SERVER_FINISHED,
-            APPLICATION_DATA
-     },
+    },
 
      [NEGOTIATED | FULL_HANDSHAKE | PERFECT_FORWARD_SECRECY | OCSP_STATUS | CLIENT_AUTH ] = {
              CLIENT_HELLO,
@@ -202,6 +194,7 @@ static message_type_t handshakes[64][16] = {
              SERVER_CHANGE_CIPHER_SPEC, SERVER_FINISHED,
              APPLICATION_DATA
      },
+
 };
 
 #define ACTIVE_MESSAGE( conn ) handshakes[ (conn)->handshake.handshake_type ][ (conn)->handshake.message_number ]
@@ -257,39 +250,30 @@ static int s2n_advance_message(struct s2n_connection *conn)
     return 0;
 }
 
-int s2n_generate_new_client_session_id(struct s2n_connection *conn)
-{
-    if (conn->mode == S2N_SERVER) {
-        struct s2n_blob session_id = { .data = conn->session_id, .size = S2N_TLS_SESSION_ID_MAX_LEN };
-
-        /* Generate a new session id */
-        GUARD(s2n_get_public_random_data(&session_id));
-        conn->session_id_len = S2N_TLS_SESSION_ID_MAX_LEN;
-    }
-    return 0;
-}
-
 int s2n_conn_set_handshake_type(struct s2n_connection *conn)
 {
     /* A handshake type has been negotiated */
     conn->handshake.handshake_type = NEGOTIATED;
 
-    /* If a TLS session is resumed, the Server should respond in its ServerHello with the same SessionId the Client
-     * sent in the ClientHello, otherwise the Server should respond with a new SessionId. */
-    if (s2n_allowed_to_cache_connection(conn)) {
+    /* Only check cache for Session ID if Client Auth is not configured */
+    if (conn->client_cert_auth_type == S2N_CERT_AUTH_NONE && s2n_is_caching_enabled(conn->config)) {
         if (!s2n_resume_from_cache(conn)) {
             return 0;
-        } else {
-            GUARD(s2n_generate_new_client_session_id(conn));
+        }
+
+        if (conn->mode == S2N_SERVER) {
+            struct s2n_blob session_id = {.data = conn->session_id,.size = S2N_TLS_SESSION_ID_MAX_LEN };
+
+            /* Generate a new session id */
+            GUARD(s2n_get_public_random_data(&session_id));
+            conn->session_id_len = S2N_TLS_SESSION_ID_MAX_LEN;
         }
     }
 
     /* If we get this far, it's a full handshake */
     conn->handshake.handshake_type |= FULL_HANDSHAKE;
 
-    s2n_cert_auth_type client_cert_auth_type;
-    GUARD(s2n_connection_get_client_auth_type(conn, &client_cert_auth_type));
-    if(client_cert_auth_type != S2N_CERT_AUTH_NONE) {
+    if(conn->client_cert_auth_type != S2N_CERT_AUTH_NONE) {
         conn->handshake.handshake_type |= CLIENT_AUTH;
     }
 
@@ -306,43 +290,12 @@ int s2n_conn_set_handshake_type(struct s2n_connection *conn)
 
 static int s2n_conn_update_handshake_hashes(struct s2n_connection *conn, struct s2n_blob *data)
 {
-    if (s2n_handshake_is_hash_required(&conn->handshake, S2N_HASH_MD5)) {
-        /* The handshake MD5 hash state will fail the s2n_hash_is_available() check
-         * since MD5 is not permitted in FIPS mode. This check will not be used as
-         * the handshake MD5 hash state is specifically used by the TLS 1.0 and TLS 1.1
-         * PRF, which is required to comply with the TLS 1.0 and 1.1 RFCs and is approved
-         * as per NIST Special Publication 800-52 Revision 1.
-         */
-        GUARD(s2n_hash_update(&conn->handshake.md5, data->data, data->size));
-    }
-
-    if (s2n_handshake_is_hash_required(&conn->handshake, S2N_HASH_SHA1)) {
-        GUARD(s2n_hash_update(&conn->handshake.sha1, data->data, data->size));
-    }
-
-    const uint8_t md5_sha1_required = (s2n_handshake_is_hash_required(&conn->handshake, S2N_HASH_MD5) &&
-                                       s2n_handshake_is_hash_required(&conn->handshake, S2N_HASH_SHA1));
-
-    if (md5_sha1_required && s2n_hash_is_available(S2N_HASH_MD5_SHA1)) {
-        /* The MD5_SHA1 hash cannot be initialized when FIPS mode is set. */
-        GUARD(s2n_hash_update(&conn->handshake.md5_sha1, data->data, data->size));
-    }
-
-    if (s2n_handshake_is_hash_required(&conn->handshake, S2N_HASH_SHA224)) {
-        GUARD(s2n_hash_update(&conn->handshake.sha224, data->data, data->size));
-    }
-
-    if (s2n_handshake_is_hash_required(&conn->handshake, S2N_HASH_SHA256)) {
-        GUARD(s2n_hash_update(&conn->handshake.sha256, data->data, data->size));
-    }
-
-    if (s2n_handshake_is_hash_required(&conn->handshake, S2N_HASH_SHA384)) {
-        GUARD(s2n_hash_update(&conn->handshake.sha384, data->data, data->size));
-    }
-
-    if (s2n_handshake_is_hash_required(&conn->handshake, S2N_HASH_SHA512)) {
-        GUARD(s2n_hash_update(&conn->handshake.sha512, data->data, data->size));
-    }
+    GUARD(s2n_hash_update(&conn->handshake.md5, data->data, data->size));
+    GUARD(s2n_hash_update(&conn->handshake.sha1, data->data, data->size));
+    GUARD(s2n_hash_update(&conn->handshake.sha224, data->data, data->size));
+    GUARD(s2n_hash_update(&conn->handshake.sha256, data->data, data->size));
+    GUARD(s2n_hash_update(&conn->handshake.sha384, data->data, data->size));
+    GUARD(s2n_hash_update(&conn->handshake.sha512, data->data, data->size));
 
     return 0;
 }
@@ -390,7 +343,11 @@ static int handshake_write_io(struct s2n_connection *conn)
         }
 
         /* Actually send the record. We could block here. Assume the caller will call flush before coming back. */
-        GUARD(s2n_flush(conn, &blocked));
+        const int w = s2n_flush(conn, &blocked);
+        if ( w < 0 ) {
+            // may need to process any pending alerts
+            GUARD(handshake_read_io(conn));
+        }
     }
 
     /* We're done sending the last record, reset everything */
@@ -579,7 +536,7 @@ static int handshake_read_io(struct s2n_connection *conn)
 
         /* Don't update handshake hashes until after the handler has executed since some handlers need to read the
          * hash values before they are updated. */
-        GUARD(s2n_handshake_conn_update_hashes(conn));
+        s2n_handshake_conn_update_hashes(conn);
 
         GUARD(s2n_stuffer_wipe(&conn->handshake.io));
 
@@ -609,27 +566,17 @@ int s2n_negotiate(struct s2n_connection *conn, s2n_blocked_status * blocked)
     }
 
     while (ACTIVE_STATE(conn).writer != 'B') {
+
         /* Flush any pending I/O or alert messages */
         GUARD(s2n_flush(conn, blocked));
 
         if (ACTIVE_STATE(conn).writer == this) {
             *blocked = S2N_BLOCKED_ON_WRITE;
-            if (handshake_write_io(conn) < 0 && s2n_errno != S2N_ERR_BLOCKED) {
-                /* Non-retryable write error. The peer might have sent an alert. Try and read it. */
-                const int write_s2n_errno = s2n_errno;
-
-                if (handshake_read_io(conn) < 0 && s2n_errno == S2N_ERR_ALERT) {
-                    /* handshake_read_io has set s2n_errno */
-                    return -1;
-                } else {
-                    /* Let the write error take precedence if we didn't read an alert. */
-                    S2N_ERROR(write_s2n_errno);
-                }
-            }
+            GUARD(handshake_write_io(conn));
         } else {
             *blocked = S2N_BLOCKED_ON_READ;
             if (handshake_read_io(conn) < 0) {
-                if (s2n_errno != S2N_ERR_BLOCKED && s2n_allowed_to_cache_connection(conn) && conn->session_id_len) {
+                if (s2n_errno != S2N_ERR_BLOCKED && s2n_is_caching_enabled(conn->config) && conn->session_id_len) {
                     conn->config->cache_delete(conn->config->cache_delete_data, conn->session_id, conn->session_id_len);
                 }
 

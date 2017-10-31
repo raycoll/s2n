@@ -14,6 +14,7 @@
  */
 
 #include <string.h>
+
 #include "error/s2n_errno.h"
 
 #include "stuffer/s2n_stuffer.h"
@@ -111,22 +112,25 @@ static int s2n_stuffer_data_from_pem(struct s2n_stuffer *pem, struct s2n_stuffer
     return 0;
 }
 
-int s2n_stuffer_private_key_from_pem(struct s2n_stuffer *pem, struct s2n_stuffer *asn1) {
-    int rc;
-   
-    rc = s2n_stuffer_data_from_pem(pem, asn1, S2N_PEM_PKCS1_RSA_PRIVATE_KEY);
-    if (!rc) {
-        return rc;
-    } 
-    
+int s2n_stuffer_rsa_private_key_from_pem(struct s2n_stuffer *pem, struct s2n_stuffer *asn1)
+{
+    const int rc = s2n_stuffer_data_from_pem(pem, asn1, S2N_PEM_PKCS1_RSA_PRIVATE_KEY);
+    if(!rc) {
+        return 0;
+    }
+    /* PEM may be using the PKCS#8 format. Retry with "PRIVATE KEY" */
     s2n_stuffer_reread(pem);
     s2n_stuffer_reread(asn1);
-    rc = s2n_stuffer_data_from_pem(pem, asn1, S2N_PEM_PKCS1_ECDSA_PRIVATE_KEY);
-    if (!rc) {
-        return rc;
+    return s2n_stuffer_data_from_pem(pem, asn1, S2N_PEM_PKCS8_PRIVATE_KEY);
+}
+
+int s2n_stuffer_ec_private_key_from_pem(struct s2n_stuffer *pem, struct s2n_stuffer *asn1)
+{
+    const int rc = s2n_stuffer_data_from_pem(pem, asn1, S2N_PEM_PKCS1_ECDSA_PRIVATE_KEY);
+    if(!rc) {
+        return 0;
     }
-    
-    /* If it does not match either format, try PKCS#8 */
+    /* PEM may be using the PKCS#8 format. Retry with "PRIVATE KEY" */
     s2n_stuffer_reread(pem);
     s2n_stuffer_reread(asn1);
     return s2n_stuffer_data_from_pem(pem, asn1, S2N_PEM_PKCS8_PRIVATE_KEY);

@@ -33,23 +33,22 @@ int mock_client(int writefd, int readfd, uint8_t *expected_data, uint32_t size)
 {
     uint8_t *buffer = malloc(size);
     uint8_t *ptr = buffer;
-    struct s2n_connection *client_conn;
-    struct s2n_config *client_config;
+    struct s2n_connection *conn;
+    struct s2n_config *config;
     s2n_blocked_status blocked;
     int result = 0;
 
     /* Give the server a chance to listen */
     sleep(1);
 
-    client_conn = s2n_connection_new(S2N_CLIENT);
-    client_config = s2n_config_new();
-    s2n_config_set_verify_cert_chain_cb(client_config, accept_all_rsa_certs, NULL);
-    s2n_connection_set_config(client_conn, client_config);
+    conn = s2n_connection_new(S2N_CLIENT);
+    config = s2n_config_new();
+    s2n_connection_set_config(conn, config);
 
-    s2n_connection_set_read_fd(client_conn, readfd);
-    s2n_connection_set_write_fd(client_conn, writefd);
+    s2n_connection_set_read_fd(conn, readfd);
+    s2n_connection_set_write_fd(conn, writefd);
 
-    result = s2n_negotiate(client_conn, &blocked);
+    result = s2n_negotiate(conn, &blocked);
     if (result < 0) {
         return 1;
     }
@@ -57,7 +56,7 @@ int mock_client(int writefd, int readfd, uint8_t *expected_data, uint32_t size)
     /* Receive 10MB of data */
     uint32_t remaining = size;
     while(remaining) {
-        int r = s2n_recv(client_conn, ptr, remaining, &blocked);
+        int r = s2n_recv(conn, ptr, remaining, &blocked);
         if (r < 0) {
             continue;
         }
@@ -67,7 +66,7 @@ int mock_client(int writefd, int readfd, uint8_t *expected_data, uint32_t size)
 
     int shutdown_rc= -1;
     do {
-        shutdown_rc = s2n_shutdown(client_conn, &blocked);
+        shutdown_rc = s2n_shutdown(conn, &blocked);
     } while(shutdown_rc != 0);
 
     for (int i = 0; i < size; i++) {
@@ -77,7 +76,7 @@ int mock_client(int writefd, int readfd, uint8_t *expected_data, uint32_t size)
     }
 
     free(buffer);
-    s2n_connection_free(client_conn);
+    s2n_connection_free(conn);
 
     /* Give the server a chance to a void a sigpipe */
     sleep(1);

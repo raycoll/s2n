@@ -18,13 +18,16 @@ OBJS=$(SRCS:.c=.o)
 
 BITCODE_DIR?=../tests/saw/bitcode/
 
-BCS_1=s2n_hmac.bc s2n_drbg.bc s2n_fips.bc
+BCS_1=$(SRCS:.c=.bc)
 BCS=$(addprefix $(BITCODE_DIR), $(BCS_1))
 
 .PHONY : all
 all: $(OBJS)
 
 .PHONY : bc
-bc: $(BCS)
+bc: $(BITCODE_DIR)all_llvm.bc
+
+$(BITCODE_DIR)all_llvm.bc : $(BCS)
+	llvm-link -o $@ $+
 
 include ../s2n.mk

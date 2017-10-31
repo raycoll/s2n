@@ -25,10 +25,8 @@
 
 #include <s2n.h>
 
-#include "tls/s2n_tls.h"
 #include "tls/s2n_connection.h"
 #include "tls/s2n_handshake.h"
-#include "tls/s2n_tls_parameters.h"
 
 #define ZERO_TO_THIRTY_ONE  0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, \
                             0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F
@@ -63,69 +61,37 @@ extern message_type_t s2n_conn_get_current_message_type(struct s2n_connection *c
 static int s2n_negotiate_test_server_and_client(struct s2n_connection *server_conn, struct s2n_connection *client_conn)
 {
     int server_rc = -1;
-    int client_rc = -1;
     s2n_blocked_status server_blocked;
+    int client_rc = -1;
     s2n_blocked_status client_blocked;
-    int server_done = 0;
-    int client_done = 0;
-
     do {
-        if (!server_done) {
-            s2n_errno = S2N_ERR_T_OK;
-            server_rc = s2n_negotiate(server_conn, &server_blocked);
-
-            if (s2n_error_get_type(s2n_errno) != S2N_ERR_T_BLOCKED || client_done) {
-                /* Success, fatal error, or the peer is done and we're still blocked. */
-                server_done = 1;
-            }
-        }
-        if (!client_done) {
-            s2n_errno = S2N_ERR_T_OK;
+        if (client_rc == -1) {
             client_rc = s2n_negotiate(client_conn, &client_blocked);
-
-            if (s2n_error_get_type(s2n_errno) != S2N_ERR_T_BLOCKED || server_done) {
-                /* Success, fatal error, or the peer is done and we're still blocked. */
-                client_done = 1;
-            }
         }
-    } while (!client_done || !server_done);
+        if (server_rc == -1) {
+            server_rc = s2n_negotiate(server_conn, &server_blocked);
+        }
+    } while ((server_blocked || client_blocked) && errno == EAGAIN);
 
-    int rc = (server_rc == 0 && client_rc == 0) ? 0 : -1;
-    return rc;
+    return (server_rc || client_rc);
 }
 
 static int s2n_shutdown_test_server_and_client(struct s2n_connection *server_conn, struct s2n_connection *client_conn)
 {
     int server_rc = -1;
-    int client_rc = -1;
     s2n_blocked_status server_blocked;
+    int client_rc = -1;
     s2n_blocked_status client_blocked;
-    int server_done = 0;
-    int client_done = 0;
-
     do {
-        if (!server_done) {
-            s2n_errno = S2N_ERR_T_OK;
+        if (server_rc == -1) {
             server_rc = s2n_shutdown(server_conn, &server_blocked);
-
-            if (s2n_error_get_type(s2n_errno) != S2N_ERR_T_BLOCKED || client_done) {
-                /* Success, fatal error, or the peer is done and we're still blocked. */
-                server_done = 1;
-            }
         }
-        if (!client_done) {
-            s2n_errno = S2N_ERR_T_OK;
+        if (client_rc == -1) {
             client_rc = s2n_shutdown(client_conn, &client_blocked);
-
-            if (s2n_error_get_type(s2n_errno) != S2N_ERR_T_BLOCKED || server_done) {
-                /* Success, fatal error, or the peer is done and we're still blocked. */
-                client_done = 1;
-            }
         }
-    } while (!client_done || !server_done);
+    } while ((server_blocked || client_blocked) && errno == EAGAIN);
 
-    int rc = (server_rc == 0 && client_rc == 0) ? 0 : -1;
-    return rc;
+    return (server_rc || client_rc);
 }
 
 int main(int argc, char **argv)
@@ -155,10 +121,7 @@ int main(int argc, char **argv)
            EXPECT_NOT_EQUAL(fcntl(client_to_server[i], F_SETFL, fcntl(client_to_server[i], F_GETFL) | O_NONBLOCK), -1);
         }
 
-        struct s2n_config *client_config;
-        EXPECT_NOT_NULL(client_config = s2n_config_new());
         EXPECT_NOT_NULL(client_conn = s2n_connection_new(S2N_CLIENT));
-        EXPECT_SUCCESS(s2n_config_set_verify_cert_chain_cb(client_config, accept_all_rsa_certs, NULL));
         client_conn->actual_protocol_version = S2N_TLS12;
         client_conn->server_protocol_version = S2N_TLS12;
         client_conn->client_protocol_version = S2N_TLS12;
@@ -172,7 +135,6 @@ int main(int argc, char **argv)
         server_conn->client_protocol_version = S2N_TLS12;
         EXPECT_SUCCESS(s2n_connection_set_read_fd(server_conn, client_to_server[0]));
         EXPECT_SUCCESS(s2n_connection_set_write_fd(server_conn, server_to_client[1]));
-
 
         EXPECT_NOT_NULL(server_config = s2n_config_new());
         EXPECT_SUCCESS(s2n_read_test_pem(S2N_DEFAULT_TEST_CERT_CHAIN, cert_chain, S2N_MAX_TEST_PEM_SIZE));
@@ -217,10 +179,7 @@ int main(int argc, char **argv)
             EXPECT_NOT_EQUAL(fcntl(client_to_server[i], F_SETFL, fcntl(client_to_server[i], F_GETFL) | O_NONBLOCK), -1);
         }
 
-        struct s2n_config *client_config;
-        EXPECT_NOT_NULL(client_config = s2n_config_new());
         EXPECT_NOT_NULL(client_conn = s2n_connection_new(S2N_CLIENT));
-        EXPECT_SUCCESS(s2n_config_set_verify_cert_chain_cb(client_config, accept_all_rsa_certs, NULL));
         client_conn->actual_protocol_version = S2N_TLS12;
         client_conn->server_protocol_version = S2N_TLS12;
         client_conn->client_protocol_version = S2N_TLS12;
@@ -594,10 +553,7 @@ int main(int argc, char **argv)
            EXPECT_NOT_EQUAL(fcntl(client_to_server[i], F_SETFL, fcntl(client_to_server[i], F_GETFL) | O_NONBLOCK), -1);
         }
 
-        struct s2n_config *client_config;
-        EXPECT_NOT_NULL(client_config = s2n_config_new());
         EXPECT_NOT_NULL(client_conn = s2n_connection_new(S2N_CLIENT));
-        EXPECT_SUCCESS(s2n_config_set_verify_cert_chain_cb(client_config, accept_all_rsa_certs, NULL));;
         client_conn->actual_protocol_version = S2N_TLS12;
         client_conn->server_protocol_version = S2N_TLS12;
         client_conn->client_protocol_version = S2N_TLS12;
@@ -655,15 +611,14 @@ int main(int argc, char **argv)
            EXPECT_NOT_EQUAL(fcntl(client_to_server[i], F_SETFL, fcntl(client_to_server[i], F_GETFL) | O_NONBLOCK), -1);
         }
 
-        EXPECT_NOT_NULL(client_config = s2n_config_new());
         EXPECT_NOT_NULL(client_conn = s2n_connection_new(S2N_CLIENT));
-        EXPECT_SUCCESS(s2n_config_set_verify_cert_chain_cb(client_config, accept_all_rsa_certs, NULL));
         client_conn->actual_protocol_version = S2N_TLS12;
         client_conn->server_protocol_version = S2N_TLS12;
         client_conn->client_protocol_version = S2N_TLS12;
         EXPECT_SUCCESS(s2n_connection_set_read_fd(client_conn, server_to_client[0]));
         EXPECT_SUCCESS(s2n_connection_set_write_fd(client_conn, client_to_server[1]));
 
+        EXPECT_NOT_NULL(client_config = s2n_config_new());
         EXPECT_SUCCESS(s2n_config_set_status_request_type(client_config, S2N_STATUS_REQUEST_OCSP));
         EXPECT_SUCCESS(s2n_connection_set_config(client_conn, client_config));
 
@@ -719,15 +674,14 @@ int main(int argc, char **argv)
            EXPECT_NOT_EQUAL(fcntl(client_to_server[i], F_SETFL, fcntl(client_to_server[i], F_GETFL) | O_NONBLOCK), -1);
         }
 
-        EXPECT_NOT_NULL(client_config = s2n_config_new());
         EXPECT_NOT_NULL(client_conn = s2n_connection_new(S2N_CLIENT));
-        EXPECT_SUCCESS(s2n_config_set_verify_cert_chain_cb(client_config, accept_all_rsa_certs, NULL));
         client_conn->actual_protocol_version = S2N_TLS12;
         client_conn->server_protocol_version = S2N_TLS12;
         client_conn->client_protocol_version = S2N_TLS12;
         EXPECT_SUCCESS(s2n_connection_set_read_fd(client_conn, server_to_client[0]));
         EXPECT_SUCCESS(s2n_connection_set_write_fd(client_conn, client_to_server[1]));
 
+        EXPECT_NOT_NULL(client_config = s2n_config_new());
         EXPECT_SUCCESS(s2n_config_set_status_request_type(client_config, S2N_STATUS_REQUEST_OCSP));
         EXPECT_SUCCESS(s2n_connection_set_config(client_conn, client_config));
 
@@ -787,10 +741,7 @@ int main(int argc, char **argv)
             EXPECT_NOT_EQUAL(fcntl(client_to_server[i], F_SETFL, fcntl(client_to_server[i], F_GETFL) | O_NONBLOCK), -1);
         }
 
-        struct s2n_config *client_config;
-        EXPECT_NOT_NULL(client_config = s2n_config_new());
         EXPECT_NOT_NULL(client_conn = s2n_connection_new(S2N_CLIENT));
-        EXPECT_SUCCESS(s2n_config_set_verify_cert_chain_cb(client_config, accept_all_rsa_certs, NULL));
         client_conn->actual_protocol_version = S2N_TLS12;
         client_conn->server_protocol_version = S2N_TLS12;
         client_conn->client_protocol_version = S2N_TLS12;
@@ -848,9 +799,7 @@ int main(int argc, char **argv)
             EXPECT_NOT_EQUAL(fcntl(client_to_server[i], F_SETFL, fcntl(client_to_server[i], F_GETFL) | O_NONBLOCK), -1);
         }
 
-        EXPECT_NOT_NULL(client_config = s2n_config_new());
         EXPECT_NOT_NULL(client_conn = s2n_connection_new(S2N_CLIENT));
-        EXPECT_SUCCESS(s2n_config_set_verify_cert_chain_cb(client_config, accept_all_rsa_certs, NULL));
         client_conn->actual_protocol_version = S2N_TLS12;
         client_conn->server_protocol_version = S2N_TLS12;
         client_conn->client_protocol_version = S2N_TLS12;
@@ -858,6 +807,7 @@ int main(int argc, char **argv)
         EXPECT_SUCCESS(s2n_connection_set_write_fd(client_conn, client_to_server[1]));
 
         /* Indicate that the client wants CT if available */
+        EXPECT_NOT_NULL(client_config = s2n_config_new());
         EXPECT_SUCCESS(s2n_config_set_ct_support_level(client_config, S2N_CT_SUPPORT_REQUEST));
         EXPECT_SUCCESS(s2n_connection_set_config(client_conn, client_config));
 
@@ -912,10 +862,7 @@ int main(int argc, char **argv)
             EXPECT_NOT_EQUAL(fcntl(client_to_server[i], F_SETFL, fcntl(client_to_server[i], F_GETFL) | O_NONBLOCK), -1);
         }
 
-        EXPECT_NOT_NULL(client_config = s2n_config_new());
         EXPECT_NOT_NULL(client_conn = s2n_connection_new(S2N_CLIENT));
-        EXPECT_SUCCESS(s2n_config_set_verify_cert_chain_cb(client_config, accept_all_rsa_certs, NULL));;
-        EXPECT_SUCCESS(s2n_connection_set_config(client_conn, client_config));
         client_conn->actual_protocol_version = S2N_TLS12;
         client_conn->server_protocol_version = S2N_TLS12;
         client_conn->client_protocol_version = S2N_TLS12;
@@ -923,6 +870,7 @@ int main(int argc, char **argv)
         EXPECT_SUCCESS(s2n_connection_set_write_fd(client_conn, client_to_server[1]));
 
         /* Indicate that the client wants CT if available */
+        EXPECT_NOT_NULL(client_config = s2n_config_new());
         EXPECT_SUCCESS(s2n_config_set_ct_support_level(client_config, S2N_CT_SUPPORT_REQUEST));
         EXPECT_SUCCESS(s2n_connection_set_config(client_conn, client_config));
 
@@ -954,192 +902,6 @@ int main(int argc, char **argv)
         for (int i = 0; i < 2; i++) {
             EXPECT_SUCCESS(close(server_to_client[i]));
             EXPECT_SUCCESS(close(client_to_server[i]));
-        }
-    }
-
-    /* Client requests 512, 1024, 2048, and 4096 maximum fragment lengths */
-    for (uint8_t mfl_code = S2N_TLS_MAX_FRAG_LEN_512; mfl_code <= S2N_TLS_MAX_FRAG_LEN_4096; mfl_code++)
-    {
-        struct s2n_connection *client_conn;
-        struct s2n_connection *server_conn;
-        struct s2n_config *server_config;
-        struct s2n_config *client_config;
-        int server_to_client[2];
-        int client_to_server[2];
-
-        /* Create nonblocking pipes */
-        EXPECT_SUCCESS(pipe(server_to_client));
-        EXPECT_SUCCESS(pipe(client_to_server));
-        for (int i = 0; i < 2; i++) {
-           EXPECT_NOT_EQUAL(fcntl(server_to_client[i], F_SETFL, fcntl(server_to_client[i], F_GETFL) | O_NONBLOCK), -1);
-           EXPECT_NOT_EQUAL(fcntl(client_to_server[i], F_SETFL, fcntl(client_to_server[i], F_GETFL) | O_NONBLOCK), -1);
-        }
-
-        EXPECT_NOT_NULL(client_conn = s2n_connection_new(S2N_CLIENT));
-        client_conn->actual_protocol_version = S2N_TLS12;
-        client_conn->server_protocol_version = S2N_TLS12;
-        client_conn->client_protocol_version = S2N_TLS12;
-        EXPECT_SUCCESS(s2n_connection_set_read_fd(client_conn, server_to_client[0]));
-        EXPECT_SUCCESS(s2n_connection_set_write_fd(client_conn, client_to_server[1]));
-
-        EXPECT_NOT_NULL(client_config = s2n_config_new());
-
-        EXPECT_SUCCESS(s2n_config_send_max_fragment_length(client_config, mfl_code));
-        EXPECT_SUCCESS(s2n_config_set_verify_cert_chain_cb(client_config, accept_all_rsa_certs, NULL));
-        EXPECT_SUCCESS(s2n_connection_set_config(client_conn, client_config));
-
-        EXPECT_NOT_NULL(server_conn = s2n_connection_new(S2N_SERVER));
-        server_conn->actual_protocol_version = S2N_TLS12;
-        server_conn->server_protocol_version = S2N_TLS12;
-        server_conn->client_protocol_version = S2N_TLS12;
-        EXPECT_SUCCESS(s2n_connection_set_read_fd(server_conn, client_to_server[0]));
-        EXPECT_SUCCESS(s2n_connection_set_write_fd(server_conn, server_to_client[1]));
-
-        EXPECT_NOT_NULL(server_config = s2n_config_new());
-        EXPECT_SUCCESS(s2n_config_accept_max_fragment_length(server_config));
-        EXPECT_SUCCESS(s2n_config_add_cert_chain_and_key(server_config, cert_chain, private_key));
-        EXPECT_SUCCESS(s2n_connection_set_config(server_conn, server_config));
-
-        /* Preference should be ignored as the TlS Maximum Fragment Length Extension is Set */
-        EXPECT_SUCCESS(s2n_connection_prefer_throughput(server_conn));
-
-        EXPECT_SUCCESS(s2n_negotiate_test_server_and_client(server_conn, client_conn));
-
-        EXPECT_EQUAL(server_conn->max_outgoing_fragment_length, mfl_code_to_length[mfl_code]);
-        EXPECT_EQUAL(server_conn->mfl_code, mfl_code);
-
-        EXPECT_SUCCESS(s2n_shutdown_test_server_and_client(server_conn, client_conn));
-
-        EXPECT_SUCCESS(s2n_connection_free(server_conn));
-        EXPECT_SUCCESS(s2n_connection_free(client_conn));
-
-        EXPECT_SUCCESS(s2n_config_free(server_config));
-        EXPECT_SUCCESS(s2n_config_free(client_config));
-
-        for (int i = 0; i < 2; i++) {
-           EXPECT_SUCCESS(close(server_to_client[i]));
-           EXPECT_SUCCESS(close(client_to_server[i]));
-        }
-    }
-
-    /* Client requests invalid maximum fragment length */
-    {
-        struct s2n_connection *client_conn;
-        struct s2n_connection *server_conn;
-        struct s2n_config *server_config;
-        struct s2n_config *client_config;
-        int server_to_client[2];
-        int client_to_server[2];
-
-        /* Create nonblocking pipes */
-        EXPECT_SUCCESS(pipe(server_to_client));
-        EXPECT_SUCCESS(pipe(client_to_server));
-        for (int i = 0; i < 2; i++) {
-           EXPECT_NOT_EQUAL(fcntl(server_to_client[i], F_SETFL, fcntl(server_to_client[i], F_GETFL) | O_NONBLOCK), -1);
-           EXPECT_NOT_EQUAL(fcntl(client_to_server[i], F_SETFL, fcntl(client_to_server[i], F_GETFL) | O_NONBLOCK), -1);
-        }
-
-        EXPECT_NOT_NULL(client_conn = s2n_connection_new(S2N_CLIENT));
-        client_conn->actual_protocol_version = S2N_TLS12;
-        client_conn->server_protocol_version = S2N_TLS12;
-        client_conn->client_protocol_version = S2N_TLS12;
-        EXPECT_SUCCESS(s2n_connection_set_read_fd(client_conn, server_to_client[0]));
-        EXPECT_SUCCESS(s2n_connection_set_write_fd(client_conn, client_to_server[1]));
-
-        EXPECT_NOT_NULL(client_config = s2n_config_new());
-        EXPECT_FAILURE(s2n_config_send_max_fragment_length(client_config, 5));
-        EXPECT_SUCCESS(s2n_config_set_verify_cert_chain_cb(client_config, accept_all_rsa_certs, NULL));
-        EXPECT_SUCCESS(s2n_connection_set_config(client_conn, client_config));
-
-        EXPECT_NOT_NULL(server_conn = s2n_connection_new(S2N_SERVER));
-        server_conn->actual_protocol_version = S2N_TLS12;
-        server_conn->server_protocol_version = S2N_TLS12;
-        server_conn->client_protocol_version = S2N_TLS12;
-        EXPECT_SUCCESS(s2n_connection_set_read_fd(server_conn, client_to_server[0]));
-        EXPECT_SUCCESS(s2n_connection_set_write_fd(server_conn, server_to_client[1]));
-
-        EXPECT_NOT_NULL(server_config = s2n_config_new());
-        EXPECT_SUCCESS(s2n_config_accept_max_fragment_length(server_config));
-        EXPECT_SUCCESS(s2n_config_add_cert_chain_and_key(server_config, cert_chain, private_key));
-        EXPECT_SUCCESS(s2n_connection_set_config(server_conn, server_config));
-
-        EXPECT_SUCCESS(s2n_negotiate_test_server_and_client(server_conn, client_conn));
-
-        /* check that max_fragment_length did not get set due to invalid mfl_code */
-        EXPECT_EQUAL(server_conn->max_outgoing_fragment_length, S2N_DEFAULT_FRAGMENT_LENGTH);
-        EXPECT_EQUAL(server_conn->mfl_code, S2N_TLS_MAX_FRAG_LEN_EXT_NONE);
-
-        EXPECT_SUCCESS(s2n_shutdown_test_server_and_client(server_conn, client_conn));
-
-        EXPECT_SUCCESS(s2n_connection_free(server_conn));
-        EXPECT_SUCCESS(s2n_connection_free(client_conn));
-
-        EXPECT_SUCCESS(s2n_config_free(server_config));
-        EXPECT_SUCCESS(s2n_config_free(client_config));
-
-        for (int i = 0; i < 2; i++) {
-           EXPECT_SUCCESS(close(server_to_client[i]));
-           EXPECT_SUCCESS(close(client_to_server[i]));
-        }
-    }
-
-    /* Server ignores client's request of S2N_TLS_MAX_FRAG_LEN_2048 maximum fragment length when accept_mfl is not set*/
-    {
-        struct s2n_connection *client_conn;
-        struct s2n_connection *server_conn;
-        struct s2n_config *server_config;
-        struct s2n_config *client_config;
-        int server_to_client[2];
-        int client_to_server[2];
-
-        /* Create nonblocking pipes */
-        EXPECT_SUCCESS(pipe(server_to_client));
-        EXPECT_SUCCESS(pipe(client_to_server));
-        for (int i = 0; i < 2; i++) {
-           EXPECT_NOT_EQUAL(fcntl(server_to_client[i], F_SETFL, fcntl(server_to_client[i], F_GETFL) | O_NONBLOCK), -1);
-           EXPECT_NOT_EQUAL(fcntl(client_to_server[i], F_SETFL, fcntl(client_to_server[i], F_GETFL) | O_NONBLOCK), -1);
-        }
-
-        EXPECT_NOT_NULL(client_conn = s2n_connection_new(S2N_CLIENT));
-        client_conn->actual_protocol_version = S2N_TLS12;
-        client_conn->server_protocol_version = S2N_TLS12;
-        client_conn->client_protocol_version = S2N_TLS12;
-        EXPECT_SUCCESS(s2n_connection_set_read_fd(client_conn, server_to_client[0]));
-        EXPECT_SUCCESS(s2n_connection_set_write_fd(client_conn, client_to_server[1]));
-
-        EXPECT_NOT_NULL(client_config = s2n_config_new());
-        EXPECT_SUCCESS(s2n_config_send_max_fragment_length(client_config, S2N_TLS_MAX_FRAG_LEN_2048));
-        EXPECT_SUCCESS(s2n_config_set_verify_cert_chain_cb(client_config, accept_all_rsa_certs, NULL));
-        EXPECT_SUCCESS(s2n_connection_set_config(client_conn, client_config));
-
-        EXPECT_NOT_NULL(server_conn = s2n_connection_new(S2N_SERVER));
-        server_conn->actual_protocol_version = S2N_TLS12;
-        server_conn->server_protocol_version = S2N_TLS12;
-        server_conn->client_protocol_version = S2N_TLS12;
-        EXPECT_SUCCESS(s2n_connection_set_read_fd(server_conn, client_to_server[0]));
-        EXPECT_SUCCESS(s2n_connection_set_write_fd(server_conn, server_to_client[1]));
-
-        EXPECT_NOT_NULL(server_config = s2n_config_new());
-        EXPECT_SUCCESS(s2n_config_add_cert_chain_and_key(server_config, cert_chain, private_key));
-        EXPECT_SUCCESS(s2n_connection_set_config(server_conn, server_config));
-
-        EXPECT_SUCCESS(s2n_negotiate_test_server_and_client(server_conn, client_conn));
-
-        /* check that max_fragment_length did not get set since accept_mfl is not set */
-        EXPECT_EQUAL(server_conn->max_outgoing_fragment_length, S2N_DEFAULT_FRAGMENT_LENGTH);
-        EXPECT_EQUAL(server_conn->mfl_code, S2N_TLS_MAX_FRAG_LEN_EXT_NONE);
-
-        EXPECT_SUCCESS(s2n_shutdown_test_server_and_client(server_conn, client_conn));
-
-        EXPECT_SUCCESS(s2n_connection_free(server_conn));
-        EXPECT_SUCCESS(s2n_connection_free(client_conn));
-
-        EXPECT_SUCCESS(s2n_config_free(server_config));
-        EXPECT_SUCCESS(s2n_config_free(client_config));
-
-        for (int i = 0; i < 2; i++) {
-           EXPECT_SUCCESS(close(server_to_client[i]));
-           EXPECT_SUCCESS(close(client_to_server[i]));
         }
     }
 

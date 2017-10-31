@@ -9,75 +9,14 @@ cd s2n
 ```
 
 ## Building s2n with existing libcrypto
-### make Instructions
+
 To build s2n with an existing libcrypto installation, store its root folder in the
 `LIBCRYPTO_ROOT` environment variable.
 ```shell
 # /usr/local/ssl/lib should contain libcrypto.a
 LIBCRYPTO_ROOT=/usr/local/ssl make
 ```
-### CMake Instructions
 
-Throughout this document, there are instructions for setting a `LIBCRYPTO_ROOT` environment variable, or setting install prefixes to `s2n/lib-crypto-root`. If you 
-are using CMake that step is unnecessary. Just follow the instructions here to use any build of libcrypto.
-
-(Required): You need at least CMake version 3.0 to fully benefit from Modern CMake. See [this](https://www.youtube.com/watch?v=bsXLMQ6WgIk) for more information.
-
-(Optional): Set the CMake variable `LIBCRYPTO_ROOT_DIR` to any libcrypto build on your machine. If you do not,
-the default installation on your machine will be used.
-
-(Optional): Set the CMake variable `BUILD_SHARED_LIBS=ON` to build shared libraries. The default is static.
- 
-We recommend an out-of-source build. Suppose you have a directory `s2n` which contains the s2n source code. At the same level
-we can create a directory called `s2n-build`
-
-For example, we can build and install shared libs using ninja as our build system, and the system libcrypto implementation.
-
-````shell
-mkdir s2n-build
-cd s2n-build
-cmake ../s2n -DBUILD_SHARED_LIBS=ON -GNinja
-ninja
-ninja test 
-sudo ninja install
-````
-
-For another example, we can prepare an Xcode project using static libs using a libcrypto implementation in the directory `$HOME/s2n-user/builds/libcrypto-impl`.
-
-````shell
-mkdir s2n-build
-cd s2n-build
-cmake ../s2n -DLIBCRYPTO_ROOT_DIR=$HOME/s2n-user/builds/libcrypto-impl -G "Xcode"
-# now open the project in Xcode and build from there, or use the Xcode CLI
-````
-
-Or, for unix style vanilla builds:
-
-````shell
-mkdir s2n-build
-cd s2n-build
-cmake ../s2n
-make
-make test
-sudo make install
-````
-
-### Consuming s2n via. CMake
-s2n ships with modern CMake finder scripts if CMake is used for the build. To take advantage of this from your CMake script, all you need to do to compile and link against s2n in your project is:
-
-````shell
-find_package(s2n)
-
-....
-
-target_link_libraries(yourExecutableOrLibrary s2n)
-````
-
-And when invoking CMake for your project, do one of three things:
- 1. Append the `CMAKE_PREFIX_PATH` variable with the path to your s2n build.
- 2. Set the `s2n_DIR` CMake variable
- 3. If you have globally installed s2n, do nothing, it will automatically be found.
- 
 ## Building s2n with OpenSSL-1.1.0
 
 To build s2n with OpenSSL-1.1.0, do the following:
@@ -312,29 +251,6 @@ typedef enum { S2N_STATUS_REQUEST_NONE, S2N_STATUS_REQUEST_OCSP } s2n_status_req
 status request an S2N_CLIENT should make during the handshake. The only
 supported status request type is OCSP, **S2N_STATUS_REQUEST_OCSP**.
 
-
-```c
-typedef enum { S2N_CERT_AUTH_NONE, S2N_CERT_AUTH_REQUIRED } s2n_cert_auth_type;
-```
-**s2n_cert_auth_type** is used to declare what type of client certificiate authentication to use.
-Currently the default for s2n is for neither the server side or the client side to use Client (aka Mutual) authentication.
-
-```c
-typedef enum {
-    S2N_CERT_TYPE_RSA_SIGN = 1,
-    S2N_CERT_TYPE_DSS_SIGN = 2,
-    S2N_CERT_TYPE_RSA_FIXED_DH = 3,
-    S2N_CERT_TYPE_DSS_FIXED_DH = 4,
-    S2N_CERT_TYPE_RSA_EPHEMERAL_DH_RESERVED = 5,
-    S2N_CERT_TYPE_DSS_EPHEMERAL_DH_RESERVED = 6,
-    S2N_CERT_TYPE_FORTEZZA_DMS_RESERVED = 20,
-    S2N_CERT_TYPE_ECDSA_SIGN = 64,
-    S2N_CERT_TYPE_RSA_FIXED_ECDH = 65,
-    S2N_CERT_TYPE_ECDSA_FIXED_ECDH = 66,
-} s2n_cert_type;
-```
-**s2n_cert_type** is used to define what type of Certificate was used in a connection.
-
 ## Opaque structures
 
 s2n defines two opaque structures that are used for managed objects. Because
@@ -350,40 +266,25 @@ struct s2n_connection;
 holding cryptographic certificates, keys and preferences. **s2n_connection**
 structures are used to track each connection.
 
-
-```c
-struct s2n_rsa_public_key;
-struct s2n_cert_public_key;
-```
-
-**s2n_rsa_public_key** and **s2n_cert_public_key** can be used by consumers of s2n to get and set public keys through other API calls.
-
-
 ## Error handling
-
-```
-const char *s2n_strerror(int error, const char *lang);
-const char *s2n_strerror_debug(int error, const char *lang);
-````
 
 s2n functions that return 'int' return 0 to indicate success and -1 to indicate
 failure. s2n functions that return pointer types return NULL in the case of
 failure. When an s2n function returns a failure, s2n_errno will be set to a value
-corresponding to the error. This error value can be translated into a string
-explaining the error in English by calling s2n_strerror(s2n_errno, "EN");
-A string containing internal debug information, including filename and line number, can be generated with `s2n_strerror_debug`
-This string is useful to include when reporting issues to the s2n development team.
+corresponding to the error. This error value can be translated into a string 
+explaining the error in English by calling s2n_strerror(s2n_errno, "EN"); 
 
 Example:
 
 ```
 if (s2n_config_set_cipher_preferences(config, prefs) < 0) {
-    printf("Setting cipher prefs failed! %s : %s", s2n_strerror(s2n_errno, "EN"), s2n_strerror_debug(s2n_errno, "EN"));
+    printf("Setting cipher prefs failed! %s", (s2n_strerror(s2n_errno, "EN"));
     return -1;
 }
 ```
 
 **NOTE**: To avoid possible confusion, s2n_errno should be cleared after processing an error: `s2n_errno = S2N_ERR_T_OK`
+
 
 ### Error categories
 
@@ -553,8 +454,7 @@ preference, with most preferred protocol first, and of length
 **protocol_count**.  When acting as an **S2N_CLIENT** the protocol list is
 included in the Client Hello message as the ALPN extension.  As an
 **S2N_SERVER**, the list is used to negotiate a mutual application protocol
-with the client. After the negotiation for the connection has completed, the
-agreed upon protocol can be retrieved with [s2n_get_application_protocol](#s2n_get_application_protocol)
+with the client.
 
 ### s2n\_config\_set\_status\_request\_type
 
@@ -637,57 +537,6 @@ callback can get any ClientHello infromation from the connection and use
 The callback can return 0 to continue handshake in s2n or it can return negative
 value to make s2n terminate handshake early with fatal handshake failure alert.
 
-## Client Auth Related calls
-Client Auth Related API's are not recommended for normal users. Use of these API's is discouraged.
-
-1. Using these API's requires users to: Complete full x509 parsing and hostname validation in the application layer
-2. Application knowledge of TLS code points for certificate types
-3. Application dependency on libcrypto to give a libcrypto RSA struct back to s2n
-
-### s2n\_config\_set\_client\_auth\_type and s2n\_connection\_set\_client\_auth\_type
-```c
-int s2n_config_set_client_auth_type(struct s2n_config *config, s2n_cert_auth_type cert_auth_type);
-int s2n_connection_set_client_auth_type(struct s2n_connection *conn, s2n_cert_auth_type cert_auth_type);
-```
-Sets whether or not a Client Certificate should be required to complete the TLS Connection.
-If this is set to **S2N_CERT_AUTH_REQUIRED** then a **verify_cert_trust_chain_fn** callback should be provided as well since the current
-default is for s2n to accept all RSA Certs on the client side, and deny all certs on the server side.
-
-
-### verify_cert_trust_chain_fn
-
-```c
-int verify_cert_trust_chain(struct s2n_connection *conn, uint8_t *der_cert_chain_in, uint32_t cert_chain_len, struct s2n_cert_public_key *public_key_out, void *context);
-```
- - **conn** The connection the certificate chain is validated for
- - **der_cert_chain_in** The DER encoded full chain of certificates recieved
- - **cert_chain_len** The length in bytes of the DER encoded Cert Chain
- - **public_key_out** The public key that should be updated with the key extracted from the first certificate in the chain (the leaf Cert)
- - **context** A pointer to any caller defined context data needed for the callback (Cert Trust Store, etc)
- - **return Value** The function should return 0 if the Certificate Chain is trusted and public key extraction was successful, and less than 0 if any Certificate in the chain is untrusted, or there was some other error.
-
-**verify_cert_trust_chain_fn** defines a Callback Function Signature intended to be used only in special circumstances, and may be removed in a later release.
-Implementations should Verify the Certificate Chain of trust, and place the leaf Certificate's Public Key in the public_key_out parameter.
-
-### Public Key API's
-```c
-int s2n_rsa_public_key_set_from_openssl(struct s2n_rsa_public_key *s2n_rsa, RSA *openssl_rsa);
-int s2n_cert_public_key_set_cert_type(struct s2n_cert_public_key *cert_pub_key, s2n_cert_type cert_type);
-int s2n_cert_public_key_get_rsa(struct s2n_cert_public_key *cert_pub_key, struct s2n_rsa_public_key **rsa);
-int s2n_cert_public_key_set_rsa(struct s2n_cert_public_key *cert_pub_key, struct s2n_rsa_public_key rsa);
-```
-**s2n_rsa_public_key** and **s2n_cert_public_key** are opaque structs. These API's are intended to be used by Implementations of **verify_cert_trust_chain_fn** to
-set the public keys found in the Certificate into **public_key_out**.
-
-### s2n_config_set_verify_cert_chain_cb and s2n_connection_set_verify_cert_chain_cb
-
-```c
-int s2n_config_set_verify_cert_chain_cb(struct s2n_config *config, verify_cert_trust_chain_fn *callback, void *context);
-int s2n_connection_set_verify_cert_chain_cb(struct s2n_connection *conn, verify_cert_trust_chain_fn *callback, void *context);
-```
-
-Sets the **verify_cert_trust_chain_fn** callback function and context that will be used when verifying Certificates for the connection.
-
 ## Session Caching related calls
 
 s2n includes support for resuming from cached SSL/TLS session, provided 
@@ -737,28 +586,6 @@ callback function takes three arguments: a pointer to abitrary data for use
 within the callback, a pointer to a key which can be used to delete the
 cached entry, and a 64 bit unsigned integer specifying the size of this key.
 
-### s2n\_config\_send\_max\_fragment\_length
-
-```c
-int s2n_config_send_max_fragment_length(struct s2n_config *config, uint8_t mfl_code);
-```
-
-**s2n_config_send_max_fragment_length** allows the caller to set a TLS Maximum
-Fragment Length extension that will be used to fragment outgoing messages.
-s2n currently does not reject fragments larger than the configured maximum when
-in server mode. The TLS negotiated maximum fragment length overrides the preference set
-by the **s2n_connection_prefer_throughput** and **s2n_connection_prefer_low_latency**.
-
-### s2n\_config\_accept\_max\_fragment\_length
-
-```c
-int s2n_config_accept_max_fragment_length(struct s2n_config *config);
-```
-
-**s2n_config_accept_max_fragment_length** allows the server to opt-in to accept
-client's TLS maximum fragment length extension requests.
-If this API is not called, and client requests the extension, server will ignore the
-request and continue TLS handshake with default maximum fragment length of 8k bytes
 ## Connection-oriented functions
 
 ### s2n\_connection\_new
@@ -876,7 +703,7 @@ or low latency. Connections prefering low latency will be encrypted using small
 record sizes that can be decrypted sooner by the recipient. Connections
 prefering throughput will use large record sizes that minimize overhead.
 
--Connections default to an 8k outgoing maximum
+Connections prefer low latency by default.
 
 ### s2n\_connection\_get\_wire\_bytes
 
@@ -907,14 +734,6 @@ returns the protocol version used in the initial client hello message.
 
 Each version number value corresponds to the macros defined as **S2N_SSLv2**,
 **S2N_SSLv3**, **S2N_TLS10**, **S2N_TLS11** and **S2N_TLS12**.
-
-### s2n\_connection\_is\_client\_authenticated
-
-```c
-int s2n_connection_is_client_authenticated(struct s2n_connection *conn);
-```
-**s2n_connection_is_client_authenticated** returns 1 if the handshake completed and Client Auth was 
-negotiated during the handshake.
 
 ### s2n\_get\_application\_protocol
 

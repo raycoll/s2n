@@ -14,9 +14,8 @@
  */
 
 #include <string.h>
-
-/* Define _GNU_SOURCE to get RTLD_NEXT definition from dlfcn.h */
 #define _GNU_SOURCE
+
 #include <dlfcn.h>
 
 /* Overrides will work only if RTLD_NEXT is defined */

@@ -124,9 +124,6 @@ int main(int argc, char **argv)
 
     BEGIN_TEST();
 
-    EXPECT_SUCCESS(s2n_hmac_new(&check_mac));
-    EXPECT_SUCCESS(s2n_hmac_new(&record_mac));
-
     EXPECT_NOT_NULL(conn = s2n_connection_new(S2N_SERVER));
     EXPECT_SUCCESS(s2n_get_urandom_data(&r));
 
@@ -151,7 +148,7 @@ int main(int argc, char **argv)
             EXPECT_SUCCESS(s2n_hmac_init(&check_mac, S2N_HMAC_SHA1, mac_key, sizeof(mac_key)));
 
             uint64_t before = rdtsc();
-            EXPECT_SUCCESS(s2n_verify_cbc(conn, &check_mac, &decrypted));
+            EXPECT_SUCCESS(s2n_verify_cbc(conn, &check_mac, &decrypted)); 
             uint64_t after = rdtsc();
 
             timings[ t ] = (after - before);
@@ -164,7 +161,7 @@ int main(int argc, char **argv)
             EXPECT_SUCCESS(s2n_hmac_init(&check_mac, S2N_HMAC_SHA1, mac_key, sizeof(mac_key)));
 
             uint64_t before = rdtsc();
-            EXPECT_SUCCESS(s2n_verify_cbc(conn, &check_mac, &decrypted));
+            EXPECT_SUCCESS(s2n_verify_cbc(conn, &check_mac, &decrypted)); 
             uint64_t after = rdtsc();
 
             timings[ t ] = (after - before);
@@ -186,7 +183,7 @@ int main(int argc, char **argv)
 
         /* Verify that the record would pass: the MAC and padding are ok */
         EXPECT_SUCCESS(s2n_hmac_init(&check_mac, S2N_HMAC_SHA1, mac_key, sizeof(mac_key)));
-        EXPECT_SUCCESS(s2n_verify_cbc(conn, &check_mac, &decrypted));
+        EXPECT_SUCCESS(s2n_verify_cbc(conn, &check_mac, &decrypted)); 
 
         /* Corrupt a HMAC byte */
         fragment[i - 256]++;
@@ -195,7 +192,7 @@ int main(int argc, char **argv)
             EXPECT_SUCCESS(s2n_hmac_init(&check_mac, S2N_HMAC_SHA1, mac_key, sizeof(mac_key)));
 
             uint64_t before = rdtsc();
-            EXPECT_FAILURE(s2n_verify_cbc(conn, &check_mac, &decrypted));
+            EXPECT_FAILURE(s2n_verify_cbc(conn, &check_mac, &decrypted)); 
             uint64_t after = rdtsc();
 
             timings[ t ] = (after - before);
@@ -229,7 +226,7 @@ int main(int argc, char **argv)
 
         /* Verify that the record would pass: the MAC and padding are ok */
         EXPECT_SUCCESS(s2n_hmac_init(&check_mac, S2N_HMAC_SHA1, mac_key, sizeof(mac_key)));
-        EXPECT_SUCCESS(s2n_verify_cbc(conn, &check_mac, &decrypted));
+        EXPECT_SUCCESS(s2n_verify_cbc(conn, &check_mac, &decrypted)); 
 
         /* Now corrupt a padding byte */
         fragment[i - 10]++;
@@ -238,7 +235,7 @@ int main(int argc, char **argv)
             EXPECT_SUCCESS(s2n_hmac_init(&check_mac, S2N_HMAC_SHA1, mac_key, sizeof(mac_key)));
 
             uint64_t before = rdtsc();
-            EXPECT_FAILURE(s2n_verify_cbc(conn, &check_mac, &decrypted));
+            EXPECT_FAILURE(s2n_verify_cbc(conn, &check_mac, &decrypted)); 
             uint64_t after = rdtsc();
 
             timings[ t ] = (after - before);
@@ -271,9 +268,6 @@ int main(int argc, char **argv)
             FAIL();
         }
     }
-
-    EXPECT_SUCCESS(s2n_hmac_free(&check_mac));
-    EXPECT_SUCCESS(s2n_hmac_free(&record_mac));
     EXPECT_SUCCESS(s2n_connection_free(conn));
 
     END_TEST();
