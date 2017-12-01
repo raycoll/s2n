@@ -205,3 +205,14 @@ int s2n_stuffer_write_base64(struct s2n_stuffer *stuffer, struct s2n_stuffer *in
 
     return 0;
 }
+
+int s2n_is_base64(char c)
+{
+    for (int i = 0; i < (sizeof(b64) / b64[0]); i++) {
+        if (b64[i] == c) {
+            return 1;
+        }
+    }
+
+    return 0;
+}

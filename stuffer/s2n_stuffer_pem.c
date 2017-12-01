@@ -43,8 +43,8 @@ static int s2n_stuffer_data_from_pem(struct s2n_stuffer *pem, struct s2n_stuffer
     /* Skip all data before the start of the PEM headers */
     GUARD(s2n_stuffer_skip_to_char(pem, '-'));
 
-    /* Check that the first none whitespace line matches the header */
-    GUARD(s2n_stuffer_read_token(pem, &line, '\n'));
+    /* Check that the first non whitespace line matches the header */
+    GUARD(s2n_stuffer_read_line(pem, &line));
     field = s2n_stuffer_raw_read(&line, sizeof(S2N_PEM_BEGIN_TOKEN) - 1);
     notnull_check(field);
     if (memcmp(field, S2N_PEM_BEGIN_TOKEN, sizeof(S2N_PEM_BEGIN_TOKEN) - 1)) {
@@ -54,6 +54,7 @@ static int s2n_stuffer_data_from_pem(struct s2n_stuffer *pem, struct s2n_stuffer
     field = s2n_stuffer_raw_read(&line, strlen(keyword));
     notnull_check(field);
     if (memcmp(field, keyword, strlen(keyword))) {
+        printf("field: %.*s\n", (int) strlen(keyword), (char *) field);
         S2N_ERROR(S2N_ERR_INVALID_PEM);
     }
 
@@ -63,17 +64,23 @@ static int s2n_stuffer_data_from_pem(struct s2n_stuffer *pem, struct s2n_stuffer
         S2N_ERROR(S2N_ERR_INVALID_PEM);
     }
 
+    Pseudocode:
+    - 
+    - read base64 chars until the first '-'
+    - verify that we have a valid trailer
+    - skip to the first '-'
+
     /* Get the actual base64 data */
     do {
-        GUARD(s2n_stuffer_rewrite(&line));
-
-        /* Per RFC7468 Section 2: PEM parsers must handle different newline conventions.
-         * Support both LF and CR+LF.
-         */
-        GUARD(s2n_stuffer_read_line(pem, &line));
-
         char c;
         GUARD(s2n_stuffer_peek_char(&line, &c));
+        if (s2n_is_base64(c)) {
+            if (s2n_stuffer_read_base64(&line, asn1) < 0) {
+                GUARD(s2n_stuffer_reread(&line));
+                break;
+            }
+        }
+
         if (c == '-') {
             GUARD(s2n_stuffer_reread(&line));
             break;

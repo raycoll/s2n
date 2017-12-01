@@ -76,7 +76,7 @@ static inline void* trace_memcpy_check(void *restrict to, const void *restrict f
     lt_check(__tmp_n, high);                    \
   } while (0)
 
-#define GUARD( x )      if ( (x) < 0 ) return -1
+#define GUARD( x )      if ( (x) < 0 && printf("GUARD ERROR: %s:%d\n", __FILE__, __LINE__)) return -1
 #define GUARD_PTR( x )  if ( (x) < 0 ) return NULL
 
 /**

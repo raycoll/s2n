@@ -94,6 +94,7 @@ extern int s2n_stuffer_copy(struct s2n_stuffer *from, struct s2n_stuffer *to, ui
 /* Read and write base64 */
 extern int s2n_stuffer_read_base64(struct s2n_stuffer *stuffer, struct s2n_stuffer *out);
 extern int s2n_stuffer_write_base64(struct s2n_stuffer *stuffer, struct s2n_stuffer *in);
+extern int s2n_is_base64(char c);
 
 /* Useful for text manipulation ... */
 #define s2n_stuffer_write_char( stuffer, c )  s2n_stuffer_write_uint8( (stuffer), (uint8_t) (c) )

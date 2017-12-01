@@ -380,8 +380,11 @@ int s2n_config_add_cert_chain_and_key(struct s2n_config *config, const char *cer
 
         if (s2n_stuffer_certificate_from_pem(&chain_in_stuffer, &cert_out_stuffer) < 0) {
             if (chain_size == 0) {
+                printf("ERROR: %s %s\n", s2n_strerror(s2n_errno, "EN"), s2n_debug_str);
                 S2N_ERROR(S2N_ERR_NO_CERTIFICATE_IN_PEM);
             }
+
+printf("ERROR: %s %s\n", s2n_strerror(s2n_errno, "EN"), s2n_debug_str);
             break;
         }
 
@@ -407,6 +410,7 @@ int s2n_config_add_cert_chain_and_key(struct s2n_config *config, const char *cer
      * Be conservative and fail instead of using a partial chain.
      */
     if (leftover_chain_amount > 0) {
+printf("ERROR: %s %s\n", s2n_strerror(s2n_errno, "EN"), s2n_debug_str);
         S2N_ERROR(S2N_ERR_INVALID_PEM);
     }
     
