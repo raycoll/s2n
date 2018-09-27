@@ -82,6 +82,7 @@ LIBRESSL_TEST_CIPHERS = list(filter(lambda x: x.openssl_name != "ECDHE-RSA-CHACH
 # Libcrypto string will be an argument to test scripts.
 S2N_LIBCRYPTO_TO_TEST_CIPHERS = {
     "openssl-1.1.x-master"  : OPENSSL_1_1_0_TEST_CIPHERS,
+    "openssl-1.1.1"         : OPENSSL_1_1_0_TEST_CIPHERS,
     "openssl-1.1.0"         : OPENSSL_1_1_0_TEST_CIPHERS,
     "openssl-1.0.2"         : OPENSSL_1_0_2_TEST_CIPHERS,
     "openssl-1.0.2-fips"    : OPENSSL_1_0_2_FIPS_TEST_CIPHERS,

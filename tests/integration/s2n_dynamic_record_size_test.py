@@ -117,7 +117,8 @@ def try_dynamic_record(endpoint, port, cipher, ssl_version, threshold, server_ce
 
     envVars = os.environ.copy()
     envVars["S2N_ENABLE_CLIENT_MODE"] = "1"
-
+    envVars["PATH"] = envVars["LIBCRYPTO_ROOT"] + "/bin:" + envVars["PATH"]
+    envVars["LD_LIBRARY_PATH"] = envVars["LIBCRYPTO_ROOT"] + "/lib:" + envVars["LD_LIBRARY_PATH"]
     file_input = open(test_file)
     s2nc = subprocess.Popen(s2nc_cmd, stdin=file_input, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=envVars)
 
@@ -266,9 +267,10 @@ def main():
     parser = argparse.ArgumentParser(description='Runs TLS server integration tests against Openssl s_server using s2nc')
     parser.add_argument('host', help='The host for s2nc to connect to')
     parser.add_argument('port', type=int, help='The port for s_server to bind to')
-    parser.add_argument('--libcrypto', default='openssl-1.1.0', choices=['openssl-1.0.2', 'openssl-1.0.2-fips', 'openssl-1.1.0', 'openssl-1.1.x-master', 'libressl'],
+    parser.add_argument('--libcrypto', default='openssl-1.1.1', choices=['openssl-1.0.2', 'openssl-1.0.2-fips',
+            'openssl-1.1.0', 'openssl-1.1.1', 'openssl-1.1.x-master', 'libressl'],
             help="""The Libcrypto that s2n was built with. s2n supports different cipher suites depending on
-                    libcrypto version. Defaults to openssl-1.1.0.""")
+                    libcrypto version. Defaults to openssl-1.1.1.""")
     args = parser.parse_args()
 
     # Retrieve the test ciphers to use based on the libcrypto version s2n was built with

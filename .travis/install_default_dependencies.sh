@@ -1,5 +1,5 @@
 #!/bin/bash
-# Copyright 2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# Copyright 2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License").
 # You may not use this file except in compliance with the License.
@@ -31,6 +31,12 @@ fi
 if [[ "$TESTS" == "integration"  || "$TESTS" == "ALL" ]] && [[ ! -d "$OPENSSL_1_1_0_INSTALL_DIR" ]]; then
     mkdir -p "$OPENSSL_1_1_0_INSTALL_DIR";
     .travis/install_openssl_1_1_0.sh "$(mktemp -d)" "$OPENSSL_1_1_0_INSTALL_DIR" "$TRAVIS_OS_NAME" > /dev/null ;
+fi
+
+# Download and Install Openssl 1.1.1
+if [[ "$S2N_LIBCRYPTO" == "openssl-1.1.1" ]] && [[ ! -d "$OPENSSL_1_1_1_INSTALL_DIR" ]]; then
+    mkdir -p "$OPENSSL_1_1_1_INSTALL_DIR";
+    .travis/install_openssl_1_1_1.sh "$(mktemp -d)" "$OPENSSL_1_1_1_INSTALL_DIR" "$TRAVIS_OS_NAME" > /dev/null ;
 fi
 
 # Download and Install Openssl 1.0.2
