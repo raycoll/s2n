@@ -34,10 +34,8 @@ if [[ "$TESTS" == "integration"  || "$TESTS" == "ALL" ]] && [[ ! -d "$OPENSSL_1_
 fi
 
 # Download and Install Openssl 1.1.1
-if [[ "$S2N_LIBCRYPTO" == "openssl-1.1.1" ]] && [[ ! -d "$OPENSSL_1_1_1_INSTALL_DIR" ]]; then
-    mkdir -p "$OPENSSL_1_1_1_INSTALL_DIR";
-    .travis/install_openssl_1_1_1.sh "$(mktemp -d)" "$OPENSSL_1_1_1_INSTALL_DIR" "$TRAVIS_OS_NAME" > /dev/null ;
-fi
+mkdir -p "$OPENSSL_1_1_1_INSTALL_DIR";
+.travis/install_openssl_1_1_1.sh "$(mktemp -d)" "$OPENSSL_1_1_1_INSTALL_DIR" "$TRAVIS_OS_NAME" > /dev/null ;
 
 # Download and Install Openssl 1.0.2
 if [[ "$S2N_LIBCRYPTO" == "openssl-1.0.2" ]] && [[ ! -d "$OPENSSL_1_0_2_INSTALL_DIR" ]]; then

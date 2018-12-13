@@ -16,13 +16,18 @@
 S2ND_PORT=8888
 S2ND_HOST=127.0.0.1
 
-# If the libcrypto that s2n was built with is not specified, assume latest(1.1.0).
+# If the libcrypto that s2n was built with is not specified, assume latest(1.1.1).
 # Required to determine the cipher suites to use in integration tests.
 ifndef S2N_LIBCRYPTO
-	export S2N_LIBCRYPTO="openssl-1.1.0"
+	export S2N_LIBCRYPTO="openssl-1.1.1"
 endif
 
 .PHONY : all
+all: setenv
+setenv:
+	@echo "DYLD_LIBRARY_PATH: $$DYLD_LIBRARY_PATH"
+	@echo "LD_LIBRARY_PATH:  $$LD_LIBRARY_PATH"
+	@echo "PATH: $$PATH"
 all:
 	# Run s2n client endpoint handshake tests
 	( \
@@ -34,7 +39,6 @@ all:
 	( \
 	DYLD_LIBRARY_PATH="../../lib/:../testlib/:$$DYLD_LIBRARY_PATH" \
 	LD_LIBRARY_PATH="../../lib/:../testlib/:$$LD_LIBRARY_PATH" \
-	echo "The PATH=$$PATH LD_LIBRARY_PATH=$$LD_LIBRARY_PATH" && \
 	python3 s2n_dynamic_record_size_test.py --libcrypto $(S2N_LIBCRYPTO) $(S2ND_HOST) $(S2ND_PORT); \
 	)
 	# Run s_client handshake tests
