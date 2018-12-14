@@ -45,6 +45,9 @@ void s2n_print_connection(struct s2n_connection *conn, const char *marker);
 #define S2N_RSA_2048_PKCS1_CERT_CHAIN   "../pems/rsa_2048_pkcs1_cert.pem"
 
 #define S2N_RSA_2048_PKCS1_LEAF_CERT    "../pems/rsa_2048_pkcs1_leaf.pem"
+#define S2N_ECDSA_P256_PKCS1_CERT_CHAIN "../pems/ocsp/ecdsa.pem"
+#define S2N_ECDSA_P256_PKCS1_KEY        "../pems/ocsp/ecdsa_key.pem"
+#define S2N_ECDSA_ROOT_PEM              "../pems/ocsp/ca_cert.pem"
 #define S2N_ECDSA_P384_PKCS1_CERT_CHAIN "../pems/ecdsa_p384_pkcs1_cert.pem"
 #define S2N_RSA_CERT_CHAIN_CRLF         "../pems/rsa_2048_pkcs1_cert_crlf.pem"
 #define S2N_RSA_KEY_CRLF                "../pems/rsa_2048_pkcs1_key_crlf.pem"

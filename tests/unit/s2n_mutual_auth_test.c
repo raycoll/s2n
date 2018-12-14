@@ -96,15 +96,19 @@ int main(int argc, char **argv)
 {
     struct s2n_config *config;
     const struct s2n_cipher_preferences *default_cipher_preferences;
-    char *cert_chain_pem;
-    char *private_key_pem;
-    char *dhparams_pem;
+    char *cert_chain_pem = NULL;
+    char *private_key_pem = NULL;
+    char *ecdsa_cert_chain_pem = NULL;
+    char *ecdsa_private_key_pem = NULL;
+    char *dhparams_pem = NULL;
 
     BEGIN_TEST();
 
     EXPECT_SUCCESS(setenv("S2N_ENABLE_CLIENT_MODE", "1", 0));
     EXPECT_NOT_NULL(cert_chain_pem = malloc(S2N_MAX_TEST_PEM_SIZE));
     EXPECT_NOT_NULL(private_key_pem = malloc(S2N_MAX_TEST_PEM_SIZE));
+    EXPECT_NOT_NULL(ecdsa_cert_chain_pem = malloc(S2N_MAX_TEST_PEM_SIZE));
+    EXPECT_NOT_NULL(ecdsa_private_key_pem = malloc(S2N_MAX_TEST_PEM_SIZE));
     EXPECT_NOT_NULL(dhparams_pem = malloc(S2N_MAX_TEST_PEM_SIZE));
 
     /*
@@ -114,6 +118,8 @@ int main(int argc, char **argv)
     EXPECT_NOT_NULL(config = s2n_config_new());
     EXPECT_SUCCESS(s2n_read_test_pem(S2N_DEFAULT_TEST_CERT_CHAIN, cert_chain_pem, S2N_MAX_TEST_PEM_SIZE));
     EXPECT_SUCCESS(s2n_read_test_pem(S2N_DEFAULT_TEST_PRIVATE_KEY, private_key_pem, S2N_MAX_TEST_PEM_SIZE));
+    EXPECT_SUCCESS(s2n_read_test_pem(S2N_ECDSA_P256_PKCS1_CERT_CHAIN, ecdsa_cert_chain_pem, S2N_MAX_TEST_PEM_SIZE));
+    EXPECT_SUCCESS(s2n_read_test_pem(S2N_ECDSA_P256_PKCS1_KEY, ecdsa_private_key_pem, S2N_MAX_TEST_PEM_SIZE));
     EXPECT_SUCCESS(s2n_read_test_pem(S2N_DEFAULT_TEST_DHPARAMS, dhparams_pem, S2N_MAX_TEST_PEM_SIZE));
     EXPECT_SUCCESS(s2n_config_add_cert_chain_and_key(config, cert_chain_pem, private_key_pem));
     EXPECT_SUCCESS(s2n_config_add_dhparams(config, dhparams_pem));
@@ -441,9 +447,101 @@ int main(int argc, char **argv)
         EXPECT_SUCCESS(s2n_stuffer_free(&client_to_server));
     }
 
+    /*
+     * Test Mutual Auth using **s2n_connection_set_client_auth_type**
+     * and an ECDSA client certificate. All ciphers should work since allow client cert auth types are not coupled with
+     * the cipher suite.
+     */
+    struct s2n_config *ecdsa_client_cert_config;
+    EXPECT_NOT_NULL(ecdsa_client_cert_config = s2n_config_new());
+    EXPECT_SUCCESS(s2n_config_add_cert_chain_and_key(ecdsa_client_cert_config, ecdsa_cert_chain_pem, ecdsa_private_key_pem));
+    EXPECT_SUCCESS(s2n_config_add_dhparams(ecdsa_client_cert_config, dhparams_pem));
+    EXPECT_SUCCESS(s2n_config_set_client_auth_type(ecdsa_client_cert_config, S2N_CERT_AUTH_REQUIRED));
+    EXPECT_SUCCESS(s2n_config_set_verify_host_callback(ecdsa_client_cert_config, verify_host_fn, &verify_data));
+    EXPECT_SUCCESS(s2n_config_set_verification_ca_location(config, S2N_ECDSA_ROOT_PEM, NULL));
+    EXPECT_SUCCESS(s2n_config_set_verification_ca_location(ecdsa_client_cert_config, S2N_DEFAULT_TEST_CERT_CHAIN, NULL));
+    /* Verify that a handshake succeeds for every cipher in the default list. */
+    for (int cipher_idx = 0; cipher_idx < default_cipher_preferences->count; cipher_idx++) {
+        verify_data.callback_invoked = 0;
+        struct s2n_cipher_preferences server_cipher_preferences;
+        struct s2n_connection *client_conn;
+        struct s2n_connection *server_conn;
+        s2n_blocked_status client_blocked;
+        s2n_blocked_status server_blocked;
+        struct s2n_stuffer client_to_server;
+        struct s2n_stuffer server_to_client;
+
+        /* Craft a cipher preference with a cipher_idx cipher
+           NOTE: Its safe to use memcpy as the address of server_cipher_preferences
+           will never be NULL */
+        memcpy(&server_cipher_preferences, default_cipher_preferences, sizeof(server_cipher_preferences));
+        server_cipher_preferences.count = 1;
+        struct s2n_cipher_suite *cur_cipher = default_cipher_preferences->suites[cipher_idx];
+
+        if (!cur_cipher->available) {
+            /* Skip Ciphers that aren't supported with the linked libcrypto */
+            continue;
+        }
+
+        server_cipher_preferences.suites = &cur_cipher;
+        config->cipher_preferences = &server_cipher_preferences;
+
+        EXPECT_NOT_NULL(server_conn = s2n_connection_new(S2N_SERVER));
+        EXPECT_SUCCESS(s2n_connection_set_client_auth_type(server_conn, S2N_CERT_AUTH_REQUIRED));
+        EXPECT_SUCCESS(s2n_connection_set_config(server_conn, config));
+
+        EXPECT_NOT_NULL(client_conn = s2n_connection_new(S2N_CLIENT));
+        EXPECT_SUCCESS(s2n_connection_set_client_auth_type(client_conn, S2N_CERT_AUTH_REQUIRED));
+        EXPECT_SUCCESS(s2n_connection_set_config(client_conn, ecdsa_client_cert_config));
+
+
+        /* Set up our I/O callbacks. Use stuffers for the "I/O context" */
+        EXPECT_SUCCESS(s2n_stuffer_growable_alloc(&client_to_server, 0));
+        EXPECT_SUCCESS(s2n_stuffer_growable_alloc(&server_to_client, 0));
+
+        /* Set Up Callbacks*/
+        EXPECT_SUCCESS(s2n_connection_set_recv_cb(client_conn, &buffer_read));
+        EXPECT_SUCCESS(s2n_connection_set_send_cb(client_conn, &buffer_write));
+        EXPECT_SUCCESS(s2n_connection_set_recv_cb(server_conn, &buffer_read));
+        EXPECT_SUCCESS(s2n_connection_set_send_cb(server_conn, &buffer_write));
+
+        /* Set up Callback Contexts to use stuffers */
+        EXPECT_SUCCESS(s2n_connection_set_recv_ctx(client_conn, &server_to_client));
+        EXPECT_SUCCESS(s2n_connection_set_send_ctx(client_conn, &client_to_server));
+        EXPECT_SUCCESS(s2n_connection_set_recv_ctx(server_conn, &client_to_server));
+        EXPECT_SUCCESS(s2n_connection_set_send_ctx(server_conn, &server_to_client));
+
+        int tries = 0;
+        do {
+            int ret;
+            ret = s2n_negotiate(client_conn, &client_blocked);
+            EXPECT_TRUE(ret == 0 || (client_blocked && errno == EAGAIN));
+            ret = s2n_negotiate(server_conn, &server_blocked);
+            EXPECT_TRUE(ret == 0 || (server_blocked && errno == EAGAIN));
+            tries += 1;
+
+            if (tries >= MAX_TRIES) {
+               FAIL();
+            }
+        } while (client_blocked || server_blocked);
+
+        /* Verify that both connections negotiated Mutual Auth */
+        EXPECT_TRUE(s2n_connection_client_cert_used(server_conn));
+        EXPECT_TRUE(s2n_connection_client_cert_used(client_conn));
+        EXPECT_TRUE(verify_data.callback_invoked);
+
+        EXPECT_SUCCESS(s2n_connection_free(client_conn));
+        EXPECT_SUCCESS(s2n_connection_free(server_conn));
+        EXPECT_SUCCESS(s2n_stuffer_free(&server_to_client));
+        EXPECT_SUCCESS(s2n_stuffer_free(&client_to_server));
+    }
+
     EXPECT_SUCCESS(s2n_config_free(config));
+    EXPECT_SUCCESS(s2n_config_free(ecdsa_client_cert_config));
     free(cert_chain_pem);
     free(private_key_pem);
+    free(ecdsa_cert_chain_pem);
+    free(ecdsa_private_key_pem);
     free(dhparams_pem);
     END_TEST();
     return 0;
