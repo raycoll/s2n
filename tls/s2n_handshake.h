@@ -26,6 +26,8 @@
 
 #include "crypto/s2n_hash.h"
 
+#define s2n_conn_received_server_name(conn) conn->server_name[0] != 0
+
 /* This is the list of message types that we support */
 typedef enum {
     CLIENT_HELLO=0,
@@ -59,6 +61,9 @@ struct s2n_handshake_parameters {
     /* The sig/hash used to sign handshake messages. */
     s2n_hash_algorithm hash_alg;
     s2n_signature_algorithm sig_alg;
+
+    int num_matching_certs;
+    struct s2n_cert_chain_and_key *matching_certs[S2N_MAX_CERTIFICATES];
 };
 
 struct s2n_handshake {
@@ -133,3 +138,5 @@ extern int s2n_handshake_require_all_hashes(struct s2n_handshake *handshake);
 extern uint8_t s2n_handshake_is_hash_required(struct s2n_handshake *handshake, s2n_hash_algorithm hash_alg);
 extern int s2n_conn_update_required_handshake_hashes(struct s2n_connection *conn);
 extern int s2n_handshake_get_hash_state(struct s2n_connection *conn, s2n_hash_algorithm hash_alg, struct s2n_hash_state *hash_state);
+extern int s2n_conn_find_name_matching_certs(struct s2n_connection *conn);
+

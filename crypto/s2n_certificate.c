@@ -19,6 +19,7 @@
 #include "utils/s2n_safety.h"
 #include "utils/s2n_mem.h"
 
+
 int s2n_cert_public_key_set_rsa_from_openssl(s2n_cert_public_key *public_key, RSA *openssl_rsa)
 {
     notnull_check(openssl_rsa);
@@ -254,8 +255,28 @@ int s2n_send_cert_chain(struct s2n_stuffer *out, struct s2n_cert_chain *chain)
     return 0;
 }
 
-int s2n_send_empty_cert_chain(struct s2n_stuffer *out) {
+int s2n_send_empty_cert_chain(struct s2n_stuffer *out)
+{
     notnull_check(out);
     GUARD(s2n_stuffer_write_uint24(out, 0));
     return 0;
 }
+
+int s2n_cert_chain_and_key_set_name(struct s2n_cert_chain_and_key *chain_and_key, const char *name)
+{
+    S2N_ERROR_IF(strnlen(name, S2N_MAX_SERVER_NAME) >= S2N_MAX_SERVER_NAME, S2N_ERR_SERVER_NAME_TOO_LONG);
+
+    strcpy(chain_and_key->name, name);
+
+    return 0;
+}
+
+int s2n_cert_chain_and_key_matches_name(struct s2n_cert_chain_and_key *chain_and_key, const char *name)
+{
+    if (strncmp(chain_and_key->name, name, S2N_MAX_SERVER_NAME) == 0) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
