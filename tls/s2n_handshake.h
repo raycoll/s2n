@@ -55,6 +55,10 @@ struct s2n_handshake_parameters {
 
     /* The cert chain we will send the peer. */
     struct s2n_cert_chain_and_key *our_chain_and_key;
+
+    /* The sig/hash used to sign handshake messages. */
+    s2n_hash_algorithm hash_alg;
+    s2n_signature_algorithm sig_alg;
 };
 
 struct s2n_handshake {
