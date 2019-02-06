@@ -687,14 +687,6 @@ int main(int argc, char *const *argv)
             exit(1);
         }
 
-        /* TODO: this needs to be the CN/SAN of the cert... */
-        char cert_name[256];
-        snprintf(cert_name, 256, "cert%d", i);
-        if (s2n_cert_chain_and_key_set_name(chain_and_key, cert_name) < 0) {
-            print_s2n_error("Error setting certificate name");
-            exit(1);
-        }
-
         if (s2n_config_add_cert_chain_and_key_to_store(config, chain_and_key) < 0) {
             print_s2n_error("Error setting certificate/key");
             exit(1);

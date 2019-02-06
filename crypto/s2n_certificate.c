@@ -14,7 +14,7 @@
  */
 
 #include <s2n.h>
-#include <openssl/x509.h>
+#include <openssl/x509v3.h>
 #include <openssl/pem.h>
 
 #include "crypto/s2n_certificate.h"
@@ -301,7 +301,8 @@ int s2n_cert_chain_and_key_set_name(struct s2n_cert_chain_and_key *chain_and_key
 
 int s2n_cert_chain_and_key_matches_name(struct s2n_cert_chain_and_key *chain_and_key, const char *name)
 {
-    if (strncmp(chain_and_key->name, name, S2N_MAX_SERVER_NAME) == 0) {
+    /* TODO: what flags do we actually want to set? */
+    if (X509_check_host(chain_and_key->x509_cert, name, strnlen(name, S2N_MAX_SERVER_NAME), 0, NULL) == 1) {
         return 1;
     } else {
         return 0;
