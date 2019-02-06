@@ -16,6 +16,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <openssl/x509.h>
 
 #include <s2n.h>
 #include "crypto/s2n_pkey.h"
@@ -41,6 +42,10 @@ struct s2n_cert_chain_and_key {
     struct s2n_blob ocsp_status;
     struct s2n_blob sct_list;
     char name[S2N_MAX_SERVER_NAME];
+    /* TODO adding this as a convenience for SNI comparison via X509_check_host.
+     * Plan on implementing native hostname comparison next
+     */
+    X509 *x509_cert;
 };
 
 int s2n_cert_chain_and_key_set_name(struct s2n_cert_chain_and_key *chain_and_key, const char *name);

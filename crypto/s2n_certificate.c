@@ -14,6 +14,8 @@
  */
 
 #include <s2n.h>
+#include <openssl/x509.h>
+#include <openssl/pem.h>
 
 #include "crypto/s2n_certificate.h"
 #include "utils/s2n_safety.h"
@@ -164,8 +166,28 @@ struct s2n_cert_chain_and_key *s2n_cert_chain_and_key_new(void)
     GUARD_PTR(s2n_pkey_zero_init(chain_and_key->private_key));
     memset(&chain_and_key->ocsp_status, 0, sizeof(chain_and_key->ocsp_status));
     memset(&chain_and_key->sct_list, 0, sizeof(chain_and_key->sct_list));
-    
+    chain_and_key->x509_cert = NULL;
+
     return chain_and_key;
+}
+
+static int s2n_cert_chain_and_key_set_x509(struct s2n_cert_chain_and_key *chain_and_key, void *chain_pem)
+{
+    BIO *membio = BIO_new_mem_buf(chain_pem, -1);
+    if (!membio) {
+        S2N_ERROR(S2N_ERR_ALLOC);
+    }
+
+    /* Assume leaf is first */
+    X509 *cert = PEM_read_bio_X509(membio, NULL, 0, NULL);
+    if (!cert) {
+        BIO_free(membio);
+        S2N_ERROR(S2N_ERR_INVALID_PEM);
+    }
+
+    chain_and_key->x509_cert = cert;
+    BIO_free(membio);
+    return 0;
 }
 
 int s2n_cert_chain_and_key_load_pem(struct s2n_cert_chain_and_key *chain_and_key, const char *chain_pem, const char *private_key_pem)
@@ -184,6 +206,9 @@ int s2n_cert_chain_and_key_load_pem(struct s2n_cert_chain_and_key *chain_and_key
 
     /* Validate the leaf cert's public key matches the provided private key */
     GUARD(s2n_pkey_match(&public_key, chain_and_key->private_key));
+
+    /* TODO this will be removed once we add native hostname comparison to s2n. */
+    GUARD(s2n_cert_chain_and_key_set_x509(chain_and_key, (void *)(uintptr_t)chain_pem));
 
     return 0;
 }
@@ -230,7 +255,10 @@ int s2n_cert_chain_and_key_free(struct s2n_cert_chain_and_key *cert_and_key)
         GUARD(s2n_pkey_free(cert_and_key->private_key));
         GUARD(s2n_free(&k));
     }
- 
+
+    if (cert_and_key->x509_cert) {
+        X509_free(cert_and_key->x509_cert);
+    }
     GUARD(s2n_free(&cert_and_key->ocsp_status));
     GUARD(s2n_free(&cert_and_key->sct_list));
 
