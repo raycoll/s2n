@@ -87,7 +87,7 @@ int s2n_ecdhe_server_key_recv_read_data(struct s2n_connection *conn, struct s2n_
 
 int s2n_ecdhe_server_key_recv_parse_data(struct s2n_connection *conn, union s2n_kex_raw_server_data *raw_server_data)
 {
-    GUARD(s2n_ecc_parse_ecc_params(&conn->secure.server_ecc_params, &raw_server_data->ecdhe_data));
+    GUARD(s2n_ecc_parse_ecc_params(&conn->handshake_params.server_ecc_params, &raw_server_data->ecdhe_data));
     return 0;
 }
 
@@ -131,7 +131,7 @@ int s2n_dhe_server_key_recv_parse_data(struct s2n_connection *conn, union s2n_ke
     struct s2n_dhe_raw_server_points dhe_data = raw_server_data->dhe_data;
 
     /* Copy the DH details */
-    GUARD(s2n_dh_p_g_Ys_to_dh_params(&conn->secure.server_dh_params, &dhe_data.p, &dhe_data.g, &dhe_data.Ys));
+    GUARD(s2n_dh_p_g_Ys_to_dh_params(&conn->handshake_params.server_dh_params, &dhe_data.p, &dhe_data.g, &dhe_data.Ys));
     return 0;
 }
 
@@ -169,10 +169,10 @@ int s2n_ecdhe_server_key_send(struct s2n_connection *conn, struct s2n_blob *data
     struct s2n_stuffer *out = &conn->handshake.io;
 
     /* Generate an ephemeral key and  */
-    GUARD(s2n_ecc_generate_ephemeral_key(&conn->secure.server_ecc_params));
+    GUARD(s2n_ecc_generate_ephemeral_key(&conn->handshake_params.server_ecc_params));
 
     /* Write it out and calculate the data to sign later */
-    GUARD(s2n_ecc_write_ecc_params(&conn->secure.server_ecc_params, out, data_to_sign));
+    GUARD(s2n_ecc_write_ecc_params(&conn->handshake_params.server_ecc_params, out, data_to_sign));
     return 0;
 }
 
@@ -181,13 +181,13 @@ int s2n_dhe_server_key_send(struct s2n_connection *conn, struct s2n_blob *data_t
     struct s2n_stuffer *out = &conn->handshake.io;
 
     /* Duplicate the DH key from the config */
-    GUARD(s2n_dh_params_copy(conn->config->dhparams, &conn->secure.server_dh_params));
+    GUARD(s2n_dh_params_copy(conn->config->dhparams, &conn->handshake_params.server_dh_params));
 
     /* Generate an ephemeral key */
-    GUARD(s2n_dh_generate_ephemeral_key(&conn->secure.server_dh_params));
+    GUARD(s2n_dh_generate_ephemeral_key(&conn->handshake_params.server_dh_params));
 
     /* Write it out and calculate the data to sign later */
-    GUARD(s2n_dh_params_to_p_g_Ys(&conn->secure.server_dh_params, out, data_to_sign));
+    GUARD(s2n_dh_params_to_p_g_Ys(&conn->handshake_params.server_dh_params, out, data_to_sign));
     return 0;
 }
 

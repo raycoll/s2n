@@ -93,9 +93,9 @@ int s2n_dhe_client_key_recv(struct s2n_connection *conn, struct s2n_blob *shared
     struct s2n_stuffer *in = &conn->handshake.io;
 
     /* Get the shared key */
-    GUARD(s2n_dh_compute_shared_secret_as_server(&conn->secure.server_dh_params, in, shared_key));
+    GUARD(s2n_dh_compute_shared_secret_as_server(&conn->handshake_params.server_dh_params, in, shared_key));
     /* We don't need the server params any more */
-    GUARD(s2n_dh_params_free(&conn->secure.server_dh_params));
+    GUARD(s2n_dh_params_free(&conn->handshake_params.server_dh_params));
     return 0;
 }
 
@@ -104,9 +104,9 @@ int s2n_ecdhe_client_key_recv(struct s2n_connection *conn, struct s2n_blob *shar
     struct s2n_stuffer *in = &conn->handshake.io;
 
     /* Get the shared key */
-    GUARD(s2n_ecc_compute_shared_secret_as_server(&conn->secure.server_ecc_params, in, shared_key));
+    GUARD(s2n_ecc_compute_shared_secret_as_server(&conn->handshake_params.server_ecc_params, in, shared_key));
     /* We don't need the server params any more */
-    GUARD(s2n_ecc_params_free(&conn->secure.server_ecc_params));
+    GUARD(s2n_ecc_params_free(&conn->handshake_params.server_ecc_params));
     return 0;
 }
 
@@ -124,20 +124,20 @@ int s2n_client_key_recv(struct s2n_connection *conn)
 int s2n_dhe_client_key_send(struct s2n_connection *conn, struct s2n_blob *shared_key)
 {
     struct s2n_stuffer *out = &conn->handshake.io;
-    GUARD(s2n_dh_compute_shared_secret_as_client(&conn->secure.server_dh_params, out, shared_key));
+    GUARD(s2n_dh_compute_shared_secret_as_client(&conn->handshake_params.server_dh_params, out, shared_key));
 
     /* We don't need the server params any more */
-    GUARD(s2n_dh_params_free(&conn->secure.server_dh_params));
+    GUARD(s2n_dh_params_free(&conn->handshake_params.server_dh_params));
     return 0;
 }
 
 int s2n_ecdhe_client_key_send(struct s2n_connection *conn, struct s2n_blob *shared_key)
 {
     struct s2n_stuffer *out = &conn->handshake.io;
-    GUARD(s2n_ecc_compute_shared_secret_as_client(&conn->secure.server_ecc_params, out, shared_key));
+    GUARD(s2n_ecc_compute_shared_secret_as_client(&conn->handshake_params.server_ecc_params, out, shared_key));
 
     /* We don't need the server params any more */
-    GUARD(s2n_ecc_params_free(&conn->secure.server_ecc_params));
+    GUARD(s2n_ecc_params_free(&conn->handshake_params.server_ecc_params));
     return 0;
 }
 

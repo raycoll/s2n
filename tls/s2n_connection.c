@@ -302,8 +302,8 @@ static int s2n_connection_wipe_keys(struct s2n_connection *conn)
     GUARD(s2n_pkey_free(&conn->secure.client_public_key));
     GUARD(s2n_pkey_zero_init(&conn->secure.client_public_key));
     s2n_x509_validator_wipe(&conn->x509_validator);
-    GUARD(s2n_dh_params_free(&conn->secure.server_dh_params));
-    GUARD(s2n_ecc_params_free(&conn->secure.server_ecc_params));
+    GUARD(s2n_dh_params_free(&conn->handshake_params.server_dh_params));
+    GUARD(s2n_ecc_params_free(&conn->handshake_params.server_ecc_params));
     GUARD(s2n_free(&conn->secure.client_cert_chain));
     GUARD(s2n_free(&conn->ct_response));
 
@@ -860,11 +860,11 @@ const char *s2n_connection_get_curve(struct s2n_connection *conn)
 {
     notnull_check_ptr(conn);
 
-    if (!conn->secure.server_ecc_params.negotiated_curve) {
+    if (!conn->handshake_params.server_ecc_params.negotiated_curve) {
         return "NONE";
     }
 
-    return conn->secure.server_ecc_params.negotiated_curve->name;
+    return conn->handshake_params.server_ecc_params.negotiated_curve->name;
 }
 
 int s2n_connection_get_client_protocol_version(struct s2n_connection *conn)

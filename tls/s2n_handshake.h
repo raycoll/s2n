@@ -59,6 +59,10 @@ struct s2n_handshake_parameters {
     /* The signature/hash algorithms the server will use to sign handshake messages. */
     s2n_hash_algorithm hash_alg;
     s2n_signature_algorithm sig_alg;
+
+    /* Key exchange parameters we will use for this handshake. */
+    struct s2n_dh_params server_dh_params;
+    struct s2n_ecc_params server_ecc_params;
 };
 
 struct s2n_handshake {

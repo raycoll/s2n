@@ -72,7 +72,7 @@ static int check_dhe(const struct s2n_connection *conn)
 
 static int check_ecdhe(const struct s2n_connection *conn)
 {
-    return conn->secure.server_ecc_params.negotiated_curve != NULL;
+    return conn->handshake_params.server_ecc_params.negotiated_curve != NULL;
 }
 
 const struct s2n_kex s2n_rsa = {
