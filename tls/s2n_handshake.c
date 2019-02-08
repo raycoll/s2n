@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -154,4 +154,15 @@ int s2n_conn_update_required_handshake_hashes(struct s2n_connection *conn)
     }
 
     return 0;
+}
+
+/**
+ * Decide the handshake parameters for this connection. The outputs of this function are:
+ * - Certificate chain the server will send to the client
+ * - The cipher suite
+ * - The signature/hash algorithm the server will use to sign handshake messages
+ */
+int s2n_decide_handshake_parameters_as_server(struct s2n_connection *conn)
+{
+    
 }
