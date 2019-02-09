@@ -40,5 +40,6 @@ static const s2n_signature_algorithm s2n_preferred_signature_algorithms[] = {
 extern int s2n_set_signature_hash_pair_from_preference_list(struct s2n_connection *conn, struct s2n_sig_hash_alg_pairs *sig_hash_algs, 
                                                             s2n_hash_algorithm *hash, s2n_signature_algorithm *sig);
 extern int s2n_get_signature_hash_pair_if_supported(struct s2n_stuffer *in, s2n_hash_algorithm *hash_alg, s2n_signature_algorithm *signature_alg);
+extern int s2n_is_signature_algorithm_supported(struct s2n_sig_hash_alg_pairs *sig_hash_algs, s2n_signature_algorithm signature_alg);
 extern int s2n_send_supported_signature_algorithms(struct s2n_stuffer *out);
 extern int s2n_recv_supported_signature_algorithms(struct s2n_connection *conn, struct s2n_stuffer *in, struct s2n_sig_hash_alg_pairs *sig_hash_algs); 

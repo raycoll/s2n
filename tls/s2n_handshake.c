@@ -164,5 +164,5 @@ int s2n_conn_update_required_handshake_hashes(struct s2n_connection *conn)
  */
 int s2n_decide_handshake_parameters_as_server(struct s2n_connection *conn)
 {
-    
+    return 0;
 }

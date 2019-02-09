@@ -135,6 +135,25 @@ int s2n_send_supported_signature_algorithms(struct s2n_stuffer *out)
     return 0;
 }
 
+int s2n_is_signature_algorithm_supported(struct s2n_sig_hash_alg_pairs *sig_hash_alg_pairs, s2n_signature_algorithm sig_alg)
+{
+    /* Well they sent nothing, we'll use any sig! */
+    uint8_t zeroes[sizeof(sig_hash_alg_pairs->matrix)] = {0};
+    if (memcmp(zeroes, sig_hash_alg_pairs->matrix, sizeof(sig_hash_alg_pairs->matrix)) == 0) {
+        return 1;
+    }
+
+
+    for (int j = 0; j < TLS_HASH_ALGORITHM_COUNT; j++) {
+        if (s2n_sig_hash_alg_pairs_get(sig_hash_alg_pairs, sig_alg, j)) {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+
 int s2n_recv_supported_signature_algorithms(struct s2n_connection *conn, struct s2n_stuffer *in, struct s2n_sig_hash_alg_pairs *sig_hash_algs)
 {
     uint16_t length_of_all_pairs;

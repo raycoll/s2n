@@ -936,6 +936,27 @@ static struct s2n_cert_chain_and_key *s2n_get_compatible_cert_chain_and_key(stru
     return NULL;
 }
 
+/**
+ * return 1 if the cipher suite is possible based on the signature algorithms
+ */
+static int s2n_cipher_suite_sig_alg_match(struct s2n_connection *conn, struct s2n_cipher_suite *cipher_suite)
+{
+    const s2n_authentication_method auth_method = cipher_suite->auth_method;
+    if (auth_method == S2N_AUTHENTICATION_ECDSA) {
+        if (s2n_is_signature_algorithm_supported(&conn->handshake_params.client_sig_hash_algs, S2N_SIGNATURE_ECDSA)) {
+            return 1;
+        }
+    }
+
+    if (auth_method == S2N_AUTHENTICATION_RSA) {
+        if (s2n_is_signature_algorithm_supported(&conn->handshake_params.client_sig_hash_algs, S2N_SIGNATURE_RSA)) {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
 static int s2n_set_cipher_and_cert_as_server(struct s2n_connection *conn, uint8_t * wire, uint32_t count, uint32_t cipher_suite_len)
 {
     uint8_t renegotiation_info_scsv[S2N_TLS_CIPHER_SUITE_LEN] = { TLS_EMPTY_RENEGOTIATION_INFO_SCSV };
@@ -998,6 +1019,11 @@ static int s2n_set_cipher_and_cert_as_server(struct s2n_connection *conn, uint8_
                     higher_vers_cert = conn->handshake_params.our_chain_and_key;
                 }
                 continue;
+            }
+
+            /* Skip the suite if we don't have a compatible signature algorithm */
+            if (s2n_cipher_suite_sig_alg_match(conn, match) == 0) {
+                return 0;
             }
 
             conn->secure.cipher_suite = match;
