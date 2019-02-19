@@ -393,8 +393,10 @@ int s2n_compute_weight_of_encrypt_decrypt_keys(struct s2n_config *config,
         if (i > 0) {
             ticket_keys_weight[i].key_weight += ticket_keys_weight[i - 1].key_weight;
         }
+        printf("weight of ticket key %u:%f\n", ticket_keys_weight[i].key_index, ticket_keys_weight[i].key_weight);
 
         if (ticket_keys_weight[i].key_weight > random) {
+            printf("returning key index %d\n", ticket_keys_weight[i].key_index);
             return ticket_keys_weight[i].key_index;
         }
     }

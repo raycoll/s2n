@@ -844,7 +844,6 @@ int main(int argc, char **argv)
 
         /* Add a key pre-emptively. It can be used only after 10 hours */
         EXPECT_SUCCESS(s2n_config_add_ticket_crypto_key(server_config, ticket_key_name3, strlen((char *)ticket_key_name3), ticket_key3, strlen((char *)ticket_key3), now/ONE_SEC_IN_NANOS + 36000));
-
         /* Add a mock delay such that negotiation happens after 1 hour */
         uint64_t mock_delay = (server_config->encrypt_decrypt_key_lifetime_in_nanos / 2) - ONE_SEC_IN_NANOS;
         EXPECT_SUCCESS(s2n_config_set_monotonic_clock(server_config, mock_nanoseconds_since_epoch, &mock_delay));
@@ -859,6 +858,7 @@ int main(int argc, char **argv)
 
         /* Verify that the client received NST which is encrypted using a key which is at it's peak encryption */
         serialized_session_state_length = s2n_connection_get_session_length(client_conn);
+        printf("the session length: %zu\n", serialized_session_state_length);
         EXPECT_EQUAL(s2n_connection_get_session(client_conn, serialized_session_state, serialized_session_state_length), serialized_session_state_length);
         EXPECT_BYTEARRAY_EQUAL(serialized_session_state + S2N_PARTIAL_SESSION_STATE_INFO_IN_BYTES, ticket_key_name2, strlen((char *)ticket_key_name2));
 
