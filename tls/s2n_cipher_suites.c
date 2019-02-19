@@ -1022,9 +1022,9 @@ static int s2n_set_cipher_and_cert_as_server(struct s2n_connection *conn, uint8_
             }
 
             /* Skip the suite if we don't have a compatible signature algorithm */
-            if (s2n_cipher_suite_sig_alg_match(conn, match) == 0) {
+            /* if (s2n_cipher_suite_sig_alg_match(conn, match) == 0) {
                 return 0;
-            }
+            } */
 
             conn->secure.cipher_suite = match;
             return 0;
