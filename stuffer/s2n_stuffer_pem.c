@@ -45,7 +45,7 @@ static int s2n_stuffer_pem_read_encapsulation_line(struct s2n_stuffer *pem, cons
     GUARD(s2n_stuffer_read_expected_str(pem, encap_marker));
 
     /* Ensure next string is stuffer is the keyword (Eg "CERTIFICATE", "PRIVATE KEY", etc) */
-    GUARD(s2n_stuffer_read_expected_str(pem, keyword));
+    GUARD(s2n_stuffer_skip_read_until(pem, keyword));
 
     /* Ensure between 1 and 64 '-' chars at end of line */
     GUARD(s2n_stuffer_skip_expected_char(pem, S2N_PEM_DELIMTER_CHAR, S2N_PEM_DELIMITER_MIN_COUNT, S2N_PEM_DELIMITER_MAX_COUNT));
