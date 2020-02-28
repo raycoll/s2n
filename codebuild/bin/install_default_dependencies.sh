@@ -44,6 +44,12 @@ fi
 if [[ "$S2N_LIBCRYPTO" == "openssl-1.0.2-fips" ]] && [[ ! -d "$OPENSSL_1_0_2_FIPS_INSTALL_DIR" ]]; then
     codebuild/bin/install_openssl_1_0_2_fips.sh "$(mktemp -d)" "$OPENSSL_1_0_2_FIPS_INSTALL_DIR" "$OS_NAME" ; fi
 
+# Download and Install Openssl 0.9.8 for legacy client tests
+if [[ ! -d "$OPENSSL_0_9_8_INSTALL_DIR" ]]; then
+    mkdir -p "$OPENSSL_0_9_8_INSTALL_DIR"||true
+    codebuild/bin/install_openssl_0_9_8.sh "$(mktemp -d)" "$OPENSSL_0_9_8_INSTALL_DIR" "$OS_NAME" > /dev/null ;
+fi
+
 # Download and Install CppCheck
 if [[ "$BUILD_S2N" == "true" ]]; then
     mkdir -p "$CPPCHECK_INSTALL_DIR"||true
