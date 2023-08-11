@@ -43,7 +43,7 @@
 
 struct s2n_client_hello *s2n_connection_get_client_hello(struct s2n_connection *conn)
 {
-    if (conn->client_hello.callback_invoked != 1) {
+    if (conn->client_hello.parsed != 1) {
         return NULL;
     }
 
