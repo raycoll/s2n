@@ -23,7 +23,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="s2n-logo-github.svg"/></td>
   <td id="projectalign">
-   <div id="projectname">AWS s2n-tls<span id="projectnumber">&#160;-54c914f9</span>
+   <div id="projectname">AWS s2n-tls<span id="projectnumber">&#160;-5f29e4c7</span>
    </div>
    <div id="projectbrief">s2n-tls is a C99 implementation of the TLS/SSL protocols that is designed to be simple, small, fast, and with security as a priority.</div>
   </td>
@@ -188,6 +188,10 @@ Enumerations</h2></td></tr>
 <br />
  }</td></tr>
 <tr class="separator:a41f8ab66d28ce2f33fa8dbf858c0ac44"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afca8aa07679a8a51477bf73a2159b8b2"><td class="memItemLeft" align="right" valign="top"><a id="afca8aa07679a8a51477bf73a2159b8b2" name="afca8aa07679a8a51477bf73a2159b8b2"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><b>s2n_fips_mode</b> { <b>S2N_FIPS_MODE_DISABLED</b> = 0
+, <b>S2N_FIPS_MODE_ENABLED</b>
+ }</td></tr>
+<tr class="separator:afca8aa07679a8a51477bf73a2159b8b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab2b46f61765da5529f931afb8dd8a1f8"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s2n_8h.html#ab2b46f61765da5529f931afb8dd8a1f8">s2n_tls_extension_type</a> { <br />
 &#160;&#160;<b>S2N_EXTENSION_SERVER_NAME</b> = 0
 , <b>S2N_EXTENSION_MAX_FRAG_LEN</b> = 1
@@ -199,7 +203,8 @@ Enumerations</h2></td></tr>
 , <b>S2N_EXTENSION_ALPN</b> = 16
 , <b>S2N_EXTENSION_CERTIFICATE_TRANSPARENCY</b> = 18
 , <br />
-&#160;&#160;<b>S2N_EXTENSION_RENEGOTIATION_INFO</b> = 65281
+&#160;&#160;<b>S2N_EXTENSION_SUPPORTED_VERSIONS</b> = 43
+, <b>S2N_EXTENSION_RENEGOTIATION_INFO</b> = 65281
 <br />
  }</td></tr>
 <tr class="separator:ab2b46f61765da5529f931afb8dd8a1f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -237,6 +242,10 @@ Enumerations</h2></td></tr>
 , <b>S2N_SELF_SERVICE_BLINDING</b>
  }</td></tr>
 <tr class="separator:a364ad496c9dd42fd3117a2f9d3289e62"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa8ab6cd4a526f781116a39bd16bab9ba"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s2n_8h.html#aa8ab6cd4a526f781116a39bd16bab9ba">s2n_peer_key_update</a> { <b>S2N_KEY_UPDATE_NOT_REQUESTED</b> = 0
+, <b>S2N_KEY_UPDATE_REQUESTED</b>
+ }</td></tr>
+<tr class="separator:aa8ab6cd4a526f781116a39bd16bab9ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af70ca0b089daa98cd79a424d3f6af15d"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s2n_8h.html#af70ca0b089daa98cd79a424d3f6af15d">s2n_blocked_status</a> { <br />
 &#160;&#160;<b>S2N_NOT_BLOCKED</b> = 0
 , <b>S2N_BLOCKED_ON_READ</b>
@@ -297,6 +306,10 @@ Enumerations</h2></td></tr>
 , <b>S2N_EARLY_DATA_STATUS_END</b>
  }</td></tr>
 <tr class="separator:ab11b47e128bd2074bf486e1e47864033"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8d830314bad02fd3dea9e9e7b7c8db8c"><td class="memItemLeft" align="right" valign="top"><a id="a8d830314bad02fd3dea9e9e7b7c8db8c" name="a8d830314bad02fd3dea9e9e7b7c8db8c"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><b>s2n_serialization_version</b> { <b>S2N_SERIALIZED_CONN_NONE</b> = 0
+, <b>S2N_SERIALIZED_CONN_V1</b> = 1
+ }</td></tr>
+<tr class="separator:a8d830314bad02fd3dea9e9e7b7c8db8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
@@ -314,6 +327,8 @@ Functions</h2></td></tr>
 <tr class="separator:a41b65ad20272f232f12c8ae36578d372"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6bec40a852f3766f4e419684036e7550"><td class="memItemLeft" align="right" valign="top"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s2n_8h.html#a6bec40a852f3766f4e419684036e7550">s2n_cleanup</a> (void)</td></tr>
 <tr class="separator:a6bec40a852f3766f4e419684036e7550"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae2f5f01eb4a3c924ffb8674bd3256601"><td class="memItemLeft" align="right" valign="top"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s2n_8h.html#ae2f5f01eb4a3c924ffb8674bd3256601">s2n_get_fips_mode</a> (s2n_fips_mode *fips_mode)</td></tr>
+<tr class="separator:ae2f5f01eb4a3c924ffb8674bd3256601"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aae4a525b68ba7bd181a27de9ea2fcd1a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> struct s2n_config *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s2n_8h.html#aae4a525b68ba7bd181a27de9ea2fcd1a">s2n_config_new</a> (void)</td></tr>
 <tr class="separator:aae4a525b68ba7bd181a27de9ea2fcd1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab4ea3e214391965d7edb0efa6bf1e4cd"><td class="memItemLeft" align="right" valign="top"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> struct s2n_config *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s2n_8h.html#ab4ea3e214391965d7edb0efa6bf1e4cd">s2n_config_new_minimal</a> (void)</td></tr>
@@ -334,6 +349,8 @@ Functions</h2></td></tr>
 <tr class="separator:abe953bd1887fbd7812beebc180639baa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a114d3d3ce1bb2a59ee44434af04b068c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s2n_8h.html#a114d3d3ce1bb2a59ee44434af04b068c">s2n_strerror_name</a> (int error)</td></tr>
 <tr class="separator:a114d3d3ce1bb2a59ee44434af04b068c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a87f6086b173925bd39185c79538dfdf5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s2n_8h.html#a87f6086b173925bd39185c79538dfdf5">s2n_strerror_source</a> (int error)</td></tr>
+<tr class="separator:a87f6086b173925bd39185c79538dfdf5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad2220ac8657a5417ee02e8da3b7789b1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s2n_8h.html#ad2220ac8657a5417ee02e8da3b7789b1">s2n_stack_traces_enabled</a> (void)</td></tr>
 <tr class="separator:ad2220ac8657a5417ee02e8da3b7789b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a997548b3339d0ee7d154911c733f2126"><td class="memItemLeft" align="right" valign="top"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s2n_8h.html#a997548b3339d0ee7d154911c733f2126">s2n_stack_traces_enabled_set</a> (bool newval)</td></tr>
@@ -402,6 +419,8 @@ Functions</h2></td></tr>
 <tr class="separator:a079022d5c18f4ffd64c1c6dedb3bbc66"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:affff244d7ed6f3b8d1f885df1b307f4e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s2n_8h.html#affff244d7ed6f3b8d1f885df1b307f4e">s2n_config_set_check_stapled_ocsp_response</a> (struct s2n_config *config, uint8_t check_ocsp)</td></tr>
 <tr class="separator:affff244d7ed6f3b8d1f885df1b307f4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abbdc139b4a68057aa0ce812b5f07138d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s2n_8h.html#abbdc139b4a68057aa0ce812b5f07138d">s2n_config_disable_x509_time_verification</a> (struct s2n_config *config)</td></tr>
+<tr class="separator:abbdc139b4a68057aa0ce812b5f07138d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa9d89fb59987254fe2546881d172be18"><td class="memItemLeft" align="right" valign="top"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s2n_8h.html#aa9d89fb59987254fe2546881d172be18">s2n_config_disable_x509_verification</a> (struct s2n_config *config)</td></tr>
 <tr class="separator:aa9d89fb59987254fe2546881d172be18"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adbe1f248fa4510df373890a70f6f39b9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s2n_8h.html#adbe1f248fa4510df373890a70f6f39b9">s2n_config_set_max_cert_chain_depth</a> (struct s2n_config *config, uint16_t max_depth)</td></tr>
@@ -460,6 +479,10 @@ Functions</h2></td></tr>
 <tr class="separator:a71cfccf774ddf237a30eb9c2fc9b0831"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac0c64d96b5b9a4cb600a22157d6743e3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> struct s2n_client_hello *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s2n_8h.html#ac0c64d96b5b9a4cb600a22157d6743e3">s2n_connection_get_client_hello</a> (struct s2n_connection *conn)</td></tr>
 <tr class="separator:ac0c64d96b5b9a4cb600a22157d6743e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aacf329c844fa13ec9ccef34da945d7f2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> struct s2n_client_hello *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s2n_8h.html#aacf329c844fa13ec9ccef34da945d7f2">s2n_client_hello_parse_message</a> (const uint8_t *bytes, uint32_t size)</td></tr>
+<tr class="separator:aacf329c844fa13ec9ccef34da945d7f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad664daed9d1c437460c563c6f02157d9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s2n_8h.html#ad664daed9d1c437460c563c6f02157d9">s2n_client_hello_free</a> (struct s2n_client_hello **ch)</td></tr>
+<tr class="separator:ad664daed9d1c437460c563c6f02157d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4c2c0de61921c9ddc8e8c4e56084cc6c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> ssize_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s2n_8h.html#a4c2c0de61921c9ddc8e8c4e56084cc6c">s2n_client_hello_get_raw_message_length</a> (struct s2n_client_hello *ch)</td></tr>
 <tr class="separator:a4c2c0de61921c9ddc8e8c4e56084cc6c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac1fc624f4ffe9378ad77eea895bb52d6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> ssize_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s2n_8h.html#ac1fc624f4ffe9378ad77eea895bb52d6">s2n_client_hello_get_raw_message</a> (struct s2n_client_hello *ch, uint8_t *out, uint32_t max_length)</td></tr>
@@ -482,6 +505,18 @@ Functions</h2></td></tr>
 <tr class="separator:a803cebda25d3d8beadfd2981bfc0faa2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae86458717edccfb2f58b86f3991af1a9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s2n_8h.html#ae86458717edccfb2f58b86f3991af1a9">s2n_client_hello_get_session_id</a> (struct s2n_client_hello *ch, uint8_t *out, uint32_t *out_length, uint32_t max_length)</td></tr>
 <tr class="separator:ae86458717edccfb2f58b86f3991af1a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a76a3487dda504244c2b81978de6d79bb"><td class="memItemLeft" align="right" valign="top"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s2n_8h.html#a76a3487dda504244c2b81978de6d79bb">s2n_client_hello_get_compression_methods_length</a> (struct s2n_client_hello *ch, uint32_t *out_length)</td></tr>
+<tr class="separator:a76a3487dda504244c2b81978de6d79bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adbab79e2b5c583efaf918283fb0222bf"><td class="memItemLeft" align="right" valign="top"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s2n_8h.html#adbab79e2b5c583efaf918283fb0222bf">s2n_client_hello_get_compression_methods</a> (struct s2n_client_hello *ch, uint8_t *list, uint32_t list_length, uint32_t *out_length)</td></tr>
+<tr class="separator:adbab79e2b5c583efaf918283fb0222bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeff080b07553418e574fa5907c6d2ca0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s2n_8h.html#aeff080b07553418e574fa5907c6d2ca0">s2n_client_hello_get_legacy_protocol_version</a> (struct s2n_client_hello *ch, uint8_t *out)</td></tr>
+<tr class="separator:aeff080b07553418e574fa5907c6d2ca0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a68a751eb59517406db2439a88e94d8d1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s2n_8h.html#a68a751eb59517406db2439a88e94d8d1">s2n_client_hello_get_supported_groups</a> (struct s2n_client_hello *ch, uint16_t *groups, uint16_t groups_count_max, uint16_t *groups_count)</td></tr>
+<tr class="separator:a68a751eb59517406db2439a88e94d8d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4345089b56dee57f4c6f97c04588289e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s2n_8h.html#a4345089b56dee57f4c6f97c04588289e">s2n_client_hello_get_server_name_length</a> (struct s2n_client_hello *ch, uint16_t *length)</td></tr>
+<tr class="separator:a4345089b56dee57f4c6f97c04588289e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a13b362b99e61c3da07b6be2f9c4cff3f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s2n_8h.html#a13b362b99e61c3da07b6be2f9c4cff3f">s2n_client_hello_get_server_name</a> (struct s2n_client_hello *ch, uint8_t *server_name, uint16_t length, uint16_t *out_length)</td></tr>
+<tr class="separator:a13b362b99e61c3da07b6be2f9c4cff3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a67962bf835ce5145d215a9ee8f4985d3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s2n_8h.html#a67962bf835ce5145d215a9ee8f4985d3">s2n_connection_set_fd</a> (struct s2n_connection *conn, int fd)</td></tr>
 <tr class="separator:a67962bf835ce5145d215a9ee8f4985d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa75014bd12d682e91ab2812c2e92c16d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s2n_8h.html#aa75014bd12d682e91ab2812c2e92c16d">s2n_connection_set_read_fd</a> (struct s2n_connection *conn, int readfd)</td></tr>
@@ -506,6 +541,10 @@ Functions</h2></td></tr>
 <tr class="separator:a11c72914bfc09a9174b6a7b019e5aa5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9b4fafb7e9b8277f408af0ad17ab6e19"><td class="memItemLeft" align="right" valign="top"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s2n_8h.html#a9b4fafb7e9b8277f408af0ad17ab6e19">s2n_connection_prefer_low_latency</a> (struct s2n_connection *conn)</td></tr>
 <tr class="separator:a9b4fafb7e9b8277f408af0ad17ab6e19"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae30791c458875956ef9f4cdbd8c8c19f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s2n_8h.html#ae30791c458875956ef9f4cdbd8c8c19f">s2n_connection_set_recv_buffering</a> (struct s2n_connection *conn, bool enabled)</td></tr>
+<tr class="separator:ae30791c458875956ef9f4cdbd8c8c19f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9e66cd9a37ddf82419039cdc60b28895"><td class="memItemLeft" align="right" valign="top"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s2n_8h.html#a9e66cd9a37ddf82419039cdc60b28895">s2n_peek_buffered</a> (struct s2n_connection *conn)</td></tr>
+<tr class="separator:a9e66cd9a37ddf82419039cdc60b28895"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5399ba44a921d36ed34661038a509d1a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s2n_8h.html#a5399ba44a921d36ed34661038a509d1a">s2n_connection_set_dynamic_buffers</a> (struct s2n_connection *conn, bool enabled)</td></tr>
 <tr class="separator:a5399ba44a921d36ed34661038a509d1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:add5f14855b2810a9857b1a41f2cc92f9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s2n_8h.html#add5f14855b2810a9857b1a41f2cc92f9">s2n_connection_set_dynamic_record_threshold</a> (struct s2n_connection *conn, uint32_t resize_threshold, uint16_t timeout_threshold)</td></tr>
@@ -518,6 +557,8 @@ Functions</h2></td></tr>
 <tr class="separator:ab8a2a372d2d13cef62357473b7fea568"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab4544d664e827a426b484b3eaa62063d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s2n_8h.html#ab4544d664e827a426b484b3eaa62063d">s2n_connection_set_cipher_preferences</a> (struct s2n_connection *conn, const char *version)</td></tr>
 <tr class="separator:ab4544d664e827a426b484b3eaa62063d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a824fed871df4202b6bd5428ee791f660"><td class="memItemLeft" align="right" valign="top"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s2n_8h.html#a824fed871df4202b6bd5428ee791f660">s2n_connection_request_key_update</a> (struct s2n_connection *conn, <a class="el" href="s2n_8h.html#aa8ab6cd4a526f781116a39bd16bab9ba">s2n_peer_key_update</a> peer_request)</td></tr>
+<tr class="separator:a824fed871df4202b6bd5428ee791f660"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1cbf7aa3eb0834357994ea902d6c4847"><td class="memItemLeft" align="right" valign="top"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s2n_8h.html#a1cbf7aa3eb0834357994ea902d6c4847">s2n_connection_append_protocol_preference</a> (struct s2n_connection *conn, const uint8_t *protocol, uint8_t protocol_len)</td></tr>
 <tr class="separator:a1cbf7aa3eb0834357994ea902d6c4847"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1e7fc1efa730562ff9a804fe578235b4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s2n_8h.html#a1e7fc1efa730562ff9a804fe578235b4">s2n_connection_set_protocol_preferences</a> (struct s2n_connection *conn, const char *const *protocols, int protocol_count)</td></tr>
@@ -672,10 +713,16 @@ Functions</h2></td></tr>
 <tr class="separator:a67f52395125df9876ebf18964f582883"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad2a608603c7dbe9203a7c8f8b63ee1b8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s2n_8h.html#ad2a608603c7dbe9203a7c8f8b63ee1b8">s2n_connection_get_client_hello_version</a> (struct s2n_connection *conn)</td></tr>
 <tr class="separator:ad2a608603c7dbe9203a7c8f8b63ee1b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad2c9fa3dea9e458f259c142c01537e4f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s2n_8h.html#ad2c9fa3dea9e458f259c142c01537e4f">s2n_client_hello_get_legacy_record_version</a> (struct s2n_client_hello *ch, uint8_t *out)</td></tr>
+<tr class="separator:ad2c9fa3dea9e458f259c142c01537e4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a249408b5a39897276524176bb951dba5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s2n_8h.html#a249408b5a39897276524176bb951dba5">s2n_connection_client_cert_used</a> (struct s2n_connection *conn)</td></tr>
 <tr class="separator:a249408b5a39897276524176bb951dba5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aed6c509e7ec18b2a9ddb47e3e595b565"><td class="memItemLeft" align="right" valign="top"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s2n_8h.html#aed6c509e7ec18b2a9ddb47e3e595b565">s2n_connection_get_cipher</a> (struct s2n_connection *conn)</td></tr>
 <tr class="separator:aed6c509e7ec18b2a9ddb47e3e595b565"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad34a96dd1e2cae7dd2da4812576a65fc"><td class="memItemLeft" align="right" valign="top"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s2n_8h.html#ad34a96dd1e2cae7dd2da4812576a65fc">s2n_connection_get_master_secret</a> (const struct s2n_connection *conn, uint8_t *secret_bytes, size_t max_size)</td></tr>
+<tr class="separator:ad34a96dd1e2cae7dd2da4812576a65fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae8c865863e6dcfa38d4de30cd11f7c40"><td class="memItemLeft" align="right" valign="top"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s2n_8h.html#ae8c865863e6dcfa38d4de30cd11f7c40">s2n_connection_tls_exporter</a> (struct s2n_connection *conn, const uint8_t *label, uint32_t label_length, const uint8_t *context, uint32_t context_length, uint8_t *output, uint32_t output_length)</td></tr>
+<tr class="separator:ae8c865863e6dcfa38d4de30cd11f7c40"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abc11d4e901bae3b322a5a3bc5dc9a5d1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s2n_8h.html#abc11d4e901bae3b322a5a3bc5dc9a5d1">s2n_connection_get_cipher_iana_value</a> (struct s2n_connection *conn, uint8_t *first, uint8_t *second)</td></tr>
 <tr class="separator:abc11d4e901bae3b322a5a3bc5dc9a5d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac396d45fe79efa2142be8cf491dfdbeb"><td class="memItemLeft" align="right" valign="top"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s2n_8h.html#ac396d45fe79efa2142be8cf491dfdbeb">s2n_connection_is_valid_for_cipher_preferences</a> (struct s2n_connection *conn, const char *version)</td></tr>
@@ -746,6 +793,19 @@ Functions</h2></td></tr>
 <tr class="separator:a23b80aded2ad1f434662ae5b76f176f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a675dc5ad09b3950ef36c62f4a43a7414"><td class="memItemLeft" align="right" valign="top"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s2n_8h.html#a675dc5ad09b3950ef36c62f4a43a7414">s2n_offered_early_data_accept</a> (struct s2n_offered_early_data *early_data)</td></tr>
 <tr class="separator:a675dc5ad09b3950ef36c62f4a43a7414"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad1465c4cb90a8956a26a32aa8e53808c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s2n_8h.html#ad1465c4cb90a8956a26a32aa8e53808c">s2n_config_get_supported_groups</a> (struct s2n_config *config, uint16_t *groups, uint16_t groups_count_max, uint16_t *groups_count)</td></tr>
+<tr class="separator:ad1465c4cb90a8956a26a32aa8e53808c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a619375c69a21184f06fb22d7810c3831"><td class="memItemLeft" align="right" valign="top"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s2n_8h.html#a619375c69a21184f06fb22d7810c3831">s2n_config_set_serialization_version</a> (struct s2n_config *config, s2n_serialization_version version)</td></tr>
+<tr class="separator:a619375c69a21184f06fb22d7810c3831"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a978a1d8977b97f7f4faae7111a0404d3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s2n_8h.html#a978a1d8977b97f7f4faae7111a0404d3">s2n_connection_serialization_length</a> (struct s2n_connection *conn, uint32_t *length)</td></tr>
+<tr class="separator:a978a1d8977b97f7f4faae7111a0404d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5d020f94e2f7324b8a5eee91287c18b3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s2n_8h.html#a5d020f94e2f7324b8a5eee91287c18b3">s2n_connection_serialize</a> (struct s2n_connection *conn, uint8_t *buffer, uint32_t buffer_length)</td></tr>
+<tr class="separator:a5d020f94e2f7324b8a5eee91287c18b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a79859a910905832157c08251d1a76888"><td class="memItemLeft" align="right" valign="top"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s2n_8h.html#a79859a910905832157c08251d1a76888">s2n_connection_deserialize</a> (struct s2n_connection *conn, uint8_t *buffer, uint32_t buffer_length)</td></tr>
+<tr class="separator:a79859a910905832157c08251d1a76888"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0a870cb61cc69457a41f2bcee5f365a5"><td class="memItemLeft" align="right" valign="top"><a id="a0a870cb61cc69457a41f2bcee5f365a5" name="a0a870cb61cc69457a41f2bcee5f365a5"></a>
+<a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int&#160;</td><td class="memItemRight" valign="bottom"><b>s2n_config_set_cert_authorities_from_trust_store</b> (struct s2n_config *config)</td></tr>
+<tr class="separator:a0a870cb61cc69457a41f2bcee5f365a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
@@ -1567,7 +1627,7 @@ Safety</h1>
 <p >Used to help applications determine why an s2n-tls function failed.</p>
 <p >This enum is optimized for use in C switch statements. Each value in the enum represents an error "category".</p>
 <p >s2n-tls organizes errors into different "types" to allow applications to handle error values without catching all possibilities. Applications using non-blocking I/O should check the error type to determine if the I/O operation failed because it would block or for some other error. To retrieve the type for a given error use <code><a class="el" href="s2n_8h.html#aebff13e0704f879abbb6a3a7cbbe62c2">s2n_error_get_type()</a></code>. Applications should perform any error handling logic using these high level types.</p>
-<p >See the <a href="https://github.com/aws/s2n-tls/blob/main/docs/USAGE-GUIDE.md#error-handling">Error Handling</a> section for how the errors should be interpreted. </p>
+<p >See the <a href="https://github.com/aws/s2n-tls/blob/main/docs/usage-guide/topics/ch03-error-handling.md">Error Handling</a> section for how the errors should be interpreted. </p>
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a41f8ab66d28ce2f33fa8dbf858c0ac44a09221eeb73c34d50145b9c7c0eb21f25" name="a41f8ab66d28ce2f33fa8dbf858c0ac44a09221eeb73c34d50145b9c7c0eb21f25"></a>S2N_ERR_T_OK&#160;</td><td class="fielddoc"><p >No error </p>
 </td></tr>
@@ -1616,6 +1676,21 @@ Safety</h1>
       </table>
 </div><div class="memdoc">
 <p >Used to declare connections as server or client type, respectively. </p>
+
+</div>
+</div>
+<a id="aa8ab6cd4a526f781116a39bd16bab9ba" name="aa8ab6cd4a526f781116a39bd16bab9ba"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa8ab6cd4a526f781116a39bd16bab9ba">&#9670;&#160;</a></span>s2n_peer_key_update</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="s2n_8h.html#aa8ab6cd4a526f781116a39bd16bab9ba">s2n_peer_key_update</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p >Used to indicate the type of key update that is being requested. For further information refer to <code>s2n_connection_request_key_update</code>. </p>
 
 </div>
 </div>
@@ -2233,7 +2308,7 @@ Safety</h1>
         </tr>
       </table>
 </div><div class="memdoc">
-<p >Associates a public certificate chain with a <code>s2n_cert_chain_and_key</code> object. It does NOT set a private key, so the connection will need to be configured to <a href="https://github.com/aws/s2n-tls/blob/main/docs/USAGE-GUIDE.md#offloading-asynchronous-private-key-operations">offload private key operations</a>.</p>
+<p >Associates a public certificate chain with a <code>s2n_cert_chain_and_key</code> object. It does NOT set a private key, so the connection will need to be configured to <a href="https://github.com/aws/s2n-tls/blob/main/docs/usage-guide/topics/ch12-private-key-ops.md">offload private key operations</a>.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">chain_and_key</td><td>The certificate chain and private key handle </td></tr>
@@ -2763,6 +2838,33 @@ Safety</h1>
 
 </div>
 </div>
+<a id="ad664daed9d1c437460c563c6f02157d9" name="ad664daed9d1c437460c563c6f02157d9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad664daed9d1c437460c563c6f02157d9">&#9670;&#160;</a></span>s2n_client_hello_free()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int s2n_client_hello_free </td>
+          <td>(</td>
+          <td class="paramtype">struct s2n_client_hello **&#160;</td>
+          <td class="paramname"><em>ch</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p >Frees an s2n_client_hello structure.</p>
+<p >This method should be called to free s2n_client_hellos returned by s2n_client_hello_parse_message. It will error if passed an s2n_client_hello returned by s2n_connection_get_client_hello and owned by the connection.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ch</td><td>The structure to be freed. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>S2N_SUCCESS on success, S2N_FAILURE on failure. </dd></dl>
+
+</div>
+</div>
 <a id="ab83eff4e25edddcd4688854e0c4d8e62" name="ab83eff4e25edddcd4688854e0c4d8e62"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab83eff4e25edddcd4688854e0c4d8e62">&#9670;&#160;</a></span>s2n_client_hello_get_cipher_suites()</h2>
 
@@ -2831,6 +2933,98 @@ Safety</h1>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>the number of bytes the cipher_suites takes on the ClientHello message received by the server </dd></dl>
+
+</div>
+</div>
+<a id="adbab79e2b5c583efaf918283fb0222bf" name="adbab79e2b5c583efaf918283fb0222bf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adbab79e2b5c583efaf918283fb0222bf">&#9670;&#160;</a></span>s2n_client_hello_get_compression_methods()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int s2n_client_hello_get_compression_methods </td>
+          <td>(</td>
+          <td class="paramtype">struct s2n_client_hello *&#160;</td>
+          <td class="paramname"><em>ch</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t *&#160;</td>
+          <td class="paramname"><em>list</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>list_length</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t *&#160;</td>
+          <td class="paramname"><em>out_length</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p >Retrieves the list of compression methods sent in the Client Hello.</p>
+<p >Use <code><a class="el" href="s2n_8h.html#a76a3487dda504244c2b81978de6d79bb">s2n_client_hello_get_compression_methods_length()</a></code> to retrieve how much memory should be allocated for the buffer in advance.</p>
+<dl class="section note"><dt>Note</dt><dd>Compression methods were removed in TLS1.3 and therefore the only valid value in this list is the "null" compression method when TLS1.3 is negotiated.</dd>
+<dd>
+s2n-tls has never supported compression methods in any TLS version and therefore a compression method will never be negotiated or used.</dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ch</td><td>A pointer to the Client Hello </td></tr>
+    <tr><td class="paramname">list</td><td>A pointer to some memory that s2n will write the compression methods to. This memory MUST be the size of <code>list_length</code> </td></tr>
+    <tr><td class="paramname">list_length</td><td>The size of <code>list</code>. </td></tr>
+    <tr><td class="paramname">out_length</td><td>An out pointer. s2n will set its value to the size of the compression methods list in bytes. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>S2N_SUCCESS on success. S2N_FAILURE on failure </dd></dl>
+
+</div>
+</div>
+<a id="a76a3487dda504244c2b81978de6d79bb" name="a76a3487dda504244c2b81978de6d79bb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a76a3487dda504244c2b81978de6d79bb">&#9670;&#160;</a></span>s2n_client_hello_get_compression_methods_length()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int s2n_client_hello_get_compression_methods_length </td>
+          <td>(</td>
+          <td class="paramtype">struct s2n_client_hello *&#160;</td>
+          <td class="paramname"><em>ch</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t *&#160;</td>
+          <td class="paramname"><em>out_length</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p >Get the length of the compression methods list sent in the Client Hello.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ch</td><td>A pointer to the Client Hello </td></tr>
+    <tr><td class="paramname">out_length</td><td>An out pointer. Will be set to the length of the compression methods list in bytes. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>S2N_SUCCESS on success. S2N_FAILURE on failure </dd></dl>
 
 </div>
 </div>
@@ -2993,6 +3187,80 @@ Safety</h1>
 
 </div>
 </div>
+<a id="aeff080b07553418e574fa5907c6d2ca0" name="aeff080b07553418e574fa5907c6d2ca0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeff080b07553418e574fa5907c6d2ca0">&#9670;&#160;</a></span>s2n_client_hello_get_legacy_protocol_version()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int s2n_client_hello_get_legacy_protocol_version </td>
+          <td>(</td>
+          <td class="paramtype">struct s2n_client_hello *&#160;</td>
+          <td class="paramname"><em>ch</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t *&#160;</td>
+          <td class="paramname"><em>out</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p >Access the Client Hello protocol version</p>
+<dl class="section note"><dt>Note</dt><dd>This field is a legacy field in TLS1.3 and is no longer used to negotiate the protocol version of the connection. It will be set to TLS1.2 even if TLS1.3 is negotiated. Therefore this method should only be used for logging or fingerprinting.</dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ch</td><td>A pointer to the client hello struct </td></tr>
+    <tr><td class="paramname">out</td><td>The protocol version in the client hello. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ad2c9fa3dea9e458f259c142c01537e4f" name="ad2c9fa3dea9e458f259c142c01537e4f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad2c9fa3dea9e458f259c142c01537e4f">&#9670;&#160;</a></span>s2n_client_hello_get_legacy_record_version()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int s2n_client_hello_get_legacy_record_version </td>
+          <td>(</td>
+          <td class="paramtype">struct s2n_client_hello *&#160;</td>
+          <td class="paramname"><em>ch</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t *&#160;</td>
+          <td class="paramname"><em>out</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p >Access the protocol version from the header of the first record that contained the ClientHello message.</p>
+<dl class="section note"><dt>Note</dt><dd>This field has been deprecated and should not be confused with the client hello version. It is often set very low, usually to TLS1.0 for compatibility reasons, and should never be set higher than TLS1.2. Therefore this method should only be used for logging or fingerprinting.</dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">conn</td><td>A pointer to the client hello struct </td></tr>
+    <tr><td class="paramname">out</td><td>The protocol version in the record header containing the Client Hello. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="ac1fc624f4ffe9378ad77eea895bb52d6" name="ac1fc624f4ffe9378ad77eea895bb52d6"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ac1fc624f4ffe9378ad77eea895bb52d6">&#9670;&#160;</a></span>s2n_client_hello_get_raw_message()</h2>
 
@@ -3062,6 +3330,93 @@ Safety</h1>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The size of the ClientHello message received by the server </dd></dl>
+
+</div>
+</div>
+<a id="a13b362b99e61c3da07b6be2f9c4cff3f" name="a13b362b99e61c3da07b6be2f9c4cff3f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a13b362b99e61c3da07b6be2f9c4cff3f">&#9670;&#160;</a></span>s2n_client_hello_get_server_name()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int s2n_client_hello_get_server_name </td>
+          <td>(</td>
+          <td class="paramtype">struct s2n_client_hello *&#160;</td>
+          <td class="paramname"><em>ch</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t *&#160;</td>
+          <td class="paramname"><em>server_name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t&#160;</td>
+          <td class="paramname"><em>length</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t *&#160;</td>
+          <td class="paramname"><em>out_length</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p >Gets the first server name in a Client Hello.</p>
+<p >Use <code><a class="el" href="s2n_8h.html#a4345089b56dee57f4c6f97c04588289e">s2n_client_hello_get_server_name_length()</a></code> to get the amount of memory needed for the buffer.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ch</td><td>A pointer to the ClientHello </td></tr>
+    <tr><td class="paramname">server_name</td><td>A pointer to the memory which will be populated with the server name </td></tr>
+    <tr><td class="paramname">length</td><td>The maximum amount of data that can be written to <code>server_name</code> </td></tr>
+    <tr><td class="paramname">out_length</td><td>A pointer which will be populated with the size of the server name </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a4345089b56dee57f4c6f97c04588289e" name="a4345089b56dee57f4c6f97c04588289e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4345089b56dee57f4c6f97c04588289e">&#9670;&#160;</a></span>s2n_client_hello_get_server_name_length()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int s2n_client_hello_get_server_name_length </td>
+          <td>(</td>
+          <td class="paramtype">struct s2n_client_hello *&#160;</td>
+          <td class="paramname"><em>ch</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t *&#160;</td>
+          <td class="paramname"><em>length</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p >Gets the length of the first server name in a Client Hello.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ch</td><td>A pointer to the ClientHello </td></tr>
+    <tr><td class="paramname">length</td><td>A pointer which will be populated with the length of the server name </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -3156,6 +3511,60 @@ Safety</h1>
 
 </div>
 </div>
+<a id="a68a751eb59517406db2439a88e94d8d1" name="a68a751eb59517406db2439a88e94d8d1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a68a751eb59517406db2439a88e94d8d1">&#9670;&#160;</a></span>s2n_client_hello_get_supported_groups()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int s2n_client_hello_get_supported_groups </td>
+          <td>(</td>
+          <td class="paramtype">struct s2n_client_hello *&#160;</td>
+          <td class="paramname"><em>ch</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t *&#160;</td>
+          <td class="paramname"><em>groups</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t&#160;</td>
+          <td class="paramname"><em>groups_count_max</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t *&#160;</td>
+          <td class="paramname"><em>groups_count</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p >Retrieves the supported groups received from the client in the supported groups extension.</p>
+<p >IANA values for each of the received supported groups are written to the provided <code>groups</code> array, and <code>groups_count</code> is set to the number of received supported groups.</p>
+<p ><code>groups_count_max</code> should be set to the maximum capacity of the <code>groups</code> array. If <code>groups_count_max</code> is less than the number of received supported groups, this function will error. To determine how large <code>groups</code> should be in advance, use <code><a class="el" href="s2n_8h.html#aba6709ea1bac503daf846990821d8f36">s2n_client_hello_get_extension_length()</a></code> with the S2N_EXTENSION_SUPPORTED_GROUPS extension type, and divide the value by 2.</p>
+<p >If no supported groups extension was received from the peer, or the received supported groups extension is malformed, this function will error.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ch</td><td>A pointer to the ClientHello. Can be retrieved from a connection via <code><a class="el" href="s2n_8h.html#ac0c64d96b5b9a4cb600a22157d6743e3">s2n_connection_get_client_hello()</a></code>. </td></tr>
+    <tr><td class="paramname">groups</td><td>The array to populate with the received supported groups. </td></tr>
+    <tr><td class="paramname">groups_count_max</td><td>The maximum number of supported groups that can fit in the <code>groups</code> array. </td></tr>
+    <tr><td class="paramname">groups_count</td><td>Returns the number of received supported groups. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>S2N_SUCCESS on success. S2N_FAILURE on failure. </dd></dl>
+
+</div>
+</div>
 <a id="a1be05b74838db77a70ce8aba82b284fa" name="a1be05b74838db77a70ce8aba82b284fa"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a1be05b74838db77a70ce8aba82b284fa">&#9670;&#160;</a></span>s2n_client_hello_has_extension()</h2>
 
@@ -3197,6 +3606,46 @@ Safety</h1>
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a id="aacf329c844fa13ec9ccef34da945d7f2" name="aacf329c844fa13ec9ccef34da945d7f2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aacf329c844fa13ec9ccef34da945d7f2">&#9670;&#160;</a></span>s2n_client_hello_parse_message()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> struct s2n_client_hello * s2n_client_hello_parse_message </td>
+          <td>(</td>
+          <td class="paramtype">const uint8_t *&#160;</td>
+          <td class="paramname"><em>bytes</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>size</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p >Creates an s2n_client_hello from bytes representing a ClientHello message.</p>
+<p >The input bytes should include the message header (message type and length), but not the record header.</p>
+<p >Unlike s2n_connection_get_client_hello, the s2n_client_hello returned by this method is owned by the application and must be freed with s2n_client_hello_free.</p>
+<p >This method does not support SSLv2 ClientHellos.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">bytes</td><td>The raw bytes representing the ClientHello. </td></tr>
+    <tr><td class="paramname">size</td><td>The size of raw_message. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A new s2n_client_hello on success, or NULL on failure. </dd></dl>
 
 </div>
 </div>
@@ -3495,6 +3944,35 @@ Safety</h1>
 
 </div>
 </div>
+<a id="abbdc139b4a68057aa0ce812b5f07138d" name="abbdc139b4a68057aa0ce812b5f07138d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abbdc139b4a68057aa0ce812b5f07138d">&#9670;&#160;</a></span>s2n_config_disable_x509_time_verification()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int s2n_config_disable_x509_time_verification </td>
+          <td>(</td>
+          <td class="paramtype">struct s2n_config *&#160;</td>
+          <td class="paramname"><em>config</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p >Disables timestamp validation for received certificates.</p>
+<p >By default, s2n-tls checks the notBefore and notAfter fields on the certificates it receives during the handshake. If the current date is not within the range of these fields for any certificate in the chain of trust, <code><a class="el" href="s2n_8h.html#ad3222e7aacf35a56be842678171be440">s2n_negotiate()</a></code> will error. This validation is in accordance with RFC 5280, section 6.1.3 a.2: <a href="https://datatracker.ietf.org/doc/html/rfc5280#section-6.1.3">https://datatracker.ietf.org/doc/html/rfc5280#section-6.1.3</a>.</p>
+<p >This API will disable this timestamp validation, permitting negotiation with peers that send expired certificates, or certificates that are not yet considered valid.</p>
+<dl class="section warning"><dt>Warning</dt><dd>Applications calling this API should seriously consider the security implications of disabling this validation. The validity period of a certificate corresponds to the range of time in which the CA is guaranteed to maintain information regarding the certificate's revocation status. As such, it may not be possible to obtain accurate revocation information for certificates with invalid timestamps. Applications disabling this validation MUST implement some external method for limiting certificate lifetime.</dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">config</td><td>The associated connection config. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>S2N_SUCCESS on success, S2N_FAILURE on failure. </dd></dl>
+
+</div>
+</div>
 <a id="aa9d89fb59987254fe2546881d172be18" name="aa9d89fb59987254fe2546881d172be18"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa9d89fb59987254fe2546881d172be18">&#9670;&#160;</a></span>s2n_config_disable_x509_verification()</h2>
 
@@ -3694,6 +4172,61 @@ Safety</h1>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>S2N_SUCCESS on success. S2N_FAILURE on failure </dd></dl>
+
+</div>
+</div>
+<a id="ad1465c4cb90a8956a26a32aa8e53808c" name="ad1465c4cb90a8956a26a32aa8e53808c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad1465c4cb90a8956a26a32aa8e53808c">&#9670;&#160;</a></span>s2n_config_get_supported_groups()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int s2n_config_get_supported_groups </td>
+          <td>(</td>
+          <td class="paramtype">struct s2n_config *&#160;</td>
+          <td class="paramname"><em>config</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t *&#160;</td>
+          <td class="paramname"><em>groups</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t&#160;</td>
+          <td class="paramname"><em>groups_count_max</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t *&#160;</td>
+          <td class="paramname"><em>groups_count</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p >Retrieves the list of supported groups configured by the security policy associated with <code>config</code>.</p>
+<p >The retrieved list of groups will contain all of the supported groups for a security policy that are compatible with the build of s2n-tls. For instance, PQ kem groups that are not supported by the linked libcrypto will not be written. Otherwise, all of the supported groups configured for the security policy will be written. This API can be used with the <a class="el" href="s2n_8h.html#a68a751eb59517406db2439a88e94d8d1">s2n_client_hello_get_supported_groups()</a> API as a means of comparing compatibility between a client and server.</p>
+<p >IANA values for each of the supported groups are written to the provided <code>groups</code> array, and <code>groups_count</code> is set to the number of written supported groups.</p>
+<p ><code>groups_count_max</code> should be set to the maximum capacity of the <code>groups</code> array. If <code>groups_count_max</code> is less than the number of supported groups configured by the security policy, this function will error.</p>
+<p >Note that this API retrieves only the groups from a security policy that are available to negotiate via the supported groups extension, and does not return TLS 1.2 PQ kem groups that are negotiated in the supported PQ kem parameters extension.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">config</td><td>A pointer to the s2n_config object from which the supported groups will be retrieved. </td></tr>
+    <tr><td class="paramname">groups</td><td>The array to populate with the supported groups. </td></tr>
+    <tr><td class="paramname">groups_count_max</td><td>The maximum number of supported groups that can fit in the <code>groups</code> array. </td></tr>
+    <tr><td class="paramname">groups_count</td><td>Set to the number of supported groups written to <code>groups</code>. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>S2N_SUCCESS on success. S2N_FAILURE on failure. </dd></dl>
 
 </div>
 </div>
@@ -4196,7 +4729,7 @@ Safety</h1>
       </table>
 </div><div class="memdoc">
 <p >Sets the security policy that includes the cipher/kem/signature/ecc preferences and protocol version.</p>
-<p >See the <a href="https://github.com/aws/s2n-tls/blob/main/docs/USAGE-GUIDE.md">USAGE-GUIDE.md</a> for how to use security policies. </p>
+<p >See the <a href="https://github.com/aws/s2n-tls/blob/main/docs/usage-guide">USAGE-GUIDE.md</a> for how to use security policies. </p>
 
 </div>
 </div>
@@ -4858,6 +5391,44 @@ Safety</h1>
 
 </div>
 </div>
+<a id="a619375c69a21184f06fb22d7810c3831" name="a619375c69a21184f06fb22d7810c3831"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a619375c69a21184f06fb22d7810c3831">&#9670;&#160;</a></span>s2n_config_set_serialization_version()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int s2n_config_set_serialization_version </td>
+          <td>(</td>
+          <td class="paramtype">struct s2n_config *&#160;</td>
+          <td class="paramname"><em>config</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">s2n_serialization_version&#160;</td>
+          <td class="paramname"><em>version</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p >Set what version to use when serializing connections</p>
+<p >A version is required to serialize connections. Versioning ensures that all features negotiated during the handshake will be available wherever the connection is deserialized. Applications may need to update this version to pick up new features, since versioning may disable newer TLS features to ensure compatibility.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">config</td><td>A pointer to the config object. </td></tr>
+    <tr><td class="paramname">version</td><td>The requested version. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>S2N_SUCCESS on success, S2N_FAILURE on error. </dd></dl>
+
+</div>
+</div>
 <a id="abf75ca7a2f3ac18b228e8b3509c35895" name="abf75ca7a2f3ac18b228e8b3509c35895"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#abf75ca7a2f3ac18b228e8b3509c35895">&#9670;&#160;</a></span>s2n_config_set_server_max_early_data_size()</h2>
 
@@ -5505,6 +6076,53 @@ Safety</h1>
 
 </div>
 </div>
+<a id="a79859a910905832157c08251d1a76888" name="a79859a910905832157c08251d1a76888"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a79859a910905832157c08251d1a76888">&#9670;&#160;</a></span>s2n_connection_deserialize()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int s2n_connection_deserialize </td>
+          <td>(</td>
+          <td class="paramtype">struct s2n_connection *&#160;</td>
+          <td class="paramname"><em>conn</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t *&#160;</td>
+          <td class="paramname"><em>buffer</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>buffer_length</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p >Deserializes the provided buffer into the <code>s2n_connection</code> parameter.</p>
+<dl class="section warning"><dt>Warning</dt><dd>s2n-tls DOES NOT check the integrity of the provided buffer. s2n-tls may successfully deserialize a corrupted buffer which WILL cause a connection failure when attempting to resume sending/receiving encrypted data. To avoid this, it is recommended to MAC and encrypt the serialized connection before sending it off-box and deserializing it.</dd>
+<dd>
+Only a minimal amount of information about the original TLS connection is serialized. Therefore, after deserialization, the connection will behave like a new <code>s2n_connection</code> from the <code><a class="el" href="s2n_8h.html#a58005ebdc3e4caf6b6f40321bbc5b1e5">s2n_connection_new()</a></code> call, except that it can read/write encrypted data from a peer. Any desired config-level or connection-level configuration will need to be re-applied to the deserialized connection. For this same reason none of the connection getters will return useful information about the original connection after deserialization. Any information about the original connection needs to be retrieved before serialization.</dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">conn</td><td>A pointer to the connection object. Should be a new s2n_connection object. </td></tr>
+    <tr><td class="paramname">buffer</td><td>A pointer to the buffer where the serialized connection will be read from. </td></tr>
+    <tr><td class="paramname">buffer_length</td><td>Maximum amount of data that can be read from the buffer parameter. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>S2N_SUCCESS on success, S2N_FAILURE on error. </dd></dl>
+
+</div>
+</div>
 <a id="a9c7664ec2fe4c694148ad303f4229f94" name="a9c7664ec2fe4c694148ad303f4229f94"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a9c7664ec2fe4c694148ad303f4229f94">&#9670;&#160;</a></span>s2n_connection_free()</h2>
 
@@ -5753,13 +6371,14 @@ Safety</h1>
         </tr>
       </table>
 </div><div class="memdoc">
-<p >Gets the client certificate chain and places it in the <code>der_cert_chain_out</code> buffer. <code>cert_chain_len</code> is updated to match the size the chain buffer.</p>
-<dl class="section warning"><dt>Warning</dt><dd>The buffers share a lifetime with the s2n_connection object.</dd></dl>
+<p >Gets the raw certificate chain received from the client.</p>
+<p >The retrieved certificate chain has the format described by the TLS 1.2 RFC: <a href="https://datatracker.ietf.org/doc/html/rfc5246#section-7.4.2">https://datatracker.ietf.org/doc/html/rfc5246#section-7.4.2</a>. Each certificate is a DER-encoded ASN.1 X.509, prepended by a 3 byte network-endian length value. Note that this format is used regardless of the connection's protocol version.</p>
+<dl class="section warning"><dt>Warning</dt><dd>The buffer pointed to by <code>cert_chain_out</code> shares its lifetime with the s2n_connection object.</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">conn</td><td>A pointer to the s2n_connection object </td></tr>
-    <tr><td class="paramname">der_cert_chain_out</td><td>A uint8_t pointer. This will be updated to point to the client certificate chain. </td></tr>
-    <tr><td class="paramname">cert_chain_len</td><td>A pointer to a uint32_t. This will be updated to match the size of the buffer <code>der_cert_chain_out</code> points to. </td></tr>
+    <tr><td class="paramname">cert_chain_out</td><td>A pointer that's set to the client certificate chain. </td></tr>
+    <tr><td class="paramname">cert_chain_len</td><td>A pointer that's set to the size of the <code>cert_chain_out</code> buffer. </td></tr>
   </table>
   </dd>
 </dl>
@@ -6062,6 +6681,53 @@ Safety</h1>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The last message name in the TLS state machine, e.g. "SERVER_HELLO", "APPLICATION_DATA". </dd></dl>
+
+</div>
+</div>
+<a id="ad34a96dd1e2cae7dd2da4812576a65fc" name="ad34a96dd1e2cae7dd2da4812576a65fc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad34a96dd1e2cae7dd2da4812576a65fc">&#9670;&#160;</a></span>s2n_connection_get_master_secret()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int s2n_connection_get_master_secret </td>
+          <td>(</td>
+          <td class="paramtype">const struct s2n_connection *&#160;</td>
+          <td class="paramname"><em>conn</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t *&#160;</td>
+          <td class="paramname"><em>secret_bytes</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>max_size</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p >Provides access to the TLS master secret.</p>
+<p >This is a dangerous method and should not be used unless absolutely necessary. Mishandling the master secret can compromise both the current connection and any past or future connections that use the same master secret due to session resumption.</p>
+<p >This method is only supported for older TLS versions, and will report an S2N_ERR_INVALID_STATE usage error if called for a TLS1.3 connection. TLS1.3 includes a new key schedule that derives independent secrets from the master secret for specific purposes, such as separate traffic, session ticket, and exporter secrets. Using the master secret directly circumvents that security feature, reducing the security of the protocol.</p>
+<p >If you need cryptographic material tied to the current TLS session, consider <code>s2n_connection_tls_exporter</code> instead. Although s2n_connection_tls_exporter currently only supports TLS1.3, there is also an RFC that describes exporters for older TLS versions: <a href="https://datatracker.ietf.org/doc/html/rfc5705">https://datatracker.ietf.org/doc/html/rfc5705</a> Using the master secret as-is or defining your own exporter is dangerous.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">conn</td><td>A pointer to the connection. </td></tr>
+    <tr><td class="paramname">secret_bytes</td><td>Memory to copy the master secret into. The secret is always 48 bytes long. </td></tr>
+    <tr><td class="paramname">max_size</td><td>The size of the memory available at <code>secret_bytes</code>. Must be at least 48 bytes. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>S2N_SUCCESS on success, S2N_FAILURE otherwise. <code>secret_bytes</code> will be set on success. </dd></dl>
 
 </div>
 </div>
@@ -7072,6 +7738,132 @@ Safety</h1>
 
 </div>
 </div>
+<a id="a824fed871df4202b6bd5428ee791f660" name="a824fed871df4202b6bd5428ee791f660"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a824fed871df4202b6bd5428ee791f660">&#9670;&#160;</a></span>s2n_connection_request_key_update()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int s2n_connection_request_key_update </td>
+          <td>(</td>
+          <td class="paramtype">struct s2n_connection *&#160;</td>
+          <td class="paramname"><em>conn</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="s2n_8h.html#aa8ab6cd4a526f781116a39bd16bab9ba">s2n_peer_key_update</a>&#160;</td>
+          <td class="paramname"><em>peer_request</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p >Signals the connection to do a key_update at the next possible opportunity. Note that the resulting key update message will not be sent until <code>s2n_send</code> is called.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">conn</td><td>The connection object to trigger the key update on. </td></tr>
+    <tr><td class="paramname">peer_request</td><td>Indicates if a key update should also be requested of the peer. When set to <code>S2N_KEY_UPDATE_NOT_REQUESTED</code>, then only the sending key of <code>conn</code> will be updated. If set to <code>S2N_KEY_UPDATE_REQUESTED</code>, then the sending key of conn will be updated AND the peer will be requested to update their sending key. Note that s2n-tls currently only supports <code>peer_request</code> being set to <code>S2N_KEY_UPDATE_NOT_REQUESTED</code> and will return S2N_FAILURE if any other value is used. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>S2N_SUCCESS on success. S2N_FAILURE on failure </dd></dl>
+
+</div>
+</div>
+<a id="a978a1d8977b97f7f4faae7111a0404d3" name="a978a1d8977b97f7f4faae7111a0404d3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a978a1d8977b97f7f4faae7111a0404d3">&#9670;&#160;</a></span>s2n_connection_serialization_length()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int s2n_connection_serialization_length </td>
+          <td>(</td>
+          <td class="paramtype">struct s2n_connection *&#160;</td>
+          <td class="paramname"><em>conn</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t *&#160;</td>
+          <td class="paramname"><em>length</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p >Retrieves the length of the serialized connection from <code><a class="el" href="s2n_8h.html#a5d020f94e2f7324b8a5eee91287c18b3">s2n_connection_serialize()</a></code>. Should be used to allocate enough memory for the serialized connection buffer.</p>
+<dl class="section note"><dt>Note</dt><dd>The size of the serialized connection changes based on parameters negotiated in the TLS handshake. Do not expect the size to always remain the same.</dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">conn</td><td>A pointer to the connection object. </td></tr>
+    <tr><td class="paramname">length</td><td>Output parameter where the length will be written. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>S2N_SUCCESS on success, S2N_FAILURE on error. </dd></dl>
+
+</div>
+</div>
+<a id="a5d020f94e2f7324b8a5eee91287c18b3" name="a5d020f94e2f7324b8a5eee91287c18b3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5d020f94e2f7324b8a5eee91287c18b3">&#9670;&#160;</a></span>s2n_connection_serialize()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int s2n_connection_serialize </td>
+          <td>(</td>
+          <td class="paramtype">struct s2n_connection *&#160;</td>
+          <td class="paramname"><em>conn</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t *&#160;</td>
+          <td class="paramname"><em>buffer</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>buffer_length</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p >Serializes the s2n_connection into the provided buffer.</p>
+<p >This API takes an established s2n-tls connection object and "serializes" it into a transferable object to be sent off-box or to another process. This transferable object can then be "deserialized" using the <code>s2n_connection_deserialize</code> method to instantiate an s2n-tls connection object that can talk to the original peer with the same encryption keys.</p>
+<dl class="section warning"><dt>Warning</dt><dd>This feature is dangerous because it provides cryptographic material from a TLS session in plaintext. Users MUST both encrypt and MAC the contents of the outputted material to provide secrecy and integrity if this material is transported off-box. DO NOT store or send this material off-box without encryption.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>You MUST have used <code><a class="el" href="s2n_8h.html#a619375c69a21184f06fb22d7810c3831">s2n_config_set_serialization_version()</a></code> to set a version on the s2n_config object associated with this connection before this connection began its TLS handshake. </dd>
+<dd>
+Call <code>s2n_connection_serialization_length</code> to retrieve the amount of memory needed for the buffer parameter. </dd>
+<dd>
+This API will error if the handshake is not yet complete.</dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">conn</td><td>A pointer to the connection object. </td></tr>
+    <tr><td class="paramname">buffer</td><td>A pointer to the buffer where the serialized connection will be written. </td></tr>
+    <tr><td class="paramname">buffer_length</td><td>Maximum amount of data that can be written to the buffer param. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>S2N_SUCCESS on success, S2N_FAILURE on error. </dd></dl>
+
+</div>
+</div>
 <a id="a71cfccf774ddf237a30eb9c2fc9b0831" name="a71cfccf774ddf237a30eb9c2fc9b0831"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a71cfccf774ddf237a30eb9c2fc9b0831">&#9670;&#160;</a></span>s2n_connection_server_name_extension_used()</h2>
 
@@ -7526,6 +8318,57 @@ Safety</h1>
 
 </div>
 </div>
+<a id="ae30791c458875956ef9f4cdbd8c8c19f" name="ae30791c458875956ef9f4cdbd8c8c19f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae30791c458875956ef9f4cdbd8c8c19f">&#9670;&#160;</a></span>s2n_connection_set_recv_buffering()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int s2n_connection_set_recv_buffering </td>
+          <td>(</td>
+          <td class="paramtype">struct s2n_connection *&#160;</td>
+          <td class="paramname"><em>conn</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>enabled</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p >Configure the connection to reduce potentially expensive calls to recv.</p>
+<p >If this setting is disabled, s2n-tls will call read twice for every TLS record, which can be expensive but ensures that s2n-tls will always attempt to read the exact number of bytes it requires. If this setting is enabled, s2n-tls will instead reduce the number of calls to read by attempting to read as much data as possible in each read call, storing the extra in the existing IO buffers. This may cause it to request more data than will ever actually be available.</p>
+<p >There is no additional memory cost of enabling this setting. It reuses the existing IO buffers.</p>
+<p >This setting is disabled by default. Depending on how your application detects data available for reading, buffering reads may break your event loop. In particular, note that:</p>
+<ol type="1">
+<li>File descriptor reads or calls to your custom s2n_recv_cb may request more data than is available. Reads must return partial data when available rather than blocking until all requested data is available.</li>
+<li>s2n_negotiate may read and buffer application data records. You must call s2n_recv at least once after negotiation to ensure that you handle any buffered data.</li>
+<li>s2n_recv may read and buffer more records than it parses and decrypts. You must call s2n_recv until it reports S2N_ERR_T_BLOCKED, rather than just until it reports S2N_SUCCESS.</li>
+<li>s2n_peek reports available decrypted data. It does not report any data buffered by this feature. However, s2n_peek_buffered does report data buffered by this feature.</li>
+<li>s2n_connection_release_buffers will not release the input buffer if it contains buffered data.</li>
+</ol>
+<p >For example: if your event loop uses <code>poll</code>, you will receive a POLLIN event for your read file descriptor when new data is available. When you call s2n_recv to read that data, s2n-tls reads one or more TLS records from the file descriptor. If you stop calling s2n_recv before it reports S2N_ERR_T_BLOCKED, some of those records may remain in s2n-tls's read buffer. If you read part of a record, s2n_peek will report the remainder of that record as available. But if you don't read any of a record, it remains encrypted and is not reported by s2n_peek, but is still reported by s2n_peek_buffered. And because the data is buffered in s2n-tls instead of in the file descriptor, another call to <code>poll</code> will NOT report any more data available. Your application may hang waiting for more data.</p>
+<dl class="section warning"><dt>Warning</dt><dd>This feature cannot be enabled for a connection that will enable kTLS for receiving.</dd>
+<dd>
+This feature may work with blocking IO, if used carefully. Your blocking IO must support partial reads (so MSG_WAITALL cannot be used). You will either need to know exactly how much data your peer is sending, or will need to use <code>s2n_peek</code> and <code>s2n_peek_buffered</code> rather than relying on S2N_ERR_T_BLOCKED as noted in #3 above.</dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">conn</td><td>The connection object being updated </td></tr>
+    <tr><td class="paramname">enabled</td><td>Set to <code>true</code> to enable, <code>false</code> to disable. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>S2N_SUCCESS on success. S2N_FAILURE on failure </dd></dl>
+
+</div>
+</div>
 <a id="a699fd9e05a8e8163811db6cab01af973" name="a699fd9e05a8e8163811db6cab01af973"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a699fd9e05a8e8163811db6cab01af973">&#9670;&#160;</a></span>s2n_connection_set_recv_cb()</h2>
 
@@ -7933,6 +8776,74 @@ The callback may send less than the requested length. The function should return
 
 </div>
 </div>
+<a id="ae8c865863e6dcfa38d4de30cd11f7c40" name="ae8c865863e6dcfa38d4de30cd11f7c40"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae8c865863e6dcfa38d4de30cd11f7c40">&#9670;&#160;</a></span>s2n_connection_tls_exporter()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int s2n_connection_tls_exporter </td>
+          <td>(</td>
+          <td class="paramtype">struct s2n_connection *&#160;</td>
+          <td class="paramname"><em>conn</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint8_t *&#160;</td>
+          <td class="paramname"><em>label</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>label_length</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint8_t *&#160;</td>
+          <td class="paramname"><em>context</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>context_length</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t *&#160;</td>
+          <td class="paramname"><em>output</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>output_length</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p >Provides access to the TLS-Exporter functionality.</p>
+<p >See <a href="https://datatracker.ietf.org/doc/html/rfc5705">https://datatracker.ietf.org/doc/html/rfc5705</a> and <a href="https://www.rfc-editor.org/rfc/rfc8446">https://www.rfc-editor.org/rfc/rfc8446</a>.</p>
+<dl class="section note"><dt>Note</dt><dd>This is currently only available with TLS 1.3 connections which have finished a handshake.</dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">conn</td><td>A pointer to the connection </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A POSIX error signal. If an error was returned, the value contained in <code>output</code> should be considered invalid. </dd></dl>
+
+</div>
+</div>
 <a id="a91d835f1152a699dfd00ff781c86774e" name="a91d835f1152a699dfd00ff781c86774e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a91d835f1152a699dfd00ff781c86774e">&#9670;&#160;</a></span>s2n_connection_use_corked_io()</h2>
 
@@ -8147,6 +9058,34 @@ Reusing the same connection handle(s) is more performant than repeatedly calling
 
 </div>
 </div>
+<a id="ae2f5f01eb4a3c924ffb8674bd3256601" name="ae2f5f01eb4a3c924ffb8674bd3256601"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae2f5f01eb4a3c924ffb8674bd3256601">&#9670;&#160;</a></span>s2n_get_fips_mode()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int s2n_get_fips_mode </td>
+          <td>(</td>
+          <td class="paramtype">s2n_fips_mode *&#160;</td>
+          <td class="paramname"><em>fips_mode</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p >Determines whether s2n-tls is operating in FIPS mode.</p>
+<p >s2n-tls enters FIPS mode on initialization when the linked libcrypto has FIPS mode enabled. Some libcryptos, such as AWS-LC-FIPS, have FIPS mode enabled by default. With other libcryptos, such as OpenSSL, FIPS mode must be enabled before initialization by calling <code>FIPS_mode_set()</code>.</p>
+<p >s2n-tls MUST be linked to a FIPS libcrypto and MUST be in FIPS mode in order to comply with FIPS requirements. Applications desiring FIPS compliance should use this API to ensure that s2n-tls has been properly linked with a FIPS libcrypto and has successfully entered FIPS mode.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">fips_mode</td><td>Set to the FIPS mode of s2n-tls. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>S2N_SUCCESS on success. S2N_FAILURE on failure. </dd></dl>
+
+</div>
+</div>
 <a id="af149f0a7173ca87281b568fa87e46db7" name="af149f0a7173ca87281b568fa87e46db7"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#af149f0a7173ca87281b568fa87e46db7">&#9670;&#160;</a></span>s2n_get_openssl_version()</h2>
 
@@ -8320,10 +9259,11 @@ Reusing the same connection handle(s) is more performant than repeatedly calling
 </div><div class="memdoc">
 <p >Performs the initial "handshake" phase of a TLS connection and must be called before any <a class="el" href="s2n_8h.html#a3b67ff058796d4c6c6caddfd0f10274e">s2n_recv()</a> or <a class="el" href="s2n_8h.html#a9afeb514731fa9d74edf6b9e1348c067">s2n_send()</a> calls.</p>
 <dl class="section note"><dt>Note</dt><dd>When using client authentication with TLS1.3, <a class="el" href="s2n_8h.html#ad3222e7aacf35a56be842678171be440">s2n_negotiate()</a> will report a successful handshake to clients before the server validates the client certificate. If the server then rejects the client certificate, the client may later receive an alert while calling s2n_recv, potentially after already having sent application data with s2n_send.</dd></dl>
+<p>See the following example for guidance on calling <code><a class="el" href="s2n_8h.html#ad3222e7aacf35a56be842678171be440">s2n_negotiate()</a></code>: <a href="https://github.com/aws/s2n-tls/blob/main/docs/examples/s2n_negotiate.c">https://github.com/aws/s2n-tls/blob/main/docs/examples/s2n_negotiate.c</a></p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">conn</td><td>A pointer to the s2n_connection object </td></tr>
-    <tr><td class="paramname">blocked</td><td>A pointer which will be set to the blocked status. </td></tr>
+    <tr><td class="paramname">blocked</td><td>A pointer which will be set to the blocked status if an <code>S2N_ERR_T_BLOCKED</code> error is returned. </td></tr>
   </table>
   </dd>
 </dl>
@@ -8708,6 +9648,34 @@ Safety</h1>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The number of bytes that can be read from the connection </dd></dl>
+
+</div>
+</div>
+<a id="a9e66cd9a37ddf82419039cdc60b28895" name="a9e66cd9a37ddf82419039cdc60b28895"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9e66cd9a37ddf82419039cdc60b28895">&#9670;&#160;</a></span>s2n_peek_buffered()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> uint32_t s2n_peek_buffered </td>
+          <td>(</td>
+          <td class="paramtype">struct s2n_connection *&#160;</td>
+          <td class="paramname"><em>conn</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p >Reports how many bytes of unprocessed TLS records are buffered due to the optimization enabled by <code>s2n_connection_set_recv_buffering</code>.</p>
+<p ><code>s2n_peek_buffered</code> is not a replacement for <code>s2n_peek</code>. While <code>s2n_peek</code> reports application data that is ready for the application to read with no additional processing, <code>s2n_peek_buffered</code> reports raw TLS records that still need to be parsed and likely decrypted. Those records may contain application data, but they may also only contain TLS control messages.</p>
+<p >If an application needs to determine whether there is any data left to handle (for example, before calling <code>poll</code> to wait on the read file descriptor) then that application must check both <code>s2n_peek</code> and <code>s2n_peek_buffered</code>.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">conn</td><td>A pointer to the s2n_connection object </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The number of buffered encrypted bytes </dd></dl>
 
 </div>
 </div>
@@ -9127,29 +10095,18 @@ Safety</h1>
       </table>
 </div><div class="memdoc">
 <p >Decrypts and reads **size* to <code>buf</code> data from the associated connection.</p>
-<dl class="section note"><dt>Note</dt><dd>Unlike OpenSSL, repeated calls to <code>s2n_recv</code> should not duplicate the original parameters, but should update <code>buf</code> and <code>size</code> per the indication of size read. For example; <div class="fragment"><div class="line"><a class="code hl_enumeration" href="s2n_8h.html#af70ca0b089daa98cd79a424d3f6af15d">s2n_blocked_status</a> blocked;</div>
-<div class="line"><span class="keywordtype">int</span> bytes_read = 0;</div>
-<div class="line"><span class="keywordtype">char</span> data[10];</div>
-<div class="line"><span class="keywordflow">do</span> {</div>
-<div class="line">    <span class="keywordtype">int</span> r = <a class="code hl_function" href="s2n_8h.html#a3b67ff058796d4c6c6caddfd0f10274e">s2n_recv</a>(conn, data + bytes_read, 10 - bytes_read, &amp;blocked);</div>
-<div class="line">    <span class="keywordflow">if</span> (r &lt; 0) {</div>
-<div class="line">        <span class="keywordflow">break</span>;</div>
-<div class="line">    }</div>
-<div class="line">    bytes_read += r;</div>
-<div class="line">} <span class="keywordflow">while</span> (blocked != S2N_NOT_BLOCKED);</div>
-<div class="ttc" id="as2n_8h_html_a3b67ff058796d4c6c6caddfd0f10274e"><div class="ttname"><a href="s2n_8h.html#a3b67ff058796d4c6c6caddfd0f10274e">s2n_recv</a></div><div class="ttdeci">S2N_API ssize_t s2n_recv(struct s2n_connection *conn, void *buf, ssize_t size, s2n_blocked_status *blocked)</div></div>
-<div class="ttc" id="as2n_8h_html_af70ca0b089daa98cd79a424d3f6af15d"><div class="ttname"><a href="s2n_8h.html#af70ca0b089daa98cd79a424d3f6af15d">s2n_blocked_status</a></div><div class="ttdeci">s2n_blocked_status</div><div class="ttdef"><b>Definition:</b> s2n.h:1822</div></div>
-</div><!-- fragment --></dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Unlike OpenSSL, repeated calls to <code>s2n_recv</code> should not duplicate the original parameters, but should update <code>buf</code> and <code>size</code> per the indication of size read.</dd></dl>
+<p>See the following example for guidance on calling <code><a class="el" href="s2n_8h.html#a3b67ff058796d4c6c6caddfd0f10274e">s2n_recv()</a></code>: <a href="https://github.com/aws/s2n-tls/blob/main/docs/examples/s2n_recv.c">https://github.com/aws/s2n-tls/blob/main/docs/examples/s2n_recv.c</a></p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">conn</td><td>A pointer to the s2n_connection object </td></tr>
     <tr><td class="paramname">buf</td><td>A pointer to a buffer that s2n will place read data into. </td></tr>
     <tr><td class="paramname">size</td><td>Size of <code>buf</code> </td></tr>
-    <tr><td class="paramname">blocked</td><td>A pointer which will be set to the blocked status, as in <a class="el" href="s2n_8h.html#ad3222e7aacf35a56be842678171be440">s2n_negotiate()</a> </td></tr>
+    <tr><td class="paramname">blocked</td><td>A pointer which will be set to the blocked status if an <code>S2N_ERR_T_BLOCKED</code> error is returned. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>number of bytes read. 0 if the connection was shutdown by peer. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The number of bytes read on success. 0 if the connection was shutdown by the peer. S2N_FAILURE on failure. </dd></dl>
 
 </div>
 </div>
@@ -9197,7 +10154,7 @@ Safety</h1>
       </table>
 </div><div class="memdoc">
 <p >Called by the server to begin negotiation and accept any early data the client sends.</p>
-<p >See <a href="https://github.com/aws/s2n-tls/blob/main/docs/USAGE-GUIDE.md#using-early-data&ndash;0rtt">https://github.com/aws/s2n-tls/blob/main/docs/USAGE-GUIDE.md#using-early-data&amp;ndash;0rtt</a> for usage and examples. DO NOT USE unless you have considered the security issues and implemented mitigation for anti-replay attacks.</p>
+<p >See <a href="https://github.com/aws/s2n-tls/blob/main/docs/usage-guide/topics/ch14-early-data.md">https://github.com/aws/s2n-tls/blob/main/docs/usage-guide/topics/ch14-early-data.md</a> for usage and examples. DO NOT USE unless you have considered the security issues and implemented mitigation for anti-replay attacks.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">conn</td><td>A pointer to the connection </td></tr>
@@ -9252,28 +10209,18 @@ Safety</h1>
 <p >Writes and encrypts <code>size</code> of <code>buf</code> data to the associated connection. <a class="el" href="s2n_8h.html#a9afeb514731fa9d74edf6b9e1348c067">s2n_send()</a> will return the number of bytes written, and may indicate a partial write.</p>
 <dl class="section note"><dt>Note</dt><dd>Partial writes are possible not just for non-blocking I/O, but also for connections aborted while active. </dd>
 <dd>
-Unlike OpenSSL, repeated calls to <a class="el" href="s2n_8h.html#a9afeb514731fa9d74edf6b9e1348c067">s2n_send()</a> should not duplicate the original parameters, but should update <code>buf</code> and <code>size</code> per the indication of size written. For example; <div class="fragment"><div class="line"><a class="code hl_enumeration" href="s2n_8h.html#af70ca0b089daa98cd79a424d3f6af15d">s2n_blocked_status</a> blocked;</div>
-<div class="line"><span class="keywordtype">int</span> written = 0;</div>
-<div class="line"><span class="keywordtype">char</span> data[10]; </div>
-<div class="line"><span class="keywordflow">do</span> {</div>
-<div class="line">    <span class="keywordtype">int</span> w = <a class="code hl_function" href="s2n_8h.html#a9afeb514731fa9d74edf6b9e1348c067">s2n_send</a>(conn, data + written, 10 - written, &amp;blocked);</div>
-<div class="line">    <span class="keywordflow">if</span> (w &lt; 0) {</div>
-<div class="line">        <span class="keywordflow">break</span>;</div>
-<div class="line">    }</div>
-<div class="line">    written += w;</div>
-<div class="line">} <span class="keywordflow">while</span> (blocked != S2N_NOT_BLOCKED);</div>
-<div class="ttc" id="as2n_8h_html_a9afeb514731fa9d74edf6b9e1348c067"><div class="ttname"><a href="s2n_8h.html#a9afeb514731fa9d74edf6b9e1348c067">s2n_send</a></div><div class="ttdeci">S2N_API ssize_t s2n_send(struct s2n_connection *conn, const void *buf, ssize_t size, s2n_blocked_status *blocked)</div></div>
-</div><!-- fragment --></dd></dl>
+Unlike OpenSSL, repeated calls to <a class="el" href="s2n_8h.html#a9afeb514731fa9d74edf6b9e1348c067">s2n_send()</a> should not duplicate the original parameters, but should update <code>buf</code> and <code>size</code> per the indication of size written.</dd></dl>
+<p>See the following example for guidance on calling <code><a class="el" href="s2n_8h.html#a9afeb514731fa9d74edf6b9e1348c067">s2n_send()</a></code>: <a href="https://github.com/aws/s2n-tls/blob/main/docs/examples/s2n_send.c">https://github.com/aws/s2n-tls/blob/main/docs/examples/s2n_send.c</a></p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">conn</td><td>A pointer to the s2n_connection object </td></tr>
     <tr><td class="paramname">buf</td><td>A pointer to a buffer that s2n will write data from </td></tr>
     <tr><td class="paramname">size</td><td>The size of buf </td></tr>
-    <tr><td class="paramname">blocked</td><td>A pointer which will be set to the blocked status, as in <a class="el" href="s2n_8h.html#ad3222e7aacf35a56be842678171be440">s2n_negotiate()</a> </td></tr>
+    <tr><td class="paramname">blocked</td><td>A pointer which will be set to the blocked status if an <code>S2N_ERR_T_BLOCKED</code> error is returned. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The number of bytes written, and may indicate a partial write </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The number of bytes written on success, which may indicate a partial write. S2N_FAILURE on failure. </dd></dl>
 
 </div>
 </div>
@@ -9321,7 +10268,7 @@ Unlike OpenSSL, repeated calls to <a class="el" href="s2n_8h.html#a9afeb514731fa
       </table>
 </div><div class="memdoc">
 <p >Called by the client to begin negotiation and send early data.</p>
-<p >See <a href="https://github.com/aws/s2n-tls/blob/main/docs/USAGE-GUIDE.md#using-early-data&ndash;0rtt">https://github.com/aws/s2n-tls/blob/main/docs/USAGE-GUIDE.md#using-early-data&amp;ndash;0rtt</a> for usage and examples. DO NOT USE unless you have considered the security issues and implemented mitigation for anti-replay attacks.</p>
+<p >See <a href="https://github.com/aws/s2n-tls/blob/main/docs/usage-guide/topics/ch14-early-data.md">https://github.com/aws/s2n-tls/blob/main/docs/usage-guide/topics/ch14-early-data.md</a> for usage and examples. DO NOT USE unless you have considered the security issues and implemented mitigation for anti-replay attacks.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">conn</td><td>A pointer to the connection </td></tr>
@@ -9373,17 +10320,17 @@ Unlike OpenSSL, repeated calls to <a class="el" href="s2n_8h.html#a9afeb514731fa
         </tr>
       </table>
 </div><div class="memdoc">
-<p >Works in the same way as <a class="el" href="s2n_8h.html#a1b09f96a5f4fe3b78a08e76e7304853f">s2n_sendv_with_offset()</a> except that the latter's <code>offs</code> parameter is implicitly assumed to be 0. Therefore in the partial write case, the caller would have to make sure that <code>bufs</code> and <code>count</code> fields are modified in a way that takes the partial writes into account.</p>
+<p >Works in the same way as <a class="el" href="s2n_8h.html#a1b09f96a5f4fe3b78a08e76e7304853f">s2n_sendv_with_offset()</a> but with the <code>offs</code> parameter implicitly assumed to be 0. Therefore in the partial write case, the caller would have to make sure that the <code>bufs</code> and <code>count</code> fields are modified in a way that takes the partial writes into account.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">conn</td><td>A pointer to the s2n_connection object </td></tr>
     <tr><td class="paramname">bufs</td><td>A pointer to a vector of buffers that s2n will write data from. </td></tr>
     <tr><td class="paramname">count</td><td>The number of buffers in <code>bufs</code> </td></tr>
-    <tr><td class="paramname">blocked</td><td>A pointer which will be set to the blocked status, as in <a class="el" href="s2n_8h.html#ad3222e7aacf35a56be842678171be440">s2n_negotiate()</a> </td></tr>
+    <tr><td class="paramname">blocked</td><td>A pointer which will be set to the blocked status if an <code>S2N_ERR_T_BLOCKED</code> error is returned. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The number of bytes written, and may indicate a partial write. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The number of bytes written on success, which may indicate a partial write. S2N_FAILURE on failure. </dd></dl>
 
 </div>
 </div>
@@ -9433,32 +10380,19 @@ Unlike OpenSSL, repeated calls to <a class="el" href="s2n_8h.html#a9afeb514731fa
 <p >Works in the same way as <a class="el" href="s2n_8h.html#a9afeb514731fa9d74edf6b9e1348c067">s2n_send()</a> except that it accepts vectorized buffers. Will return the number of bytes written, and may indicate a partial write. Partial writes are possible not just for non-blocking I/O, but also for connections aborted while active.</p>
 <dl class="section note"><dt>Note</dt><dd>Partial writes are possible not just for non-blocking I/O, but also for connections aborted while active.</dd>
 <dd>
-Unlike OpenSSL, repeated calls to <a class="el" href="s2n_8h.html#a1b09f96a5f4fe3b78a08e76e7304853f">s2n_sendv_with_offset()</a> should not duplicate the original parameters, but should update <code>bufs</code> and <code>count</code> per the indication of size written. For example;</dd></dl>
-<div class="fragment"><div class="line"><a class="code hl_enumeration" href="s2n_8h.html#af70ca0b089daa98cd79a424d3f6af15d">s2n_blocked_status</a> blocked;</div>
-<div class="line"><span class="keywordtype">int</span> written = 0;</div>
-<div class="line"><span class="keywordtype">char</span> data[10]; </div>
-<div class="line"><span class="keyword">struct </span>iovec iov[1];</div>
-<div class="line">iov[0].iov_base = data;</div>
-<div class="line">iov[0].iov_len = 10;</div>
-<div class="line"><span class="keywordflow">do</span> {</div>
-<div class="line">    <span class="keywordtype">int</span> w = <a class="code hl_function" href="s2n_8h.html#a1b09f96a5f4fe3b78a08e76e7304853f">s2n_sendv_with_offset</a>(conn, iov, 1, written, &amp;blocked);</div>
-<div class="line">    <span class="keywordflow">if</span> (w &lt; 0) {</div>
-<div class="line">        <span class="keywordflow">break</span>;</div>
-<div class="line">    }</div>
-<div class="line">    written += w;</div>
-<div class="line">} <span class="keywordflow">while</span> (blocked != S2N_NOT_BLOCKED);</div>
-<div class="ttc" id="as2n_8h_html_a1b09f96a5f4fe3b78a08e76e7304853f"><div class="ttname"><a href="s2n_8h.html#a1b09f96a5f4fe3b78a08e76e7304853f">s2n_sendv_with_offset</a></div><div class="ttdeci">S2N_API ssize_t s2n_sendv_with_offset(struct s2n_connection *conn, const struct iovec *bufs, ssize_t count, ssize_t offs, s2n_blocked_status *blocked)</div></div>
-</div><!-- fragment --><dl class="params"><dt>Parameters</dt><dd>
+Unlike OpenSSL, repeated calls to <a class="el" href="s2n_8h.html#a1b09f96a5f4fe3b78a08e76e7304853f">s2n_sendv_with_offset()</a> should not duplicate the original parameters, but should update <code>bufs</code> and <code>count</code> per the indication of size written.</dd></dl>
+<p>See the following example for guidance on calling <code><a class="el" href="s2n_8h.html#a1b09f96a5f4fe3b78a08e76e7304853f">s2n_sendv_with_offset()</a></code>: <a href="https://github.com/aws/s2n-tls/blob/main/docs/examples/s2n_send.c">https://github.com/aws/s2n-tls/blob/main/docs/examples/s2n_send.c</a></p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">conn</td><td>A pointer to the s2n_connection object </td></tr>
     <tr><td class="paramname">bufs</td><td>A pointer to a vector of buffers that s2n will write data from. </td></tr>
     <tr><td class="paramname">count</td><td>The number of buffers in <code>bufs</code> </td></tr>
     <tr><td class="paramname">offs</td><td>The write cursor offset. This should be updated as data is written. See the example code. </td></tr>
-    <tr><td class="paramname">blocked</td><td>A pointer which will be set to the blocked status, as in <a class="el" href="s2n_8h.html#ad3222e7aacf35a56be842678171be440">s2n_negotiate()</a> </td></tr>
+    <tr><td class="paramname">blocked</td><td>A pointer which will be set to the blocked status if an <code>S2N_ERR_T_BLOCKED</code> error is returned. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The number of bytes written, and may indicate a partial write. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The number of bytes written on success, which may indicate a partial write. S2N_FAILURE on failure. </dd></dl>
 
 </div>
 </div>
@@ -9655,7 +10589,7 @@ Safety</h1>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">conn</td><td>A pointer to the s2n_connection object </td></tr>
-    <tr><td class="paramname">blocked</td><td>A pointer which will be set to the blocked status, as in <a class="el" href="s2n_8h.html#ad3222e7aacf35a56be842678171be440">s2n_negotiate()</a> </td></tr>
+    <tr><td class="paramname">blocked</td><td>A pointer which will be set to the blocked status if an <code>S2N_ERR_T_BLOCKED</code> error is returned. </td></tr>
   </table>
   </dd>
 </dl>
@@ -9701,7 +10635,7 @@ Safety</h1>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">conn</td><td>A pointer to the s2n_connection object </td></tr>
-    <tr><td class="paramname">blocked</td><td>A pointer which will be set to the blocked status, as in <a class="el" href="s2n_8h.html#ad3222e7aacf35a56be842678171be440">s2n_negotiate()</a> </td></tr>
+    <tr><td class="paramname">blocked</td><td>A pointer which will be set to the blocked status if an <code>S2N_ERR_T_BLOCKED</code> error is returned. </td></tr>
   </table>
   </dd>
 </dl>
@@ -9855,6 +10789,32 @@ Safety</h1>
 
 </div>
 </div>
+<a id="a87f6086b173925bd39185c79538dfdf5" name="a87f6086b173925bd39185c79538dfdf5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a87f6086b173925bd39185c79538dfdf5">&#9670;&#160;</a></span>s2n_strerror_source()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> const char * s2n_strerror_source </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>error</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p >Translates an s2n_error code to a filename and line number.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">error</td><td>The error code to explain. Usually this is s2n_errno. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The error string. </dd></dl>
+
+</div>
+</div>
 <h2 class="groupheader">Variable Documentation</h2>
 <a id="a24fa509b7e7b509825866d83a00333d1" name="a24fa509b7e7b509825866d83a00333d1"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a24fa509b7e7b509825866d83a00333d1">&#9670;&#160;</a></span>s2n_errno</h2>
@@ -9877,7 +10837,7 @@ Safety</h1>
 </div><div class="memdoc">
 <p >s2n-tls functions that return 'int' return 0 to indicate success and -1 to indicate failure.</p>
 <p >s2n-tls functions that return pointer types return NULL in the case of failure.</p>
-<p >When an s2n-tls function returns a failure, s2n_errno will be set to a value corresponding to the error. This error value can be translated into a string explaining the error in English by calling s2n_strerror(s2n_errno, "EN"). A string containing human readable error name; can be generated with <code>s2n_strerror_name</code>. A string containing internal debug information, including filename and line number, can be generated with <code>s2n_strerror_debug</code>. This string is useful to include when reporting issues to the s2n-tls development team.</p>
+<p >When an s2n-tls function returns a failure, s2n_errno will be set to a value corresponding to the error. This error value can be translated into a string explaining the error in English by calling s2n_strerror(s2n_errno, "EN"). A string containing human readable error name; can be generated with <code>s2n_strerror_name</code>. A string containing internal debug information, including filename and line number, can be generated with <code>s2n_strerror_debug</code>. A string containing only the filename and line number can be generated with <code>s2n_strerror_source</code>. This string is useful to include when reporting issues to the s2n-tls development team.</p>
 <dl class="section warning"><dt>Warning</dt><dd>To avoid possible confusion, s2n_errno should be cleared after processing an error: <code>s2n_errno = S2N_ERR_T_OK</code> </dd></dl>
 
 </div>
