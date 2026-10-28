@@ -409,6 +409,11 @@ int main(int argc, char **argv)
             "CloudFront-Upstream-TLS-1-2-2025-PQ",
             "CloudFront-Upstream-TLS-1-3-2025",
             "CloudFront-Upstream-TLS-1-3-2025-PQ",
+            "CloudFront-Upstream-2025-PQ-KX",
+            "CloudFront-Upstream-TLS-1-0-2025-PQ-KX",
+            "CloudFront-Upstream-TLS-1-1-2025-PQ-KX",
+            "CloudFront-Upstream-TLS-1-2-2025-PQ-KX",
+            "CloudFront-Upstream-TLS-1-3-2025-PQ-KX",
             /* AWS Common Runtime SDK */
             "AWS-CRT-SDK-SSLv3.0",
             "AWS-CRT-SDK-TLSv1.0",
@@ -564,6 +569,71 @@ int main(int argc, char **argv)
         security_policy = NULL;
         EXPECT_SUCCESS(s2n_find_security_policy_from_version("CloudFront-TLS-1-3-2025-no-pq", &security_policy));
         EXPECT_EQUAL(security_policy->signature_preferences, &s2n_signature_preferences_20250813);
+    }
+
+    /* Test CloudFront upstream PQ-KX policies.
+     *
+     * Each PQ-KX policy is the corresponding upstream PQ policy with the signature
+     * preferences of the corresponding upstream non-PQ policy: it enables ML-KEM
+     * key exchange without enabling ML-DSA authentication.
+     */
+    {
+        const struct {
+            const char *pq_kx;
+            const char *pq;
+            const char *classical;
+        } upstream_policies[] = {
+            { "CloudFront-Upstream-2025-PQ-KX", "CloudFront-Upstream-2025-PQ", "CloudFront-Upstream-2025" },
+            { "CloudFront-Upstream-TLS-1-0-2025-PQ-KX", "CloudFront-Upstream-TLS-1-0-2025-PQ", "CloudFront-Upstream-TLS-1-0-2025" },
+            { "CloudFront-Upstream-TLS-1-1-2025-PQ-KX", "CloudFront-Upstream-TLS-1-1-2025-PQ", "CloudFront-Upstream-TLS-1-1-2025" },
+            { "CloudFront-Upstream-TLS-1-2-2025-PQ-KX", "CloudFront-Upstream-TLS-1-2-2025-PQ", "CloudFront-Upstream-TLS-1-2-2025" },
+            { "CloudFront-Upstream-TLS-1-3-2025-PQ-KX", "CloudFront-Upstream-TLS-1-3-2025-PQ", "CloudFront-Upstream-TLS-1-3-2025" },
+        };
+
+        for (size_t i = 0; i < s2n_array_len(upstream_policies); i++) {
+            const struct s2n_security_policy *pq_kx = NULL;
+            const struct s2n_security_policy *pq = NULL;
+            const struct s2n_security_policy *classical = NULL;
+            EXPECT_SUCCESS(s2n_find_security_policy_from_version(upstream_policies[i].pq_kx, &pq_kx));
+            EXPECT_SUCCESS(s2n_find_security_policy_from_version(upstream_policies[i].pq, &pq));
+            EXPECT_SUCCESS(s2n_find_security_policy_from_version(upstream_policies[i].classical, &classical));
+
+            /* Same as the PQ policy, except for signature preferences */
+            EXPECT_EQUAL(pq_kx->minimum_protocol_version, pq->minimum_protocol_version);
+            EXPECT_EQUAL(pq_kx->cipher_preferences, pq->cipher_preferences);
+            EXPECT_EQUAL(pq_kx->kem_preferences, pq->kem_preferences);
+            EXPECT_EQUAL(pq_kx->certificate_signature_preferences, pq->certificate_signature_preferences);
+            EXPECT_EQUAL(pq_kx->ecc_preferences, pq->ecc_preferences);
+            EXPECT_EQUAL(pq_kx->strongly_preferred_groups, pq->strongly_preferred_groups);
+            EXPECT_EQUAL(pq_kx->certificate_key_preferences, pq->certificate_key_preferences);
+            EXPECT_EQUAL(pq_kx->certificate_preferences_apply_locally, pq->certificate_preferences_apply_locally);
+            EXPECT_BYTEARRAY_EQUAL(pq_kx->rules, pq->rules, sizeof(pq->rules));
+
+            /* Signature preferences come from the non-PQ policy */
+            EXPECT_EQUAL(pq_kx->signature_preferences, classical->signature_preferences);
+            EXPECT_EQUAL(pq_kx->kem_preferences, &kem_preferences_pq_tls_1_3_ietf_2025_07);
+
+            /* No ML-DSA signature schemes */
+            for (size_t j = 0; j < pq_kx->signature_preferences->count; j++) {
+                EXPECT_NOT_EQUAL(pq_kx->signature_preferences->signature_schemes[j]->sig_alg, S2N_SIGNATURE_MLDSA);
+            }
+        }
+
+        /* A PQ-KX client does not negotiate ML-DSA authentication, unlike the PQ client */
+        if (s2n_mldsa_is_supported()) {
+            DEFER_CLEANUP(struct s2n_cert_chain_and_key *mldsa87_chain_and_key = NULL, s2n_cert_chain_and_key_ptr_free);
+            EXPECT_SUCCESS(s2n_test_cert_chain_and_key_new(&mldsa87_chain_and_key, S2N_MLDSA87_CERT, S2N_MLDSA87_KEY));
+
+            const struct s2n_security_policy *pq = NULL;
+            EXPECT_SUCCESS(s2n_find_security_policy_from_version("CloudFront-Upstream-TLS-1-3-2025-PQ", &pq));
+            EXPECT_OK(s2n_test_security_policies_compatible(pq, "default_pq", mldsa87_chain_and_key));
+
+            const struct s2n_security_policy *pq_kx = NULL;
+            EXPECT_SUCCESS(s2n_find_security_policy_from_version("CloudFront-Upstream-TLS-1-3-2025-PQ-KX", &pq_kx));
+            EXPECT_ERROR_WITH_ERRNO(s2n_test_security_policies_compatible(pq_kx, "default_pq", mldsa87_chain_and_key),
+                    S2N_ERR_INVALID_SIGNATURE_SCHEME);
+            EXPECT_OK(s2n_test_security_policies_compatible(pq_kx, "default_pq", ecdsa_chain_and_key));
+        }
     }
 
     /* Test that security policies have valid chacha20 boosting configurations when chacha20 is available */
